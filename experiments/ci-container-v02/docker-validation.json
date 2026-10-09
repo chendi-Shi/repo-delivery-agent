@@ -1,0 +1,19 @@
+{
+  "fixture": true,
+  "label": "TRUSTED INTEGRATION CHECK; NOT MODEL PERFORMANCE",
+  "image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+  "passed": true,
+  "checks": [
+    "persistent session",
+    "read-only Git metadata",
+    "disabled container network",
+    "new-file patch export",
+    "fresh patch application",
+    "independent container check"
+  ],
+  "changed_files": [
+    "added.py",
+    "module.py"
+  ],
+  "patch_sha256": "d4aa976426350024fb1399e006635d896afdbd6b635eadeb70ca34dbc4ae5f0e"
+}

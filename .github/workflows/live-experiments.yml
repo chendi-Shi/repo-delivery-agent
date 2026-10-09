@@ -67,6 +67,7 @@ jobs:
           python scripts/ci_live_experiment.py
           --ollama "${{ runner.temp }}/ollama-pin/bin/ollama"
           --task "${{ matrix.task }}" --profile "${{ matrix.profile }}"
+          --model qwen2.5-coder:3b --label ci-v2
           --output runs/live-ci --evidence runs/public-experiments
       - uses: actions/upload-artifact@v4
         if: always()
@@ -100,7 +101,7 @@ jobs:
           --manifest collector/public-experiments/repository-ablation.json
           --source examples/official-smoke/source.json
           --output collector/public-experiments/official-predictions.jsonl
-          --model-id repo-delivery-qwen2_5-coder-1_5b
+          --model-id repo-delivery-qwen2_5-coder-3b
       - name: Verify public repository patches in independent Docker environments
         run: >-
           python scripts/grade_experiments.py

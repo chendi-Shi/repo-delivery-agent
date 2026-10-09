@@ -52,6 +52,17 @@ class SourceBoundaryTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             self.env.execute({'command': 'delivery-file list'})
 
+    def test_source_inventory_and_directory_search_find_existing_package(self):
+        package = self.root/'some_package'; package.mkdir()
+        (package/'__init__.py').write_text('from .core import value\n',encoding='utf-8')
+        (package/'core.py').write_text('value = 1\n',encoding='utf-8')
+        context = self.env.inventory('some-package', max_chars=150)
+        self.assertLess(context.find('some_package/__init__.py'),context.find('module.py'))
+        result=self.env.execute({'command':"delivery-file search 'value' some_package"})
+        self.assertEqual(result['returncode'],0)
+        self.assertIn('some_package/core.py:1',result['output'])
+        self.assertNotIn('.git/',context)
+
     def test_toolbox_cannot_fall_through_or_retrieve_current_answer(self):
         kb = KnowledgeStore(self.root / 'kb.sqlite', 'one')
         record = kb.put(title='answer', body='current solved task', source_type='manual', source_ref='test', task_id='current',

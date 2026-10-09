@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import signal
 import socket
 import subprocess
@@ -19,7 +20,8 @@ from delivery_agent.repository import atomic_json
 
 OLLAMA_VERSION = "0.40.2"
 OLLAMA_ARCHIVE_SHA256 = "726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04"
-MODEL = "qwen2.5-coder:1.5b"
+DEFAULT_MODEL = "qwen2.5-coder:3b"
+SUPPORTED_MODELS = ("qwen2.5-coder:1.5b", "qwen2.5-coder:3b")
 
 
 def main(argv=None):
@@ -29,7 +31,15 @@ def main(argv=None):
     parser.add_argument("--profile", choices=["baseline", "recent", "retrieval"], required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--evidence", required=True)
+    parser.add_argument("--model", choices=SUPPORTED_MODELS, default=DEFAULT_MODEL)
+    parser.add_argument("--label", default="ci-v2", help="Immutable experimental round identifier")
+    parser.add_argument("--max-steps", type=int, default=24)
     args = parser.parse_args(argv)
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,31}", args.label):
+        parser.error("Label must be a bounded identifier")
+    if not 1 <= args.max_steps <= 100:
+        parser.error("Max steps must be 1..100")
+    model_name = args.model
     binary = Path(args.ollama).resolve()
     public = Path(args.evidence).resolve()
     public.mkdir(parents=True, exist_ok=False)
@@ -80,12 +90,12 @@ def main(argv=None):
                     time.sleep(0.2)
             if not ready:
                 raise TimeoutError("Job-local Ollama readiness timeout")
-            subprocess.run([str(binary), "pull", MODEL], check=True, capture_output=True,
+            subprocess.run([str(binary), "pull", model_name], check=True, capture_output=True,
                            env=environment, timeout=900)
             # Empty generate preloads weights without producing task actions.
-            request("/api/generate", {"model": MODEL, "stream": False, "keep_alive": "20m"}, timeout=180)
+            request("/api/generate", {"model": model_name, "stream": False, "keep_alive": "20m"}, timeout=180)
             models = request("/api/tags").get("models", [])
-            matches = [model for model in models if model.get("name") == MODEL]
+            matches = [model for model in models if model.get("name") == model_name]
             if len(matches) != 1 or not matches[0].get("digest"):
                 raise ValueError("Pulled model identity is unresolved")
             identity = matches[0]
@@ -93,18 +103,20 @@ def main(argv=None):
                 "schema": 1, "kind": "live_local_model_environment", "fixture": False,
                 "ollama_version": OLLAMA_VERSION, "ollama_archive_sha256": OLLAMA_ARCHIVE_SHA256,
                 "release_url": "https://github.com/ollama/ollama/releases/tag/v0.40.2",
-                "model": MODEL, "model_digest": identity["digest"], "model_bytes": identity.get("size"),
+                "model": model_name, "model_digest": identity["digest"], "model_bytes": identity.get("size"),
                 "details": identity.get("details", {}), "cpu_count": os.cpu_count(),
-                "model_source": "https://ollama.com/library/qwen2.5-coder:1.5b",
+                "model_source": "https://ollama.com/library/" + model_name,
                 "provider": "ollama_native", "backend": "files", "profile": args.profile,
-                "task": Path(args.task).name, "preload": "empty generate, no task prompt or fixed actions",
+                "task": Path(args.task).name, "label": args.label,
+                "max_steps": args.max_steps,
+                "preload": "empty generate, no task prompt or fixed actions",
             })
             command = [sys.executable, str(ROOT / "scripts/run_experiments.py"), "--task", args.task,
-                "--output", args.output, "--evidence", str(public), "--model", "ollama_chat/" + MODEL,
-                "--profiles", args.profile, "--label", "ci-v1", "--max-steps", "10",
+                "--output", args.output, "--evidence", str(public), "--model", "ollama_chat/" + model_name,
+                "--profiles", args.profile, "--label", args.label, "--max-steps", str(args.max_steps),
                 "--context-tokens", "12000", "--wall-seconds", "1200"]
             subprocess.run(command, check=True, env=environment, cwd=ROOT, timeout=2400)
-            latest = [model for model in request("/api/tags").get("models", []) if model.get("name") == MODEL]
+            latest = [model for model in request("/api/tags").get("models", []) if model.get("name") == model_name]
             if len(latest) != 1 or latest[0].get("digest") != identity["digest"]:
                 raise ValueError("Model identity changed during experiment")
         except Exception as exc:

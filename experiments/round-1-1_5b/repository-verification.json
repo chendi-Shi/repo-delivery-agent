@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "kind": "independent_public_repository_verification",
+  "manifest_sha256": "f4c95b5ccf5d5ce6d70708f68bb944f548d162305ddac639cbd53a7150f399c3",
+  "attempts": 6,
+  "verified_attempts": 6,
+  "submitted": 0,
+  "delivery_successes": 0,
+  "delivery_rate_all_attempts": 0.0,
+  "by_profile": {
+    "baseline": {
+      "attempts": 1,
+      "verified_attempts": 1,
+      "submitted": 0,
+      "delivery_successes": 0,
+      "delivery_rate_all_attempts": 0.0
+    },
+    "recent": {
+      "attempts": 1,
+      "verified_attempts": 1,
+      "submitted": 0,
+      "delivery_successes": 0,
+      "delivery_rate_all_attempts": 0.0
+    },
+    "retrieval": {
+      "attempts": 4,
+      "verified_attempts": 4,
+      "submitted": 0,
+      "delivery_successes": 0,
+      "delivery_rate_all_attempts": 0.0
+    }
+  },
+  "official_resolved": null,
+  "runs": [
+    {
+      "id": "more-itertools__count-runs-dev-baseline-ci-v1",
+      "instance_id": "more-itertools__count-runs-dev",
+      "profile": "baseline",
+      "model_name": "ollama_chat/qwen2.5-coder:1.5b",
+      "model_digest": "d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "model_identity_status": "resolved",
+      "model_status": "failed",
+      "submitted": false,
+      "patch_sha256": "9c66ee518c2187a0e5ffb53c340023a1b11b0c9e2b8c934c45d81fe77cef6122",
+      "task_sha256": "cd6786be5040d866886e3d4a0a93287f1a98f87ae4b80e962cf496a339f590ba",
+      "evidence_sha256": "8b597ca1be014ab83ab8fb6563757324138040cf099f36a70e3e7f34084a83a1",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c \"from more_itertools import count_runs; assert count_runs([])==0; assert count_runs([1,1,2,2,1])==3; assert count_runs(iter([None,None,0]))==2; assert count_runs([[1],[1],[2]])==2; print('count_runs public contract passed')\"",
+          "returncode": 1,
+          "passed": false,
+          "output_sha256": "1e73fdd62e0f917737f2152ff52a5d03fb9bd9c936e934bfea93e512716570a1",
+          "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nImportError: cannot import name 'count_runs' from 'more_itertools' (/workspace/more_itertools/__init__.py)\n"
+        }
+      ],
+      "delivery_success": false,
+      "official_resolved": null,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_status": "failed"
+    },
+    {
+      "id": "more-itertools__count-runs-dev-recent-ci-v1",
+      "instance_id": "more-itertools__count-runs-dev",
+      "profile": "recent",
+      "model_name": "ollama_chat/qwen2.5-coder:1.5b",
+      "model_digest": "d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "model_identity_status": "resolved",
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "9c66ee518c2187a0e5ffb53c340023a1b11b0c9e2b8c934c45d81fe77cef6122",
+      "task_sha256": "cd6786be5040d866886e3d4a0a93287f1a98f87ae4b80e962cf496a339f590ba",
+      "evidence_sha256": "f34dcf58a1c3de2099fe60082f823516a7d9bfb9764337582e62dd98640c84a4",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c \"from more_itertools import count_runs; assert count_runs([])==0; assert count_runs([1,1,2,2,1])==3; assert count_runs(iter([None,None,0]))==2; assert count_runs([[1],[1],[2]])==2; print('count_runs public contract passed')\"",
+          "returncode": 1,
+          "passed": false,
+          "output_sha256": "1e73fdd62e0f917737f2152ff52a5d03fb9bd9c936e934bfea93e512716570a1",
+          "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nImportError: cannot import name 'count_runs' from 'more_itertools' (/workspace/more_itertools/__init__.py)\n"
+        }
+      ],
+      "delivery_success": false,
+      "official_resolved": null,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_status": "failed"
+    },
+    {
+      "id": "more-itertools__count-runs-dev-retrieval-ci-v1",
+      "instance_id": "more-itertools__count-runs-dev",
+      "profile": "retrieval",
+      "model_name": "ollama_chat/qwen2.5-coder:1.5b",
+      "model_digest": "d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "model_identity_status": "resolved",
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "6e3c2c7e0eb8b17e56043897ea88a6367ea1239c45a4c6d5ed6eeaf9b2d53fea",
+      "task_sha256": "cd6786be5040d866886e3d4a0a93287f1a98f87ae4b80e962cf496a339f590ba",
+      "evidence_sha256": "cec73b28a824211f91f7d37bd69c1b9d58dbab372df13f3af2a08717a2c73045",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c \"from more_itertools import count_runs; assert count_runs([])==0; assert count_runs([1,1,2,2,1])==3; assert count_runs(iter([None,None,0]))==2; assert count_runs([[1],[1],[2]])==2; print('count_runs public contract passed')\"",
+          "returncode": 1,
+          "passed": false,
+          "output_sha256": "1e73fdd62e0f917737f2152ff52a5d03fb9bd9c936e934bfea93e512716570a1",
+          "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nImportError: cannot import name 'count_runs' from 'more_itertools' (/workspace/more_itertools/__init__.py)\n"
+        }
+      ],
+      "delivery_success": false,
+      "official_resolved": null,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_status": "failed"
+    },
+    {
+      "id": "pallets__flask-5014-retrieval-ci-v1",
+      "instance_id": "pallets__flask-5014",
+      "profile": "retrieval",
+      "model_name": "ollama_chat/qwen2.5-coder:1.5b",
+      "model_digest": "d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "model_identity_status": "resolved",
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "task_sha256": "48f4a2d62122173f4f4aecc005972964c758e5f0f7fa22d94c493736a852ce59",
+      "evidence_sha256": "afb242926cf0de29c1b17fa3756e7be9f4741845c0545add9bffedea799d79be",
+      "patch_valid": true,
+      "public_checks": [],
+      "delivery_success": false,
+      "official_resolved": null,
+      "verification_status": "no_public_checks"
+    },
+    {
+      "id": "psf__requests-1142-retrieval-ci-v1",
+      "instance_id": "psf__requests-1142",
+      "profile": "retrieval",
+      "model_name": "ollama_chat/qwen2.5-coder:1.5b",
+      "model_digest": "d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "model_identity_status": "resolved",
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "task_sha256": "8f7492dbebe770d718930773bb6a8f93432ae4826bb1c452fb9623456bed0d1a",
+      "evidence_sha256": "68ecfdabfb297bd38baacc04b953c2da90b674fbed5cd2170852f5da7c819567",
+      "patch_valid": true,
+      "public_checks": [],
+      "delivery_success": false,
+      "official_resolved": null,
+      "verification_status": "no_public_checks"
+    },
+    {
+      "id": "psf__requests-2931-retrieval-ci-v1",
+      "instance_id": "psf__requests-2931",
+      "profile": "retrieval",
+      "model_name": "ollama_chat/qwen2.5-coder:1.5b",
+      "model_digest": "d7372fd828518a4d38b1eb196c673c31a85f2ed302b3d1e406c4c2d1b64a0668",
+      "model_identity_status": "resolved",
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "task_sha256": "5c41c06a667ee8dde7f6e498d65fe13000c86b387dbb1c48645930b58af70041",
+      "evidence_sha256": "db9492f09d128019656fc7a6ece1f56b1dc756a1fd18746942071b3000095435",
+      "patch_valid": true,
+      "public_checks": [],
+      "delivery_success": false,
+      "official_resolved": null,
+      "verification_status": "no_public_checks"
+    }
+  ],
+  "infrastructure_failures": []
+}

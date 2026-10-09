@@ -2,7 +2,9 @@
 
 `.github/workflows/live-experiments.yml` 运行六个真实本地模型尝试：同一 more-itertools 开发需求的 baseline/recent/retrieval，以及三项冻结的官方公开任务（retrieval）。每个 shard 启动自己的 Ollama，独立拉取模型、冻结 digest，并调用项目真实 native provider 和受限源码编辑 backend。没有测试 provider 或预设工具 actions。
 
-选择的模型为官方 [qwen2.5-coder:1.5b](https://ollama.com/library/qwen2.5-coder:1.5b)，页面列出的 Q4_K_M 文件约 986 MB。它是适合 CPU 小规模链路实验的代码模型，不能把小模型结果外推到更大模型。实际运行的权重身份由 `/api/tags` 获取并保存在证据中，不能仅用可变 tag 作为复现依据。
+当前 `ci-v2` 轮次选择官方 [qwen2.5-coder:3b](https://ollama.com/library/qwen2.5-coder:3b)，页面列出的 Q4_K_M 文件约 1.9 GB。首轮 `ci-v1` 使用 [qwen2.5-coder:1.5b](https://ollama.com/library/qwen2.5-coder:1.5b)，约 986 MB，其实际失败与 partial patch 保留。两轮使用不同不可变 run ID，不能覆盖首轮结果，也不能把更换模型后产生的差异全归因于上下文策略。实际运行的权重身份由 `/api/tags` 获取并保存在证据中，不能仅用可变 tag 作为复现依据。
+
+helper 明确接受 `--model`、`--label` 和 `--max-steps`；例如 `--model qwen2.5-coder:1.5b --label ci-v1 --max-steps 10` 选择首轮型号和步数预算。重现原轮次时还必须检出对应运行 commit，并使用全新 output/evidence 目录；源码发现提示等实现变更也会影响结果。当前 workflow 的预测逻辑名称为 `repo-delivery-qwen2_5-coder-3b`，每个证据仍保存实际模型名及 digest。
 
 Ollama 固定为 [v0.40.2](https://github.com/ollama/ollama/releases/tag/v0.40.2)。Linux amd64 `tar.zst` 的 SHA-256 从该版本 [GitHub release API](https://api.github.com/repos/ollama/ollama/releases/tags/v0.40.2) 的 asset digest 核对：
 
@@ -12,7 +14,7 @@ Ollama 固定为 [v0.40.2](https://github.com/ollama/ollama/releases/tag/v0.40.2
 
 workflow 下载版本明确的 release 文件，检查 checksum 后仅解压到当前 runner 临时目录。官方 [Linux 手动安装文档](https://docs.ollama.com/linux)说明了相应的打包格式与 `ollama serve` 入口；此 workflow 使用 job 自己的进程，不安装系统服务，不执行浮动的网络安装脚本。
 
-每次尝试预算相同：10 steps、12000 context、600 output、180 秒单请求、1200 秒 Agent wall budget、seed 42。六个 matrix shard 以最多 3 个并发运行，每个 job 最长 60 分钟，避免六个最坏耗时任务挤在同一 60 分钟窗口而遗漏后半尝试。模型已发送的请求不能由 wall budget 撤回，仍受到单请求 timeout 限制。
+同一轮的各个 profile 使用相同预算：首轮为 10 steps，第二轮为 24 steps；两轮均为 12000 context、600 output、180 秒单请求、1200 秒 Agent wall budget、seed 42。第二轮同时更换模型、增加步数，并改进通用源码发现提示，因此不做跨轮的因果比较。六个 matrix shard 以最多 3 个并发运行，每个 job 最长 60 分钟，避免六个最坏耗时任务挤在同一 60 分钟窗口而遗漏后半尝试。模型已发送的请求不能由 wall budget 撤回，仍受到单请求 timeout 限制。
 
 `ci_live_experiment.py` 仅启动当前 job 的 Ollama session，在结束或异常时清理该进程及其模型子进程。若端口已被别的服务使用，直接失败，不借用或关闭那项服务。Ollama 设置 local-only、loopback 和单请求并行。空 generate 只用于预加载权重，不包含任务提示或固定操作。
 

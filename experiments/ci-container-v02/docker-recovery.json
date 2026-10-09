@@ -1,0 +1,23 @@
+{
+  "fixture": true,
+  "label": "TRUSTED CRASH RECOVERY; NOT MODEL PERFORMANCE",
+  "passed": true,
+  "image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+  "checks": [
+    "real process crash",
+    "same container reattachment",
+    "isolation identity validation",
+    "completed action not repeated",
+    "budget/history continuation",
+    "submission after recovery",
+    "resumed container cleanup"
+  ],
+  "model_calls": 2,
+  "usage": {
+    "input_tokens": 24,
+    "output_tokens": 6,
+    "calls_with_usage": 2,
+    "unknown_requests": 0,
+    "complete": true
+  }
+}

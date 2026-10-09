@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import shlex
+import os
 from pathlib import Path, PureWindowsPath
 
 
@@ -28,6 +29,8 @@ DELIVERY
 One command per call. Replacement must match exactly once. Never edit .git or escape
 the workspace. Shell/python/test commands are unavailable; independent tests run later
 in Docker. To submit use exactly: echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
+Locate existing package modules and their exports before editing. Extend the existing
+package; do not create an unrelated shadow module at the repository root.
 """
 
 
@@ -36,6 +39,42 @@ class FileEnvironment:
         self.workspace = Path(workspace).resolve()
         self.image_id, self.timeout, self.closed = image, timeout, False
         self.container_id = None
+
+    def inventory(self, repo_name="", max_chars=1100):
+        """Bounded generic source-path discovery, without reading task answers."""
+        paths = []
+        preferred = re.sub(r"[^a-z0-9]+", "_", repo_name.lower())
+        visited = 0
+        for root, dirs, files in os.walk(self.workspace, followlinks=False):
+            visited += 1
+            if visited > 600:
+                break
+            dirs[:] = sorted(d for d in dirs if d.casefold() not in {'.git', '.venv', 'node_modules', '__pycache__', 'vendor'}
+                             and not (Path(root)/d).is_symlink())
+            for name in sorted(files):
+                if not name.endswith('.py'):
+                    continue
+                relative = (Path(root)/name).relative_to(self.workspace).as_posix()
+                try:
+                    self._path(relative)
+                except ValueError:
+                    continue
+                paths.append(relative)
+                if len(paths) >= 300:
+                    break
+            if len(paths) >= 300:
+                break
+        def rank(path):
+            normalized = path.lower().replace('-', '_')
+            package = preferred and any(part == preferred for part in normalized.split('/'))
+            return (not package, '/test' in '/' + normalized, not path.endswith('__init__.py'), path.count('/'), path)
+        selected = []
+        used = 0
+        for path in sorted(paths, key=rank):
+            if used + len(path) + 1 > max_chars:
+                break
+            selected.append(path); used += len(path) + 1
+        return "Repository Python source paths (partial, discover more with list/search):\n" + '\n'.join(selected)
 
     def _path(self, value):
         if not isinstance(value, str) or not value or ':' in value or '\\' in value or PureWindowsPath(value).is_absolute():
@@ -110,7 +149,8 @@ class FileEnvironment:
                     query = tokens[2]
                     if not query or len(query) > 200:
                         raise ValueError("Search query limit exceeded")
-                    candidates = [self._path(tokens[3])] if len(tokens) == 4 else self.workspace.rglob("*.py")
+                    location = self._path(tokens[3]) if len(tokens) == 4 else self.workspace
+                    candidates = location.rglob("*.py") if location.is_dir() else [location]
                     hits = []
                     for index, candidate in enumerate(candidates):
                         if index >= 500:

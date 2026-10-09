@@ -185,6 +185,39 @@ class ExperimentTests(unittest.TestCase):
         self.assertNotIn("private", json.dumps(report))
         self.assertEqual(report["infrastructure_failures"][0]["error_type"], "RuntimeError")
 
+    def test_tasks_without_public_checks_are_unknown_and_outside_public_delivery_denominator(self):
+        public_success = self.create_run("public-success", profile="retrieval")
+        public_failure = self.create_run("public-failure", status="stopped", profile="retrieval")
+        official_only = self.create_run("official-only", profile="retrieval")
+        official_task = self.manifest.parent / official_only["task"]
+        official_task.write_text(json.dumps({**self.task, "instance_id": "official-task", "public_checks": []}), encoding="utf-8")
+        self.plan([public_success, public_failure, official_only])
+        report = grading.grade(self.manifest, self.root / "report.json", verifier=self.verifier)
+        self.assertEqual(report["attempts"], 3)
+        self.assertEqual(report["public_check_eligible_attempts"], 2)
+        self.assertEqual(report["public_delivery_denominator"], 2)
+        self.assertEqual(report["no_public_checks_attempts"], 1)
+        self.assertEqual(report["public_delivery_unknown_attempts"], 1)
+        self.assertEqual(report["delivery_successes"], 1)
+        self.assertEqual(report["public_delivery_failures"], 1)
+        self.assertEqual(report["public_delivery_rate"], 0.5)
+        self.assertIsNone(report["delivery_rate_all_attempts"])
+        self.assertEqual(report["by_profile"]["retrieval"]["public_delivery_rate"], 0.5)
+        official = next(row for row in report["runs"] if row["id"] == "official-only")
+        self.assertEqual(official["verification_status"], "no_public_checks")
+        self.assertEqual(official["public_delivery_status"], "unknown_no_public_checks")
+        self.assertFalse(official["public_check_eligible"])
+        self.assertIsNone(official["delivery_success"])
+        # Even a submitted/applicable patch cannot claim a public-check outcome
+        # when the task defines no checks. A fully ineligible experiment has no
+        # public delivery rate at all, while its real attempt remains counted.
+        self.plan([official_only])
+        no_checks = grading.grade(self.manifest, self.root / "no-checks.json", verifier=self.verifier)
+        self.assertEqual(no_checks["attempts"], 1)
+        self.assertEqual(no_checks["public_delivery_denominator"], 0)
+        self.assertIsNone(no_checks["public_delivery_rate"])
+        self.assertIsNone(no_checks["delivery_rate_all_attempts"])
+
     def test_actual_failed_public_check_does_not_count_success(self):
         self.plan([self.create_run("one")])
 

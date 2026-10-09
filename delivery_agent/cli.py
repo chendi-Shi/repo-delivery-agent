@@ -99,6 +99,11 @@ def run_repository(task, args, directory, *, session_factory=None):
             from .repository import git
             if git(work, "rev-parse", "HEAD").stdout.decode().strip() != task.base_commit:
                 raise CheckpointMismatch("Resume workspace HEAD differs from frozen task")
+            repository_context = json.loads((directory / "repository-context.json").read_text(encoding="utf-8"))["text"]
+        else:
+            repository_context = FileEnvironment(work).inventory(task.repo.rsplit('/', 1)[-1])
+            atomic_json(directory / "repository-context.json", {"text": repository_context,
+                "sha256": hashlib.sha256(repository_context.encode()).hexdigest()})
         kwargs = {"temperature": 0, "seed": args.seed, "max_tokens": args.max_output_tokens,
                   "timeout": args.request_timeout, "num_retries": 0, "drop_params": True}
         if args.api_base:
@@ -147,12 +152,15 @@ def run_repository(task, args, directory, *, session_factory=None):
                     "workspace": str(work.resolve()), "backend": backend, "base_commit": task.base_commit,
                     "image_id": env.image_id, "container_id": getattr(env, "container_id", None)}
                 identity = {"environment": environment, "task_hash": task.fingerprint(),
-                    "config_sha256": fingerprint(public_config), "model_digest": result["provenance"].get("model_digest")}
+                    "config_sha256": fingerprint(public_config), "model_digest": result["provenance"].get("model_digest"),
+                    "repository_context_sha256": hashlib.sha256(repository_context.encode()).hexdigest()}
                 atomic_json(directory / "runtime.json", identity)
             if identity.get("task_hash") != task.fingerprint() or identity.get("config_sha256") != fingerprint(public_config):
                 raise CheckpointMismatch("Runtime identity differs from frozen task/config")
+            if identity.get("repository_context_sha256") != hashlib.sha256(repository_context.encode()).hexdigest():
+                raise CheckpointMismatch("Frozen repository context was modified")
             toolbox = ToolboxEnvironment(env, skills, knowledge, task.instance_id)
-            outcome = run_agent(model, env, task=task.problem_statement +
+            outcome = run_agent(model, env, task=task.problem_statement + "\n\n" + repository_context +
                 "\n\nPublic checks (independent final benchmark tests are unavailable):\n" +
                 "\n".join(task.public_checks), output_dir=directory / "agent",
                 agent_config={"system_template": SYSTEM if backend == "docker" else

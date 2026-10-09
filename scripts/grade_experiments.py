@@ -1,7 +1,9 @@
 """Verify saved real-model repository patches in fresh Docker workspaces.
 
 This is public-check delivery verification, not official SWE-bench scoring.
-Model failures stay in the attempt denominator; infrastructure failures exit 2.
+Model failures stay in the public-check eligible denominator; tasks with no
+public checks remain unknown. Total attempts are retained. Infrastructure
+failures exit 2.
 """
 from __future__ import annotations
 
@@ -104,18 +106,24 @@ def load_plan(manifest):
 
 def verify_one(run, *, directory, command_timeout=90, session_factory=DockerSession, checkout_factory=checkout):
     task, evidence, patch = run["task"], run["evidence"], run["patch"]
+    eligible = bool(task.public_checks)
     record = {"id": run["id"], "instance_id": task.instance_id, "profile": evidence["profile"],
         "model_name": evidence["model_name"], "model_digest": evidence["model_digest"],
         "model_identity_status": "resolved" if evidence["model_digest"] else "unresolved",
         "model_status": evidence["status"], "submitted": evidence["status"] == "submitted",
         "patch_sha256": evidence["patch_sha256"], "task_sha256": run["task_sha256"],
         "evidence_sha256": run["evidence_sha256"], "patch_valid": False,
-        "public_checks": [], "delivery_success": False, "official_resolved": None}
+        "public_checks": [], "public_check_eligible": eligible,
+        "delivery_success": False if eligible else None,
+        "public_delivery_status": "pending" if eligible else "unknown_no_public_checks",
+        "official_resolved": None}
     work = checkout_factory(task, Path(directory) / "workspace")
     if patch:
         applicable = git(work, "apply", "--check", "--whitespace=nowarn", "-", input=patch, check=False)
         if applicable.returncode:
             record["verification_status"] = "patch_invalid"
+            if eligible:
+                record["public_delivery_status"] = "failed"
             return record
         git(work, "apply", "--whitespace=nowarn", "-", input=patch)
     record["patch_valid"] = True
@@ -143,6 +151,7 @@ def verify_one(run, *, directory, command_timeout=90, session_factory=DockerSess
               and all(check["passed"] for check in record["public_checks"]))
     record["verification_status"] = "passed" if passed else "failed"
     record["delivery_success"] = record["submitted"] and passed
+    record["public_delivery_status"] = "passed" if record["delivery_success"] else "failed"
     return record
 
 
@@ -164,21 +173,38 @@ def grade(manifest, output, *, pull_images=False, command_timeout=90, verifier=v
             except Exception as exc:
                 failures.append({"id": run["id"], "stage": "independent_verification", "error_type": type(exc).__name__})
     count = len(runs)
-    delivered = sum(bool(row["delivery_success"]) for row in records)
+    def metrics(attempts, verified):
+        eligible_ids = {run["id"] for run in attempts if run["task"].public_checks}
+        eligible_verified = [row for row in verified if row["id"] in eligible_ids]
+        known = [row for row in eligible_verified if type(row["delivery_success"]) is bool]
+        successes = sum(row["delivery_success"] is True for row in known)
+        unknown_eligible = len(eligible_ids) - len(known)
+        public_rate = successes / len(eligible_ids) if eligible_ids and not unknown_eligible else None
+        return {"public_check_eligible_attempts": len(eligible_ids),
+                "public_check_eligible_verified_attempts": len(eligible_verified),
+                "no_public_checks_attempts": len(attempts) - len(eligible_ids),
+                "public_delivery_denominator": len(eligible_ids),
+                "public_delivery_unknown_attempts": len(attempts) - len(known),
+                "public_delivery_rate": public_rate,
+                "public_delivery_failures": sum(row["delivery_success"] is False for row in known),
+                "delivery_successes": successes,
+                # Preserve the old interpretation only for fully eligible
+                # experiments. Mixed/no-check inputs have no all-attempt public
+                # outcome, so callers must use the explicit eligible rate.
+                "delivery_rate_all_attempts": public_rate if len(eligible_ids) == len(attempts) else None}
+    overall = metrics(runs, records)
     by_profile = {}
     for profile in sorted({run["evidence"]["profile"] for run in runs}):
         attempts = [run for run in runs if run["evidence"]["profile"] == profile]
         verified = [row for row in records if row["profile"] == profile]
-        success = sum(bool(row["delivery_success"]) for row in verified)
         by_profile[profile] = {"attempts": len(attempts), "verified_attempts": len(verified),
             "submitted": sum(run["evidence"]["status"] == "submitted" for run in attempts),
-            "delivery_successes": success,
-            "delivery_rate_all_attempts": success / len(attempts) if len(verified) == len(attempts) else None}
+            **metrics(attempts, verified)}
     report = {"schema": 1, "kind": "independent_public_repository_verification",
         "manifest_sha256": hashlib.sha256(Path(manifest).read_bytes()).hexdigest(),
         "attempts": count, "verified_attempts": len(records),
         "submitted": sum(run["evidence"]["status"] == "submitted" for run in runs),
-        "delivery_successes": delivered, "delivery_rate_all_attempts": None if failures else delivered / count,
+        **overall,
         "by_profile": by_profile,
         "official_resolved": None, "runs": records, "infrastructure_failures": failures}
     Path(output).parent.mkdir(parents=True, exist_ok=True)
@@ -199,12 +225,14 @@ def main(argv=None):
         report = grade(args.manifest, args.output, pull_images=args.pull_images, command_timeout=args.command_timeout)
     except Exception as exc:
         failure = {"schema": 1, "kind": "independent_public_repository_verification",
-                   "infrastructure_error_type": type(exc).__name__, "delivery_rate_all_attempts": None}
+                   "infrastructure_error_type": type(exc).__name__, "delivery_rate_all_attempts": None,
+                   "public_delivery_rate": None, "public_delivery_denominator": None}
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         atomic_json(args.output, failure)
         print(json.dumps({"infrastructure_error_type": type(exc).__name__}))
         return 2
-    print(json.dumps({k: report[k] for k in ("attempts", "submitted", "delivery_successes", "delivery_rate_all_attempts")},
+    print(json.dumps({k: report[k] for k in ("attempts", "submitted", "public_delivery_denominator", "no_public_checks_attempts",
+                                             "delivery_successes", "public_delivery_rate", "delivery_rate_all_attempts")},
                      ensure_ascii=False))
     return 2 if report["infrastructure_failures"] else 0
 

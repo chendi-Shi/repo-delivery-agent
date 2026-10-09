@@ -1,0 +1,22 @@
+diff --git a/more_itertools.py b/more_itertools.py
+new file mode 100644
+index 0000000..ce1f313
+--- /dev/null
++++ b/more_itertools.py
+@@ -0,0 +1,16 @@
++import itertools
++
++
++def count_runs(iterable):
++    if not iterable:
++        return 0
++    current = next(iterable)
++    count = 1
++    for item in iterable:
++        if item == current:
++            count += 1
++        else:
++            yield count
++            current = item
++            count = 1
++    yield count

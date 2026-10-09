@@ -21,7 +21,11 @@ manifest 使用 schema 1，包含 `kind: real_model_repository_ablation`、`runs
 
 ## 成绩口径
 
-只有模型按协议提交、补丁能应用、全部公开检查通过，`delivery_success` 才为真。非提交尝试即使留下了碰巧通过检查的 partial patch，也不能算交付成功。所有 failed、stopped 和 submitted 尝试都进入 `attempts` 分母，并按 profile 分组报告。
+只有任务定义了公开检查、模型按协议提交、补丁能应用、全部公开检查通过，`delivery_success` 才为真。非提交尝试即使留下了碰巧通过检查的 partial patch，也不能算交付成功。所有 failed、stopped 和 submitted 尝试都保留在总数 `attempts` 中，并按 profile 分组报告。
+
+公开交付率使用明确的 `public_delivery_denominator`，只包含任务定义了公开检查的真实尝试；这部分的 failed/stopped 尝试仍进入分母。任务没有公开检查时，`public_check_eligible: false`、`delivery_success: null`、`public_delivery_status: unknown_no_public_checks`，同时计入 `no_public_checks_attempts`，不能因为缺少检查就当成成功或失败。SWE-bench 的官方任务应通过独立官方 grader 确认 resolved。
+
+`public_delivery_rate` 只有在所有 eligible 尝试都有确定公开验收结果时才有数值；eligible 分母为零时为 `null`。`public_delivery_failures` 只统计明确的失败，`public_delivery_unknown_attempts` 包含无检查任务及尚未完成验收的 eligible 尝试。兼容字段 `delivery_rate_all_attempts` 只在所有尝试均 eligible 时保留原来的数值；混合输入时为 `null`，避免把不同验收口径混为一个成绩。
 
 模型失败、无法应用的 patch、断言失败和已确认清理的命令预算耗尽属于实验结果，脚本完成后返回 0，并把失败保存在 JSON。镜像拉取失败、checkout 失败、Docker 不可用、清理无法确认和输入证据损坏属于基础设施或产物完整性失败，返回 2；未完整验收时交付率为 `null`，不能把未知检查记成成功或失败来得出确定成绩。
 
