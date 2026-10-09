@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "fixture": true,
+  "llm_calls": 0,
+  "scope": "functional_contract",
+  "dataset": "SWE-bench/SWE-bench_Verified",
+  "revision": "03e151cf5560b1af6a4363c6a9d766deaaea6b56",
+  "parquet_sha256": "bb5b123d29ce70107cc0951cf444894241c570a11d76aec452332c65b01e06d8",
+  "harness_commit": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+  "run_id": "harness-fixture-37895794461-1",
+  "instance_id": "psf__requests-2931",
+  "model_name_or_path": "harness-contract-fixture",
+  "model_score_eligible": false,
+  "official_resolved_rate": null,
+  "all_attempt_resolved_rate": null,
+  "contract_status": "passed",
+  "contract_passed": true,
+  "fixture_patch_sha256": "d2a698acb768b1aeb72e73d11e12f0ba70af79843f2bca5e77da711c4f42f62a",
+  "artifact_policy": "boolean reports + fixture patch + contract metadata; no gold/raw logs",
+  "harness_provenance": {
+    "commit": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+    "distribution_version": "5.0.2",
+    "run_evaluation_sha256": "04b5dab584fbe62ae9d1ff025edf52d714e584102d587c7e647805d1efb37d84",
+    "python_version": "3.12.15",
+    "pyarrow_version": "25.0.1",
+    "run_log_root": "logs/evaluation"
+  },
+  "verified_parquet_bytes": 2480309,
+  "operation": {
+    "exit_code": 0,
+    "stop_reason": null,
+    "elapsed_seconds": 59.011799329
+  },
+  "image_id": "sha256:d169b644e994bc20c0d77719b008e34fdd9afab2c211d7f52e27a578e692c75b",
+  "repo_digests": [
+    "swebench/sweb.eval.x86_64.psf_1776_requests-2931@sha256:705258c23c73d25bc78ed6fa4b14836078d848a64ab9c3ea3032d1d523d7cca4"
+  ],
+  "new_image_cleanup_exit_code": 0,
+  "patch_applied": true,
+  "resolved": false,
+  "infra_failure": false
+}

@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "kind": "independent_public_repository_verification",
+  "manifest_sha256": "21b77cab44cb2ff8bc3278366a76e578e5a23d62b4f49172f8c914b4004fca42",
+  "attempts": 1,
+  "verified_attempts": 1,
+  "submitted": 0,
+  "public_check_eligible_attempts": 1,
+  "public_check_eligible_verified_attempts": 1,
+  "no_public_checks_attempts": 0,
+  "public_delivery_denominator": 1,
+  "public_delivery_unknown_attempts": 0,
+  "public_delivery_rate": 0.0,
+  "public_delivery_failures": 1,
+  "delivery_successes": 0,
+  "delivery_rate_all_attempts": 0.0,
+  "by_profile": {
+    "recent": {
+      "attempts": 1,
+      "verified_attempts": 1,
+      "submitted": 0,
+      "public_check_eligible_attempts": 1,
+      "public_check_eligible_verified_attempts": 1,
+      "no_public_checks_attempts": 0,
+      "public_delivery_denominator": 1,
+      "public_delivery_unknown_attempts": 0,
+      "public_delivery_rate": 0.0,
+      "public_delivery_failures": 1,
+      "delivery_successes": 0,
+      "delivery_rate_all_attempts": 0.0
+    }
+  },
+  "official_resolved": null,
+  "runs": [
+    {
+      "id": "more-itertools__count-runs-dev-recent-file-tools-v3",
+      "instance_id": "more-itertools__count-runs-dev",
+      "profile": "recent",
+      "model_name": "ollama_chat/qwen2.5-coder:3b",
+      "model_digest": "f72c60cabf6237b07f6e632b2c48d533cef25eda2efbd34bed21c5e9c01e6225",
+      "model_identity_status": "resolved",
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "efe226860f31d59c80e3f6bc482ebae5de9baa5fe4f3a71aed09f0ef3193c633",
+      "task_sha256": "cd6786be5040d866886e3d4a0a93287f1a98f87ae4b80e962cf496a339f590ba",
+      "evidence_sha256": "d3a594c078b53fe033896a173bc08a0644052864c7d5a35402785f1d6d1c6d41",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c \"from more_itertools import count_runs; assert count_runs([])==0; assert count_runs([1,1,2,2,1])==3; assert count_runs(iter([None,None,0]))==2; assert count_runs([[1],[1],[2]])==2; print('count_runs public contract passed')\"",
+          "returncode": 1,
+          "passed": false,
+          "output_sha256": "3fb6c1511d5d86ca7b3a551ef112898167465140421b4423620362c0a59f99e7",
+          "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/workspace/more_itertools/__init__.py\", line 7, in <module>\n    from more_itertools import count_runs\nImportError: cannot import name 'count_runs' from partially initialized module 'more_itertools' (most likely due to a circular import) (/workspace/more_itertools/__init__.py)\n"
+        }
+      ],
+      "public_check_eligible": true,
+      "delivery_success": false,
+      "public_delivery_status": "failed",
+      "official_resolved": null,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_status": "failed"
+    }
+  ],
+  "infrastructure_failures": []
+}

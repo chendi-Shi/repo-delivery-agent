@@ -1,0 +1,51 @@
+diff --git a/more_itertools/__init__.py b/more_itertools/__init__.py
+index c8678d0..adb26b3 100644
+--- a/more_itertools/__init__.py
++++ b/more_itertools/__init__.py
+@@ -4,3 +4,4 @@ from .more import *  # noqa
+ from .recipes import *  # noqa
+ 
+ __version__ = '11.1.0'
++from more_itertools import count_runs
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..65a6c8e 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -5642,3 +5642,16 @@ def random_ordered_range(*args):
+     n = len(range_object)
+     for index in _random_ordered_indices(n):
+         yield range_object[index]
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    runs = 1
++    prev = next(iterable)
++
++    for item in iterable:
++        if item != prev:
++            runs += 1
++        prev = item
++
++    return runs
+diff --git a/more_itertools/recipes.py b/more_itertools/recipes.py
+index d39d8cf..f59cb37 100644
+--- a/more_itertools/recipes.py
++++ b/more_itertools/recipes.py
+@@ -1625,3 +1625,16 @@ def random_derangement(iterable):
+         shuffle(perm)
+         if not any(map(is_, start, perm)):
+             return itemgetter(*perm)(seq)
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    runs = 1
++    prev = next(iterable)
++
++    for item in iterable:
++        if item != prev:
++            runs += 1
++        prev = item
++
++    return runs

@@ -4,6 +4,8 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
+源码提交 a81d882 的实际 CI 已通过 Windows/Linux 各 196 项、0 skip，真实 Docker 和独立 verifier 也通过。三轮六案例加一个单案例共保留 19 次固定 CI 真实模型尝试：10 次公开开发任务、9 次官方任务，Submitted 为 0，公开交付为 0/10。这个项目目前能展示完整工程实现和可核验的失败分析，没有取得模型官方 resolved 分数。逐题 usage、补丁和 CI 来源见 [验证记录](validation.md)。
+
 ## 复用了什么，自主实现了什么
 
 选择 [mini-swe-agent 2.4.6](https://github.com/SWE-agent/mini-swe-agent/tree/04d809ceab9df28f9adaed044884180159172930) 作为实际 runtime，继承它的 DefaultAgent，复用模型/环境协议、查询与执行循环、Submitted 和 FormatError 等控制流。版本由真实包 metadata 校验。这样可以验证增强在成熟运行时上成立，而不是只与自己写的 mock 配合。
@@ -52,7 +54,7 @@ system、原始需求和最新完整轮次始终受保护。如果这些内容�
 
 ### Skills 的渐进披露
 
-SkillRegistry 只在启动时加载 name/description。Agent 确认适用后使用 delivery-skill read 读取正文，再按需读取 references。资源目录和 hash 在启动时冻结；修改后读取会失败，防止运行中悄悄更换指导内容。
+SkillRegistry 在启动时读取 SKILL.md 元数据并计算资源 hash，只向模型先提供 name/description 概要。Agent 确认适用后使用 delivery-skill read 读取正文，再按需读取 references。渐进披露控制的是模型看到的内容，不代表启动时完全不读取资源文件。资源目录和 hash 在启动时冻结；修改后读取会失败，防止运行中悄悄更换指导内容。
 
 内置 python-regression 把需求转成可观察的回归检查，提醒单次迭代、空输入和不可哈希元素等具体问题；patch-delivery 指导最后的文件和验收证据检查。支持额外的操作者配置 roots，拒绝目录穿越、清单外路径和 symlink 逃逸。资源可以被阅读，但不会自动执行其中脚本，也不会因 allowed-tools 文本扩大权限。
 
@@ -104,6 +106,10 @@ claim 使用 SQLite BEGIN IMMEDIATE，在同一事务分配 attempt 和租约。
 
 files backend 把模型动作限定为来源目录内的读、搜索、写、追加和精确替换。禁 Git 元数据、路径逃逸、链接与设备/替代流等危险路径，并限制命令/文件/输出大小。因为不运行任意代码，本机可先形成真实补丁，再把补丁交给独立 Linux Docker 或官方 grader。这个后端不能假装已经运行测试。
 
+真实实验还暴露了工具设计本身的问题。第一轮模型在仓库根目录创建同名模块，未接入包导出；因此增加有界的真实 Python 路径 inventory 和目录 search，帮助先定位现有包。第二轮把 read 显示的行号写进源码，还用短片段清空了数千行模块和测试。随后把 read 改成原始选中源码，范围元数据单独保存；write 改为独占创建新文件，已有文件必须精确 replace 或 append，契约测试核对拒绝覆盖后内容保持不变。
+
+这些修改的真实结果也保留了失败：file-tools-v3 的 recent 单案例进行了 16 次真实调用、21800/1216 输入/输出 tokens，运行 354.738 秒后 LimitsExceeded；306-byte patch 只追加包自导入，公开检查因循环导入失败。第三轮六个案例也没有提交，三个开发检查仍因循环导入失败，三个官方任务为空 patch。最后七份补丁仅有增加或为空，没有再出现整文件删除和行号污染；但没有上传原始动作，不能由最终补丁证明每次 write 都被拒绝，也不能称为交付成功。相同 run ID 出现在不同轮次时，用实验目录与 Actions provenance 保留各次尝试，避免错误去重。
+
 ## 具体问题与修复
 
 | 问题 | 影响 | 修复 |
@@ -118,11 +124,14 @@ files backend 把模型动作限定为来源目录内的读、搜索、写、追
 | Windows 临时路径有别名 | 同一目录被测试误判为不同 | fixture 与生产路径都规范化，并保留诊断类型 |
 | KB 自述冒充 verified | 错误经验持续传播 | 只读模型工具、来源 hash、独立公开检查核对和 expiry |
 | 同题知识回流 | 对照实验泄漏先前答案 | 当前 task ID 同时在词项、语义、直接 read 路径排除 |
+| 新建同名根模块而未接入包 | 第一轮补丁可应用，但公开检查 ImportError | 有界源码路径 inventory、目录 search 与定位包/导出入口的提示；后续仍以实际检查验收 |
 | response 已返回但进程崩溃 | 盲目重试造成重复调用/命令 | pending/result/commit checkpoint，已知结果回放 |
 | 旧 worker 晚到提交 | 覆盖新一代结果 | generation/token fencing 和 exact completion hash |
 | 只统计提交结果 | 未提交失败从分母消失 | predictions 另附全真实 attempts sidecar，报告两种分母 |
 | 读取的行号被复制进源码 | 第二轮真实补丁出现 `1:` 前缀，Python SyntaxError | files read 返回原始源码，范围信息单独记录，避免混入可复制内容 |
 | 用读取片段覆盖整个文件 | 第二轮将数千行模块和测试缩成十几行 | write 只创建新文件，已有文件使用精确 replace/append；拒绝操作不改变原文件 |
+| 无公开检查被当成公开失败 | 官方任务混入开发验收分母 | 保留全部 attempts，公开指标只用 eligible 分母；无检查状态为 null/unknown |
+| 异常退出缺少顶层 usage | 误写零 tokens 或精确总成本 | 回查实际 response usage，报告已知用量；FormatError 缺失用量与 complete=false 保留 |
 | 官方 CLI 保留旧名字但内部已是 v5 | 旧数据字段不足而无法评分 | 固定数据 revision，私有来源保留 image/eval_script/log_parser/eval_type，公开输入去答案 |
 
 真实测试结果、后续 CI 修复和模型逐题记录见实验报告；这里不将“实现了处理分支”当成“所有运行环境都已验证”。
@@ -133,7 +142,11 @@ files backend 把模型动作限定为来源目录内的读、搜索、写、追
 
 编程 Agent 实验必须同时保留提交状态、补丁可应用、公开检查和官方 resolved。官方 report 的 task ID、模型路径与 patch.diff 必须对应实际预测；缺失或错配报告保持 unknown。失败尝试留在全部 attempts 分母，不能只挑提交成功的那批。
 
+模型官方 gate 已真实运行：接收到 3 次未提交尝试后返回 no_submissions，complete=false、resolved rate=null。它验证了没有提交时的真实流程，没有制造官方 0% 分数。另一个官方 harness 契约实际用固定 v5.0.2 源码、冻结 Parquet 和官方 requests-2931 镜像，应用人工构造的新增文本文件 patch，执行评估并导出真实布尔报告。结果为 patch_applied=true、resolved=false、infra_failure=false，exit=0，59.012 秒；summary 明确 fixture=true、llm_calls=0、model_score_eligible=false。这证明官方执行链路工作，人工 patch 未解决 Issue，不进入 19 次模型尝试、tokens 或模型 resolved 统计。实际报告见 [官方契约](../experiments/official-harness-contract/summary.json) 与 [模型 gate](../experiments/official-gate-v02/summary.json)。
+
 baseline/recent/retrieval 对照固定任务、模型 digest、预算、seed 和实现指纹。baseline 与 recent 同时改变历史选择和长输出视图，所以检验 retrieval 的增量应重点比较 recent/retrieval。一次小样本实验不能证明普遍提升；provider 生成也不保证完全确定。还应看实际 usage、耗时、超预算与失败原因，不能用 prompt 变短直接推导交付提高。
+
+前两轮分别使用 1.5B/10 steps 和 3B/24 steps，同时改变了路径提示与工具；第三轮修改文件编辑契约，单案例又使用 16 steps。因此它们是保留全部失败的工程迭代记录，不是单因素因果实验。十次开发任务的公开检查均未通过，九次官方任务没有模型分数。BGE 三篇语料探针、Docker/恢复 fixture、零模型调用的官方 fixture 和真实模型实验各自有不同证据范围；本机独立 worker 的 HTTP 验证也不能写成物理多机生产验证。
 
 项目当前的具体结果与最终测试计数以 [experiments 报告](../experiments)、[验证记录](validation.md) 和匹配源码提交的 Actions 为准。Docker functional smoke、确定 fixture 的恢复/调度协议、真实 BGE 检索、真实模型补丁与官方评分是不同证据层。
 

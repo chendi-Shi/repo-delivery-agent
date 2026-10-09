@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "kind": "real_model_repository_ablation",
+  "runs": [
+    {
+      "id": "more-itertools__count-runs-dev-recent-file-tools-v3",
+      "task": "model-runs/more-itertools__count-runs-dev-recent-file-tools-v3/task.json",
+      "patch": "model-runs/more-itertools__count-runs-dev-recent-file-tools-v3/model.patch",
+      "evidence": "model-runs/more-itertools__count-runs-dev-recent-file-tools-v3/evidence.json"
+    }
+  ],
+  "limitations": [
+    "Small exploratory sample; no general performance claim.",
+    "Source-only inference has no live test execution; independent Docker grading follows.",
+    "All profiles use the same task, seed, model digest and budgets; generation still need not be deterministic."
+  ]
+}

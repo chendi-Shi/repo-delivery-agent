@@ -1,0 +1,76 @@
+diff --git a/more_itertools/__init__.py b/more_itertools/__init__.py
+index c8678d0..adb26b3 100644
+--- a/more_itertools/__init__.py
++++ b/more_itertools/__init__.py
+@@ -4,3 +4,4 @@ from .more import *  # noqa
+ from .recipes import *  # noqa
+ 
+ __version__ = '11.1.0'
++from more_itertools import count_runs
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..d1703ce 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -5642,3 +5642,15 @@ def random_ordered_range(*args):
+     n = len(range_object)
+     for index in _random_ordered_indices(n):
+         yield range_object[index]
++def count_runs(iterable):
++    if not iterable:
++        return 0
++    count = 1
++    prev = next(iterable)
++    for item in iterable:
++        if item == prev:
++            count += 1
++        else:
++            prev = item
++            count = 1
++    return count
+diff --git a/more_itertools/recipes.py b/more_itertools/recipes.py
+index d39d8cf..3aeb079 100644
+--- a/more_itertools/recipes.py
++++ b/more_itertools/recipes.py
+@@ -1625,3 +1625,4 @@ def random_derangement(iterable):
+         shuffle(perm)
+         if not any(map(is_, start, perm)):
+             return itemgetter(*perm)(seq)
++# Placeholder for recipes
+diff --git a/tests/test_more.py b/tests/test_more.py
+index 9ecdd06..ad4f49d 100644
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -7442,3 +7442,15 @@ class TestRandomOrderedRange(TestCase):
+         # Without mitigation the LCG doesn't produce many distinct permutations
+         perms = set(tuple(mi.random_ordered_range(6)) for _ in range(10**5))
+         self.assertEqual(len(perms), factorial(6))
++
++def test_count_runs_empty():
++    assert more_itertools.count_runs([]) == 0
++
++def test_count_runs_equal_elements():
++    assert more_itertools.count_runs([1, 1, 2, 2, 1]) == 3
++
++def test_count_runs_none_elements():
++    assert more_itertools.count_runs(iter([None, None, 0])) == 2
++
++def test_count_runs_different_elements():
++    assert more_itertools.count_runs([[1], [1], [2]]) == 2
+diff --git a/tests/test_recipes.py b/tests/test_recipes.py
+index f3d065a..f9443f9 100644
+--- a/tests/test_recipes.py
++++ b/tests/test_recipes.py
+@@ -1756,3 +1756,13 @@ class RunningWindowSizeTests(TestCase):
+                 self.assertRaises(ValueError),
+             ):
+                 list(function([1, 2, 3], maxlen=WindowSize()))
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests
++# Placeholder for recipes tests

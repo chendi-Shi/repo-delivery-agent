@@ -174,7 +174,9 @@ python scripts/grade_experiments.py --manifest experiments/local-ablation-01/rep
 python scripts/semantic_smoke.py
 ```
 
-每次复跑使用新的 output、evidence 目录和 label；脚本拒绝覆盖已有 run ID。CI 固定模型和预算的复现入口见 [真实模型实验](docs/live-experiments.md)。两轮真实结果分别保存为 [1.5B](experiments/round-1-1_5b) 和 [3B](experiments/round-2-3b)，失败补丁也完整保留。公开检查与官方评分使用不同验收。当前模型结果/检查状态以 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions) 为准；未完成评分保留 pending/unknown，不据此宣称成功率提升。
+每次复跑使用新的 output、evidence 目录和 label；脚本拒绝覆盖已有 run ID。CI 固定模型和预算的复现入口见 [真实模型实验](docs/live-experiments.md)。三轮真实结果分别保存为 [1.5B](experiments/round-1-1_5b)、[3B](experiments/round-2-3b) 和 [文件工具修复后的 3B](experiments/round-3-file-tools)，另有 [16 步单案例回归](experiments/file-tools-v3)。全部 19 次真实尝试均未 Submitted；有公开检查的 10 次尝试均未交付成功，失败补丁完整保留。未取得真实模型的官方解题成绩，不能据此宣称成功率提升。
+
+工程验证已在 Windows 和 Linux 各通过 196 项测试，并完成真实 Docker 运行与崩溃恢复。[官方容器合同检查](experiments/official-harness-contract/summary.json) 使用零 LLM 调用的控制补丁，实际评分器报告补丁应用成功、问题未解决、无基础设施错误；它验证评分链路，不进入模型成绩。真实模型的 [官方门禁](experiments/official-gate-v02/summary.json) 为 `no_submissions`。各阶段完整证据见 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions)。
 
 ## 产物与岗位对应
 

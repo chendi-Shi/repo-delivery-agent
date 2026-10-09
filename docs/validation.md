@@ -4,19 +4,19 @@
 
 ## 已完成的实现与运行时验证
 
-最新提交 [1acbab6261959d22efde86fa3d1c47ee6023fbf1](https://github.com/chendi-Shi/repo-delivery-agent/commit/1acbab6261959d22efde86fa3d1c47ee6023fbf1) 的 [CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37891137623) 已实际全部成功：
+本轮源码提交 [a81d8821478f68b476885d48b9847230df29162b](https://github.com/chendi-Shi/repo-delivery-agent/commit/a81d8821478f68b476885d48b9847230df29162b) 的 [CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37895794373) 已实际全部成功：
 
 | 环境 | 结果 | 用时 |
 |---|---|---|
-| Windows | 191 项测试通过 | 61.935 秒 |
-| Linux | 191 项测试通过 | 29.947 秒 |
+| Windows | 196 项测试通过，0 skip | 74.392 秒 |
+| Linux | 196 项测试通过，0 skip | 27.893 秒 |
 | Docker job | 真实容器与崩溃恢复集成通过 | 见对应 job |
 
 覆盖上下文选择和完整工具轮次、原始历史回查、Skills 渐进披露、知识来源与 namespace/当前任务隔离、checkpoint 恢复、HTTP coordinator/worker、受限文件操作、真实 upstream 契约、patch 导出与干净应用，以及 predictions/attempts/官方报告绑定。合成模型和合成官方报告验证协议，不构成模型成绩。
 
-上一提交 [413e653f68ba8193c93be3b8842db4b1f935f123](https://github.com/chendi-Shi/repo-delivery-agent/commit/413e653f68ba8193c93be3b8842db4b1f935f123) 的 [CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889587406) 也已通过 Windows/Linux 各 189 项，分别为 64.294/31.683 秒。初版 87 项本机回归属于更早的历史验证；当前以上面 191 项的固定提交记录为准。mini-swe-agent 固定 2.4.6，真实 DefaultAgent 与官方环境工厂的契约实际执行；缺少依赖而 skip 的测试不能计入通过。
+此前 [1acbab6 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37891137623) 已通过 Windows/Linux 各 191 项，分别为 61.935/29.947 秒；更早 [413e653 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889587406) 各 189 项，分别为 64.294/31.683 秒。初版 87 项本机回归属于更早的历史验证；当前以上面 196 项的固定提交记录为准。mini-swe-agent 固定 2.4.6，真实 DefaultAgent 与官方环境工厂的契约实际执行；缺少依赖而 skip 的测试不能计入通过。
 
-此前真实 Docker 集成和进程崩溃恢复已在 [18e6f2d 对应 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889201826) 通过，下载报告保存在 [docker-validation.json](../experiments/ci-container-v02/docker-validation.json) 与 [docker-recovery.json](../experiments/ci-container-v02/docker-recovery.json)。这两份归档对应此前提交；最新 1acbab6 的 Docker job 也已成功。报告实际核对了持久会话、只读 Git 元数据、关闭网络、新文件 patch、干净应用、独立容器检查，以及进程崩溃后同容器接入、已完成动作不重执行、预算/历史连续和最终清理。
+此前真实 Docker 集成和进程崩溃恢复已在 [18e6f2d 对应 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889201826) 通过，下载报告保存在 [docker-validation.json](../experiments/ci-container-v02/docker-validation.json) 与 [docker-recovery.json](../experiments/ci-container-v02/docker-recovery.json)。这两份归档对应此前提交；最新 a81d882 的 Docker job 和独立公开 verifier 也已成功。报告实际核对了持久会话、只读 Git 元数据、关闭网络、新文件 patch、干净应用、独立容器检查，以及进程崩溃后同容器接入、已完成动作不重执行、预算/历史连续和最终清理。
 
 两个 Docker 报告都明确标记 `fixture: true`。恢复报告中的 2 次模型调用和 24/6 tokens 来自可信测试替身，不能加进真实模型 calls/tokens、解题分母或成功率。
 
@@ -124,9 +124,55 @@ recent 补丁包含明确的大范围覆盖问题：`more_itertools/more.py` 从
 
 [官方 export](../experiments/round-2-3b/official-export.json) 实际记录 submitted=0、attempted=3、agent_failure=3、official_grade_performed=false。[predictions](../experiments/round-2-3b/official-predictions.jsonl) 是空文件，其 [attempts sidecar](../experiments/round-2-3b/official-predictions.jsonl.attempts.json) 保留三次 stopped 尝试，hash 与空 predictions 对应。局部 patch 不会绕过提交协议自动进入 predictions。
 
-本轮独立验证为 6/6，基础设施失败为 0；公开检查 eligible 分母为 3，公开交付成功为 0/3，另外三题为 `unknown_no_public_checks`，全尝试公开交付率保持 null。两轮共保留 12 次真实尝试，其中官方尝试为 6 次，正式提交仍为 0。官方管线的真实 gate/容器结果尚未取得，不预先填写官方 resolved 或将 pipeline fixture 当成官方成绩。
+本轮独立验证为 6/6，基础设施失败为 0；公开检查 eligible 分母为 3，公开交付成功为 0/3，另外三题为 `unknown_no_public_checks`，全尝试公开交付率保持 null。前两轮共保留 12 次真实尝试，其中官方尝试为 6 次，正式提交为 0。后续取得的真实官方 gate 和容器契约结果单独记录于下文，fixture 不计入模型成绩。
 
 第二轮同时改变了模型大小、step budget、源码路径 inventory、目录 search 和提示内容；两轮不能作某个单一策略的因果比较。每个 profile 也只有一次 count_runs 尝试。当前能确认的是运行和证据链路已完成，以及这些具体失败，不是性能提升。
+
+## file-tools-v3 修复后的单案例与第三轮
+
+针对第二轮的行号污染和整文件覆盖，files read 改为返回原始选中源码，范围信息单独记录；write 通过独占创建只允许新文件，已有文件必须精确 replace 或 append。契约测试验证了拒绝覆盖不改变文件。真实模型单案例 [run 37895794679](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37895794679) 和后续六案例 [run 37895794485](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37895794485) 均已执行并完成独立验证，不因为结果失败而删除。
+
+两个实验使用 a81d882 源码、相同 qwen2.5-coder:3b digest 和实现 fingerprint `a5134a5a4fddb4d045f48cb4c62b4c725a580dcf8559446c9d52d152286712af`。单案例使用 recent、16 steps；第三轮仍为 24 steps、三个 count_runs profiles 和三个官方任务。context/output/wall-time/request timeout/seed 与第二轮相同。下载身份与 archive hash 见 [单案例 provenance](../experiments/file-tools-v3/provenance.json) 和 [第三轮 provenance](../experiments/round-3-file-tools/provenance.json)。
+
+### 单案例
+
+[实际 verifier](../experiments/file-tools-v3/verification.json) 记录 1 次尝试、0 提交、公开交付 0/1、零基础设施失败。模型有 16 次请求及 16 条带 usage 的响应，输入/输出 tokens 为 21800/1216，`complete=true`、`unknown_requests=0`，实际耗时 354.738 秒，停止原因为 LimitsExceeded。
+
+306-byte patch 只向包入口追加 `from more_itertools import count_runs`，没有删除旧内容，但造成从尚未初始化完成的同名包自导入。真实 Docker 公开检查报循环导入 ImportError。可以确认这次未出现行号写入和整文件清空，不能据此声称修复后已完成需求。详见 [evidence](../experiments/file-tools-v3/model-runs/more-itertools__count-runs-dev-recent-file-tools-v3/evidence.json)。
+
+### 第三轮 count_runs
+
+| Profile | 提交与停止原因 | 请求 / 带 usage 响应 | 已知输入/输出 tokens | 耗时 | patch / 公开检查 |
+|---|---|---:|---:|---:|---|
+| baseline | failed；ContextBudgetExceeded | 10 / 10 | 15018 / 810* | 264.863 秒 | 1403 bytes；循环导入失败 |
+| recent | stopped；LimitsExceeded | 24 / 24 | 33240 / 1904 | 550.402 秒 | 306 bytes；循环导入失败 |
+| retrieval | stopped；LimitsExceeded | 24 / 24 | 42206 / 1224 | 283.588 秒 | 2704 bytes；循环导入失败 |
+
+\* baseline 顶层 usage 为空，此处是十条实际 response 的 usage 之和，不能写成零；其余两项 usage 完整、unknown_requests=0。baseline 的停止原因是保守 UTF-8 估算在请求前超过 harness 预算，不是 provider 报告的 context overflow。末次选入/排除数分别为 baseline 20/0、recent 8/40、retrieval 22/26；最大保守输入估算分别为 10376、6557、10348。
+
+三个 patch 都能应用，三个公开检查均因同一包入口自导入失败；Submitted 仍为 0/3。baseline/retrieval 增添的函数也仍有 `next(list)` 或错误统计逻辑，但公开检查先在导入阶段停止。第三轮三个 count_runs 和单案例的补丁均只增添内容，没有删除旧模块或测试，源码中未再出现 read 注入的 `1:` 前缀。原始动作没有上传，不能由最终 patch 证明每一次 write 都曾被拒绝；真实效果仍是 0/4 通过。
+
+### 第三轮官方任务
+
+| 任务 | 停止原因 | 请求 / 带 usage 响应 | 实测输入/输出 tokens | 耗时 | patch |
+|---|---|---:|---:|---:|---|
+| pallets__flask-5014 | LimitsExceeded | 24 / 24 | 44685 / 1683 | 396.108 秒 | 0 bytes |
+| psf__requests-1142 | LimitsExceeded | 24 / 24 | 45405 / 2472 | 705.727 秒 | 0 bytes |
+| psf__requests-2931 | LimitsExceeded | 24 / 24 | 44094 / 1056 | 198.240 秒 | 0 bytes |
+
+三题 usage 完整、unknown_requests=0；无提交、无公开检查，公开交付保持 unknown。第三轮 [独立验证](../experiments/round-3-file-tools/repository-verification.json) 为 6/6、基础设施失败为 0；公开 eligible 分母为 3、交付成功 0/3。[官方 export](../experiments/round-3-file-tools/official-export.json) 保留 3 次失败 attempts 和空 predictions。第三轮与单案例共七组 task/evidence/patch hash、各 manifest hash 和第三轮官方 sidecar 均已核对，三个官方输入仍匹配冻结 manifest。
+
+三轮六案例加单案例共 **19 次固定 CI 真实尝试：10 次 count_runs、9 次官方任务，0 次 Submitted**。有公开检查的十次尝试全部失败，公开交付为 0/10；九次官方任务没有模型 resolved 成绩。第三轮重复使用 `ci-v2` run ID，因此尝试身份还包含实验目录与 Actions provenance，不能只按字符串 ID 去重。早期独立本机 [环境探索失败](../experiments/model-runs/more-itertools__count-runs-dev-baseline/evidence.json) 也保留：模型 digest/usage 未确定、request audit 为空，未混入这 19 次已执行 CI 推理的对照范围。
+
+工具契约改变、模型/预算改变和不同次数试验都必须分开解释。观察到最后七份 patch 没有大删除或行号污染，不能据此估计缺陷发生率，更不能宣称模型解题成功率提高。
+
+## 真实官方管线：模型 gate 与零模型调用契约
+
+[模型 gate run 37895794518](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37895794518) 已真实执行，报告 [summary.json](../experiments/official-gate-v02/summary.json) 为 `no_submissions`：该次导出保留 3 次真实模型尝试，submitted=0、agent_failure=3、unattempted=[]、complete=false，两个 resolved rate 都为 null。没有提交就不运行模型解题评分；这次 gate 的 3 次输入与三轮合计的 9 次官方尝试属于不同统计范围。
+
+另一个 [官方 harness 契约 run 37895794461](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37895794461) 实际安装固定 v5.0.2 harness，核对固定 Parquet，在官方 requests-2931 容器中应用人工构造的新增文本文件 patch 并运行官方评估。[契约 summary](../experiments/official-harness-contract/summary.json) 明确 `fixture=true`、`llm_calls=0`、`model_score_eligible=false`，实际 exit=0、耗时 59.012 秒；官方布尔报告为 patch_applied=true、resolved=false、infra_failure=false，contract_passed=true。
+
+这是官方数据、镜像、patch 应用、评估与报告导出的真实功能验证；人工 patch 没有解决 Issue，也不是模型输出。fixture 不进入 19 次真实模型尝试、token 合计或模型 resolved 分数；所有 rate 仍为 null。人工 patch 与报告同目录 patch 的字节/hash 已核对，公开产物只保留布尔字段和 provenance，没有复制 gold、隐藏测试状态或 raw logs。详见 [harness provenance](../experiments/official-harness-contract/provenance.json) 与 [官方 report](../experiments/official-harness-contract/reports/harness-contract-fixture/psf__requests-2931/report.json)。
 
 ## 真实 BGE 检索验证与保留的失败
 
@@ -136,10 +182,10 @@ recent 补丁包含明确的大范围覆盖问题：`more_itertools/more.py` 从
 
 这验证了真实 embeddings、cosine/RRF 和隔离路径，不能由三篇语料估计总体检索准确率，也不能解释为编程交付提升。
 
-## 当前结论与待取得证据
+## 当前结果与证据边界
 
-两轮已经实际运行模型、保存了全部失败尝试，并完成公开 patch 的干净应用和独立容器检查。结果揭示包路径/导出、源码覆盖、行为契约、上下文预算与步数和时间限制问题；当前没有成功提交或官方 resolved 成绩。
+三轮和单案例已经实际运行模型、保留 19 次固定 CI 尝试，并完成公开 patch 的干净应用和独立容器检查。结果揭示包路径/导出、源码覆盖、行为契约、上下文预算与步数和时间限制问题；当前没有成功提交或模型官方 resolved 成绩。
 
-第二轮代码的契约检查与真实模型实验均已完成；未通过的交付不写成已验证效果修复。后续结果须保存独立目录、模型 digest、实现 fingerprint、所有 attempts 和 matching patch 的真实评分报告，再与两轮分别报告。当前不宣称上下文策略提高成功率、性能提升百分比或研发提效倍数。
+196 项双平台契约测试、真实 Docker 恢复、真实 BGE 检索、官方零模型调用 harness fixture 和模型 no-submission gate 均有实际证据。模型交付失败不写成效果修复。后续结果须保存独立目录、模型 digest、实现 fingerprint、所有 attempts 和 matching patch 的真实评分报告，再与既有实验分别报告。当前不宣称上下文策略提高成功率、性能提升百分比或研发提效倍数，也不将本机独立 worker 进程的协议验证写成物理多机生产证明。
 
 复现流程见 [SWE-bench 工作流](swebench.md)、[官方 smoke](official-smoke.md) 与 [实现说明](implementation-walkthrough.md)。

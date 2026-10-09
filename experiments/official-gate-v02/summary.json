@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "dataset": "SWE-bench/SWE-bench_Verified",
+  "revision": "03e151cf5560b1af6a4363c6a9d766deaaea6b56",
+  "parquet_sha256": "bb5b123d29ce70107cc0951cf444894241c570a11d76aec452332c65b01e06d8",
+  "harness_commit": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+  "run_id": "official-smoke-37895794518-1",
+  "model": "repo-delivery-qwen2_5-coder-3b",
+  "attempted_count": 3,
+  "attempted_denominator": 3,
+  "submitted_count": 0,
+  "agent_failure_count": 3,
+  "unattempted_ids": [],
+  "official_resolved_rate": null,
+  "all_attempt_resolved_rate": null,
+  "complete": false,
+  "metric_scope": "fixed selected-instance smoke; not the full 500-instance Verified benchmark",
+  "grading_status": "no_submissions"
+}

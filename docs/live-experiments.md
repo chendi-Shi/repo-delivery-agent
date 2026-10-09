@@ -23,3 +23,9 @@ collector 下载六个 shard 的公开 artifact，核对任务、补丁 hash 和
 最终 `live-experiment-evidence` artifact 只包含公开任务、实际 patch、受限证据、已验证的环境身份、验收报告和 predictions。原始 trajectory、完整 provider/tool 输出、模型配置文件、服务日志和宿主绝对路径不上传。每个 shard 的基础设施失败仍会产出失败类型；缺少完整尝试的 collector 会失败，不把缺失记录悄悄删掉来提高成绩。
 
 可在 GitHub Actions 手动触发 `live-model-experiments`。自动触发仅限实验脚本、workflow 和公开 task 样本的改动；导入实验结果本身不会再次触发推理。
+
+## 文件工具修复后的实际验证
+
+`a81d8821478f68b476885d48b9847230df29162b` 将 read 改为原始源码文本，并禁止 write 覆盖已有文件。该提交的固定公开 JSON 在加入 `-text` 属性时出现 LF→CRLF 字节变化，触发了第三轮六案例实验；模型、seed 和 24 步预算与第二轮相同，结果保存在 [round-3-file-tools](../experiments/round-3-file-tools)。六次尝试全部保留，均未 Submitted；三个开发任务公开检查均失败，三个官方任务没有公开检查或官方成绩。
+
+独立的 `.github/workflows/source-editing-regression.yml` 只跑一个真实 3B/recent 开发任务，使用 16 步、其余相同预算，再由干净 Docker 工作区检查实际补丁。其 [file-tools-v3](../experiments/file-tools-v3) 记录 16 次调用与预算停止；公开交付为 0/1。这两个运行验证了工具修复后的实际行为，不能写成模型准确率提升。最终仅导入 README、docs 和 experiments 的提交不会重新触发模型实验。

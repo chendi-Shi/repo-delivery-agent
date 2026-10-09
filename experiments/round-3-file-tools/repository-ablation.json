@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "kind": "real_model_repository_ablation",
+  "runs": [
+    {
+      "id": "more-itertools__count-runs-dev-baseline-ci-v2",
+      "task": "model-runs/more-itertools__count-runs-dev-baseline-ci-v2/task.json",
+      "patch": "model-runs/more-itertools__count-runs-dev-baseline-ci-v2/model.patch",
+      "evidence": "model-runs/more-itertools__count-runs-dev-baseline-ci-v2/evidence.json"
+    },
+    {
+      "id": "more-itertools__count-runs-dev-recent-ci-v2",
+      "task": "model-runs/more-itertools__count-runs-dev-recent-ci-v2/task.json",
+      "patch": "model-runs/more-itertools__count-runs-dev-recent-ci-v2/model.patch",
+      "evidence": "model-runs/more-itertools__count-runs-dev-recent-ci-v2/evidence.json"
+    },
+    {
+      "id": "more-itertools__count-runs-dev-retrieval-ci-v2",
+      "task": "model-runs/more-itertools__count-runs-dev-retrieval-ci-v2/task.json",
+      "patch": "model-runs/more-itertools__count-runs-dev-retrieval-ci-v2/model.patch",
+      "evidence": "model-runs/more-itertools__count-runs-dev-retrieval-ci-v2/evidence.json"
+    },
+    {
+      "id": "pallets__flask-5014-retrieval-ci-v2",
+      "task": "model-runs/pallets__flask-5014-retrieval-ci-v2/task.json",
+      "patch": "model-runs/pallets__flask-5014-retrieval-ci-v2/model.patch",
+      "evidence": "model-runs/pallets__flask-5014-retrieval-ci-v2/evidence.json"
+    },
+    {
+      "id": "psf__requests-1142-retrieval-ci-v2",
+      "task": "model-runs/psf__requests-1142-retrieval-ci-v2/task.json",
+      "patch": "model-runs/psf__requests-1142-retrieval-ci-v2/model.patch",
+      "evidence": "model-runs/psf__requests-1142-retrieval-ci-v2/evidence.json"
+    },
+    {
+      "id": "psf__requests-2931-retrieval-ci-v2",
+      "task": "model-runs/psf__requests-2931-retrieval-ci-v2/task.json",
+      "patch": "model-runs/psf__requests-2931-retrieval-ci-v2/model.patch",
+      "evidence": "model-runs/psf__requests-2931-retrieval-ci-v2/evidence.json"
+    }
+  ],
+  "limitations": [
+    "Small exploratory sample; no general performance claim.",
+    "Source-only inference has no live test execution; independent Docker grading follows.",
+    "All profiles use the same task, seed, model digest and budgets; generation still need not be deterministic."
+  ]
+}
