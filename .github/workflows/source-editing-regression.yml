@@ -1,10 +1,5 @@
 name: source editing tools regression (single live 3B case)
 on:
-  push:
-    paths:
-      - '.github/workflows/source-editing-regression.yml'
-      - 'delivery_agent/file_environment.py'
-      - 'delivery_agent/cli.py'
   workflow_dispatch:
 permissions:
   contents: read

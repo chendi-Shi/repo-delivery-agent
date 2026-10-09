@@ -1,15 +1,6 @@
 name: live-model-experiments
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/live-experiments.yml'
-      - 'scripts/ci_live_experiment.py'
-      - 'scripts/run_experiments.py'
-      - 'scripts/merge_live_experiments.py'
-      - 'scripts/build_official_predictions.py'
-      - 'examples/more-itertools-count-runs.json'
-      - 'examples/official-smoke/*.json'
 permissions:
   contents: read
 concurrency:

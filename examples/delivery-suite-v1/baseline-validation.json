@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "fixture": true,
+  "llm_calls": 0,
+  "model_score_eligible": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "win32",
+  "execution": "host python; Requests runtime-only collections aliases, task commands unchanged",
+  "target_container_validation": "not claimed; separate Docker Python 3.8/3.12 proof workflow",
+  "revalidation": "Fresh execution of all eight frozen commands after input EOF normalization; old receipt retained separately.",
+  "prior_receipt_sha256": "6b8a26bed5f2ddfd3599bdd7056aba4de33a8658632a56a39c97664ea2616644",
+  "tasks": [
+    {
+      "task": "more-itertools-first-factory.json",
+      "instance_id": "more-itertools__first-factory-v1",
+      "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "actual_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "checks": [
+        {
+          "index": 0,
+          "kind": "upstream_regression",
+          "exit_code": 0,
+          "stdout": "frozen upstream compatibility regressions passed\n",
+          "stderr": "test_default (tests.test_more.FirstTests.test_default) ... ok\ntest_empty (tests.test_more.FirstTests.test_empty) ... ok\ntest_many (tests.test_more.FirstTests.test_many) ... ok\ntest_one (tests.test_more.FirstTests.test_one) ... ok\ntest_basic (tests.test_more.LastTests.test_basic) ... ok\ntest_default (tests.test_more.LastTests.test_default) ... ok\ntest_empty (tests.test_more.LastTests.test_empty) ... ok\ntest_reversed_is_none (tests.test_more.LastTests.test_reversed_is_none) ... ok\ntest_empty_collection (tests.test_more.SplitAfterTest.test_empty_collection) ... ok\ntest_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok\ntest_max_split (tests.test_more.SplitAfterTest.test_max_split) ... ok\ntest_no_sep (tests.test_more.SplitAfterTest.test_no_sep) ... ok\ntest_starts_with_sep (tests.test_more.SplitAfterTest.test_starts_with_sep) ... ok\ntest_even (tests.test_more.ChunkedTests.test_even)\nTest when ``n`` divides evenly into the length of the iterable. ... ok\ntest_negative (tests.test_more.ChunkedTests.test_negative)\nTest that a negative ``n`` raises a clear ``ValueError``, matching ... ok\ntest_none (tests.test_more.ChunkedTests.test_none)\nTest when ``n`` has the value ``None``. ... ok\ntest_odd (tests.test_more.ChunkedTests.test_odd)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true (tests.test_more.ChunkedTests.test_strict_being_true)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true_with_size_none (tests.test_more.ChunkedTests.test_strict_being_true_with_size_none)\nTest when ``n`` has value ``None`` and the keyword strict is True ... ok\ntest_strict_false (tests.test_more.ChunkedTests.test_strict_false)\nTest when ``n`` does not divide evenly into the length of the ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.173s\n\nOK\n",
+          "command_sha256": "108bc908918667100189d01c39388aa930dacb74fe68baac31283a4a2c1044ce"
+        },
+        {
+          "index": 1,
+          "kind": "new_public_contract",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nKeyError: 'default_factory'\n",
+          "command_sha256": "bdc8e75ebc68369dae65fd83a484c9c017c360a69093af4ac41d452830c8d629"
+        }
+      ],
+      "task_sha256": "19174109b222e1b9eb1b7b4c281013cd09062f25fa31aebd03829f9d57062be8",
+      "fingerprint": "6dc11188f1c10a8c29c0ced4d11d8297e377d2c431dcc31faa25ac42b782724b",
+      "source_clean": true
+    },
+    {
+      "task": "more-itertools-last-factory.json",
+      "instance_id": "more-itertools__last-factory-v1",
+      "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "actual_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "checks": [
+        {
+          "index": 0,
+          "kind": "upstream_regression",
+          "exit_code": 0,
+          "stdout": "frozen upstream compatibility regressions passed\n",
+          "stderr": "test_default (tests.test_more.FirstTests.test_default) ... ok\ntest_empty (tests.test_more.FirstTests.test_empty) ... ok\ntest_many (tests.test_more.FirstTests.test_many) ... ok\ntest_one (tests.test_more.FirstTests.test_one) ... ok\ntest_basic (tests.test_more.LastTests.test_basic) ... ok\ntest_default (tests.test_more.LastTests.test_default) ... ok\ntest_empty (tests.test_more.LastTests.test_empty) ... ok\ntest_reversed_is_none (tests.test_more.LastTests.test_reversed_is_none) ... ok\ntest_empty_collection (tests.test_more.SplitAfterTest.test_empty_collection) ... ok\ntest_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok\ntest_max_split (tests.test_more.SplitAfterTest.test_max_split) ... ok\ntest_no_sep (tests.test_more.SplitAfterTest.test_no_sep) ... ok\ntest_starts_with_sep (tests.test_more.SplitAfterTest.test_starts_with_sep) ... ok\ntest_even (tests.test_more.ChunkedTests.test_even)\nTest when ``n`` divides evenly into the length of the iterable. ... ok\ntest_negative (tests.test_more.ChunkedTests.test_negative)\nTest that a negative ``n`` raises a clear ``ValueError``, matching ... ok\ntest_none (tests.test_more.ChunkedTests.test_none)\nTest when ``n`` has the value ``None``. ... ok\ntest_odd (tests.test_more.ChunkedTests.test_odd)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true (tests.test_more.ChunkedTests.test_strict_being_true)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true_with_size_none (tests.test_more.ChunkedTests.test_strict_being_true_with_size_none)\nTest when ``n`` has value ``None`` and the keyword strict is True ... ok\ntest_strict_false (tests.test_more.ChunkedTests.test_strict_false)\nTest when ``n`` does not divide evenly into the length of the ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.006s\n\nOK\n",
+          "command_sha256": "108bc908918667100189d01c39388aa930dacb74fe68baac31283a4a2c1044ce"
+        },
+        {
+          "index": 1,
+          "kind": "new_public_contract",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nKeyError: 'default_factory'\n",
+          "command_sha256": "98792b999a030298d4a1468ec85d4d7a29a2402d581f75428721c01658bca4a9"
+        }
+      ],
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "fingerprint": "21184c67303d6e684267548c8eb227bbf947466dcbce9e9490d435931c713228",
+      "source_clean": true
+    },
+    {
+      "task": "more-itertools-split-after.json",
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "actual_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "checks": [
+        {
+          "index": 0,
+          "kind": "upstream_regression",
+          "exit_code": 0,
+          "stdout": "frozen upstream compatibility regressions passed\n",
+          "stderr": "test_default (tests.test_more.FirstTests.test_default) ... ok\ntest_empty (tests.test_more.FirstTests.test_empty) ... ok\ntest_many (tests.test_more.FirstTests.test_many) ... ok\ntest_one (tests.test_more.FirstTests.test_one) ... ok\ntest_basic (tests.test_more.LastTests.test_basic) ... ok\ntest_default (tests.test_more.LastTests.test_default) ... ok\ntest_empty (tests.test_more.LastTests.test_empty) ... ok\ntest_reversed_is_none (tests.test_more.LastTests.test_reversed_is_none) ... ok\ntest_empty_collection (tests.test_more.SplitAfterTest.test_empty_collection) ... ok\ntest_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok\ntest_max_split (tests.test_more.SplitAfterTest.test_max_split) ... ok\ntest_no_sep (tests.test_more.SplitAfterTest.test_no_sep) ... ok\ntest_starts_with_sep (tests.test_more.SplitAfterTest.test_starts_with_sep) ... ok\ntest_even (tests.test_more.ChunkedTests.test_even)\nTest when ``n`` divides evenly into the length of the iterable. ... ok\ntest_negative (tests.test_more.ChunkedTests.test_negative)\nTest that a negative ``n`` raises a clear ``ValueError``, matching ... ok\ntest_none (tests.test_more.ChunkedTests.test_none)\nTest when ``n`` has the value ``None``. ... ok\ntest_odd (tests.test_more.ChunkedTests.test_odd)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true (tests.test_more.ChunkedTests.test_strict_being_true)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true_with_size_none (tests.test_more.ChunkedTests.test_strict_being_true_with_size_none)\nTest when ``n`` has value ``None`` and the keyword strict is True ... ok\ntest_strict_false (tests.test_more.ChunkedTests.test_strict_false)\nTest when ``n`` does not divide evenly into the length of the ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.013s\n\nOK\n",
+          "command_sha256": "108bc908918667100189d01c39388aa930dacb74fe68baac31283a4a2c1044ce"
+        },
+        {
+          "index": 1,
+          "kind": "new_public_contract",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nKeyError: 'keep_separator'\n",
+          "command_sha256": "20ee9fbb589adcc319ba989eb4c29012784ada19969d9320dc8aa0428f61c0ad"
+        }
+      ],
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "fingerprint": "ec13c75801df6c737e2f1571aaa548b108cb24478547eecf115aefb27d1c654c",
+      "source_clean": true
+    },
+    {
+      "task": "requests-2931-public.json",
+      "instance_id": "psf__requests-2931",
+      "base_commit": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
+      "actual_commit": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
+      "checks": [
+        {
+          "index": 0,
+          "kind": "upstream_regression",
+          "exit_code": 0,
+          "stdout": "offline text and form compatibility passed\n",
+          "stderr": "<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\packages\\urllib3\\connectionpool.py:153: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**conn_kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\packages\\urllib3\\connectionpool.py:515: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**response_kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\packages\\urllib3\\connectionpool.py:804: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\packages\\urllib3\\poolmanager.py:45: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**connection_pool_kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\models.py:785: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:61: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:74: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:87: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:102: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:115: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:128: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:140: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:476: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:486: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:496: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:508: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:518: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:528: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:537: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n",
+          "command_sha256": "56a47f1515cf13486086ce632021ab4610d03edfb6a4dcf7d1d05c9cb6d9226f"
+        },
+        {
+          "index": 1,
+          "kind": "new_public_contract",
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": ":515: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**response_kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\packages\\urllib3\\connectionpool.py:804: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\packages\\urllib3\\poolmanager.py:45: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\**connection_pool_kw:\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\models.py:785: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:61: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:74: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:87: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:102: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:115: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:128: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\api.py:140: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:476: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:486: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:496: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:508: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:518: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:528: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\sessions.py:537: SyntaxWarning: invalid escape sequence '\\*'\n  :param \\*\\*kwargs: Optional arguments that ``request`` takes.\nTraceback (most recent call last):\n  File \"<string>\", line 16, in <module>\n  File \"<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\models.py\", line 239, in prepare\n    p.prepare(\n  File \"<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\models.py\", line 296, in prepare\n    self.prepare_body(data, files, json)\n  File \"<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\models.py\", line 447, in prepare_body\n    body = self._encode_params(data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\models.py\", line 84, in _encode_params\n    return to_native_string(data)\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"<project>\\runs\\delivery-suite-contract-v1\\base-requests\\requests\\utils.py\", line 700, in to_native_string\n    out = string.decode(encoding)\n          ^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 0: ordinal not in range(128)\n",
+          "command_sha256": "1f907b653e18c08b7c7f207cab868b207b07b15b016cb9569a3796689cf56c02"
+        }
+      ],
+      "task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+      "fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+      "source_clean": true
+    }
+  ],
+  "all_old_checks_passed": true,
+  "all_new_checks_failed_for_missing_feature_or_reported_bug": true
+}

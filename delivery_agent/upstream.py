@@ -8,10 +8,13 @@ optional import so history and context policy tests run without model packages.
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.metadata
 import json
 import math
+import os
 import re
+import shlex
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -39,6 +42,166 @@ class ContextBudgetExceeded(RuntimeError):
 
 class InvalidToolHistory(ValueError):
     """A context view would contain incomplete or orphaned tool results."""
+
+
+class ActionAuditError(RuntimeError):
+    """A real execution could not be recorded; its result must not be invented."""
+
+
+class ActionAuditEnvironment:
+    """Bounded private evidence of actual execution, inside the recovery cache."""
+
+    MAX_FILE_BYTES = 8 * 1024 * 1024
+    PREVIEW_CHARS = 500
+    MARKER_RESERVE = 512
+
+    def __init__(self, environment: Any, path: Path | str, call_number: Any = None, action_context: Any = None):
+        self.environment, self.path = environment, Path(path)
+        self.config = getattr(environment, "config", None)
+        self.call_number = call_number or (lambda: 0)
+        self.action_context = action_context or (lambda: {})
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._bytes = self.path.stat().st_size if self.path.exists() else 0
+        self._records, self._omitted, self._complete = 0, 0, True
+        self._last_call, self._ordinal = None, 0
+        if self.path.is_symlink() or self._bytes > self.MAX_FILE_BYTES:
+            raise ActionAuditError("Invalid bounded action audit file")
+        if self.path.exists():
+            try:
+                with self.path.open("rb") as stream:
+                    for line in stream:
+                        value = json.loads(line)
+                        if value.get("schema") != 1 or value.get("event") not in {"action", "audit_limit"}:
+                            raise ValueError("Invalid action audit record")
+                        self._records += value["event"] == "action"
+                        if value["event"] == "audit_limit":
+                            self._complete = False
+            except (OSError, ValueError, TypeError, AttributeError) as exc:
+                raise ActionAuditError("Existing action audit is unreadable") from exc
+
+    def status(self) -> dict[str, Any]:
+        return {"artifact": "action-audit.jsonl", "complete": self._complete,
+                "recorded_actions": self._records, "omitted_actions_since_open": self._omitted,
+                "bytes": self._bytes, "max_bytes": self.MAX_FILE_BYTES,
+                "scope": "actual executions; cached recovery results are not re-executed"}
+
+    @staticmethod
+    def _text(value: Any) -> str:
+        return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False, sort_keys=True, default=str)
+
+    @staticmethod
+    def _sha(text: str) -> str:
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def _kind(command: str) -> str:
+        # This label is descriptive, not authorization to execute a command.
+        match = re.match(r"\s*(delivery-(?:file|history|skill|knowledge))\s+([a-z]+)(?:\s|$)", command)
+        if match:
+            return match[1] + "/" + match[2]
+        return "submit" if command.strip() == "echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT" else "shell"
+
+    def _knowledge(self, command: str, output: dict[str, Any]) -> dict[str, Any]:
+        """Bind only a successful real registry response, never shell stdout."""
+        from .toolbox import ToolboxEnvironment
+        toolbox = self.environment.environment if isinstance(self.environment, HistoryEnvironment) else self.environment
+        if (not isinstance(toolbox, ToolboxEnvironment) or toolbox.knowledge is None
+                or output.get("returncode") != 0 or not command.lstrip().startswith("delivery-knowledge ")):
+            return {}
+        try:
+            tokens = shlex.split(command)
+            if len(tokens) < 3 or tokens[:2] not in (["delivery-knowledge", "search"], ["delivery-knowledge", "read"]):
+                return {}
+            value = json.loads(output["output"])
+            records = value["hits"] if tokens[1] == "search" else [value]
+            namespace = toolbox.knowledge.namespace_sha256
+            if not isinstance(records, list) or len(records) > 8 or value.get("namespace_sha256") != namespace:
+                raise ValueError("Knowledge response namespace or bound differs")
+            selected = []
+            for record in records:
+                if (not isinstance(record, dict) or record.get("namespace_sha256") != namespace
+                        or not re.fullmatch(r"k[0-9a-f]{32}", record.get("source_id", ""))
+                        or not re.fullmatch(r"[0-9a-f]{64}", record.get("content_sha256", ""))
+                        or not isinstance(record.get("task_id"), str) or len(record["task_id"]) > 200
+                        or not isinstance(record.get("source_ref"), str) or len(record["source_ref"]) > 2000
+                        or type(record.get("verified")) is not bool):
+                    raise ValueError("Invalid knowledge response provenance")
+                verification = json.dumps(record["verification"], ensure_ascii=False, sort_keys=True,
+                                          separators=(",", ":"), allow_nan=False)
+                selected.append({key: record[key] for key in ("source_id", "content_sha256", "task_id",
+                    "namespace_sha256", "verified", "source_ref")} | {"verification_sha256": self._sha(verification)})
+            return {"knowledge_operation": tokens[1], "knowledge_source_ids": [r["source_id"] for r in selected],
+                    "knowledge_namespace_sha256": namespace, "knowledge_records": selected}
+        except (ValueError, KeyError, TypeError, AttributeError) as exc:
+            raise ActionAuditError("Successful knowledge response could not be bound to its registry") from exc
+
+    def _append(self, record: dict[str, Any]) -> None:
+        if not self._complete:
+            self._omitted += 1
+            return
+        raw = (json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+        capped = self._bytes + len(raw) > self.MAX_FILE_BYTES - self.MARKER_RESERVE
+        if capped:
+            raw = (json.dumps({"schema": 1, "event": "audit_limit", "complete": False,
+                "reason": "file_size_limit", "max_bytes": self.MAX_FILE_BYTES,
+                "recorded_actions": self._records}, sort_keys=True) + "\n").encode("utf-8")
+        if self._bytes + len(raw) > self.MAX_FILE_BYTES:
+            raise ActionAuditError("Action audit cannot record its completeness marker")
+        try:
+            with self.path.open("ab") as stream:
+                if stream.write(raw) != len(raw):
+                    raise OSError("Incomplete action audit write")
+                stream.flush()
+                os.fsync(stream.fileno())
+        except OSError as exc:
+            raise ActionAuditError("Action execution audit could not be saved") from exc
+        self._bytes += len(raw)
+        if capped:
+            self._complete = False
+            self._omitted += 1
+        else:
+            self._records += 1
+
+    def execute(self, action: dict[str, Any], cwd: str = "", **kwargs: Any) -> dict[str, Any]:
+        call = self.call_number()
+        if call != self._last_call:
+            self._last_call, self._ordinal = call, 0
+        self._ordinal += 1
+        context = self.action_context()
+        command = self._text(action.get("command", ""))
+        record = {"schema": 1, "event": "action", "call": call,
+                  "ordinal": context.get("ordinal", self._ordinal),
+                  "assistant_source_id": context.get("assistant_source_id"),
+                  "tool_call_id": self._text(action.get("tool_call_id", ""))[:200],
+                  "action_kind": self._kind(command), "command_sha256": self._sha(command),
+                  "command_preview": command[:self.PREVIEW_CHARS], "command_chars": len(command)}
+        started = time.monotonic()
+        try:
+            output = self.environment.execute(action, cwd=cwd, **kwargs)
+        except BaseException as exc:
+            self._append(record | {"outcome": "exception", "exception_type": type(exc).__name__,
+                "returncode": None, "output_sha256": None, "output_preview": "", "output_chars": 0,
+                "elapsed_seconds": time.monotonic() - started})
+            raise
+        text = self._text(output.get("output", ""))
+        self._append(record | {"outcome": "completed", "exception_type": None,
+            "returncode": output.get("returncode"), "output_sha256": self._sha(text),
+            "output_preview": text[:self.PREVIEW_CHARS], "output_chars": len(text),
+            "elapsed_seconds": time.monotonic() - started} | self._knowledge(command, output))
+        return output
+
+    def get_template_vars(self, **kwargs: Any) -> dict[str, Any]:
+        return self.environment.get_template_vars(**kwargs)
+
+    def serialize(self) -> dict[str, Any]:
+        value = copy.deepcopy(self.environment.serialize())
+        value.setdefault("info", {})["action_audit"] = self.status()
+        return value
+
+    def cleanup(self) -> None:
+        cleanup = getattr(self.environment, "cleanup", None)
+        if cleanup:
+            cleanup()
 
 
 @dataclass(frozen=True)
@@ -270,6 +433,9 @@ class ContextModel:
             "artifacts": {"history": "history.sqlite", "requests": "request-views.jsonl",
                           "trajectory": "trajectory.json"},
         }
+        if getattr(self, "action_audit", None) is not None:
+            result["info"]["delivery"]["action_audit"] = self.action_audit.status()
+            result["info"]["delivery"]["artifacts"]["actions"] = "action-audit.jsonl"
         return result
 
 
@@ -302,8 +468,21 @@ def make_agent_class(base_class: Any = None) -> Any:
             wrapped_env = HistoryEnvironment(toolbox or env, self.delivery_history)
             from .checkpoint import CheckpointStore, fingerprint
             from .recovery import RecoveryController, RecoveryEnvironment
-            recovery_env = RecoveryEnvironment(wrapped_env)
             self.delivery_recovery = None
+            def action_context():
+                recovery = self.delivery_recovery
+                if recovery is None:
+                    return {}
+                return {"ordinal": recovery.action_index,
+                        "assistant_source_id": (recovery.transition or {}).get("assistant_source_id")}
+            try:
+                self.delivery_audit = ActionAuditEnvironment(wrapped_env, self.delivery_output / "action-audit.jsonl",
+                    lambda: getattr(self, "n_calls", 0), action_context)
+            except BaseException:
+                self.delivery_history.close()
+                raise
+            wrapped_model.action_audit = self.delivery_audit
+            recovery_env = RecoveryEnvironment(self.delivery_audit)
             self.delivery_resume = resume
             self.delivery_recovery_binding = recovery_binding or {}
             kwargs["output_path"] = self.delivery_output / "trajectory.json"
@@ -334,7 +513,7 @@ def make_agent_class(base_class: Any = None) -> Any:
                     wrapped_model.recovery = self.delivery_recovery
                     recovery_env.controller = self.delivery_recovery
                 else:
-                    self.env = wrapped_env
+                    self.env = self.delivery_audit
             except BaseException:
                 self.delivery_history.close()
                 raise

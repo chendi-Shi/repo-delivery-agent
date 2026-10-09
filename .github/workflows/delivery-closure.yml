@@ -1,0 +1,85 @@
+name: genuine Docker delivery closure
+on:
+  push:
+    branches: [main]
+    paths: ['.github/delivery-proof-request.json']
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Frozen public task under examples
+        type: string
+        default: examples/delivery-suite-v1/requests-2931-public.json
+      mode:
+        description: One live delivery proof (paired/transfer follow after proof)
+        type: choice
+        options: [proof]
+        default: proof
+      model:
+        description: Local coding model (actual weight digest recorded)
+        type: choice
+        options: ['qwen2.5-coder:7b', 'qwen3:4b-instruct']
+        default: 'qwen2.5-coder:7b'
+permissions:
+  contents: read
+concurrency:
+  group: delivery-closure-${{ github.ref }}-${{ inputs.model || 'qwen2.5-coder:7b' }}
+  cancel-in-progress: false
+jobs:
+  delivery-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      OLLAMA_NO_CLOUD: '1'
+      NO_PROXY: 127.0.0.1,localhost
+      TASK_PATH: ${{ inputs.task || 'examples/delivery-suite-v1/requests-2931-public.json' }}
+      TRIAL_MODE: ${{ inputs.mode || 'proof' }}
+      MODEL_NAME: ${{ inputs.model || 'qwen2.5-coder:7b' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the pinned actual agent runtime
+        run: python -m pip install -e ".[agent]"
+      - name: Install the verified fixed Ollama release locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$RUNNER_TEMP/ollama-v0.40.2.tar.zst"
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 600 \
+            https://github.com/ollama/ollama/releases/download/v0.40.2/ollama-linux-amd64.tar.zst \
+            --output "$package"
+          printf '%s  %s\n' 726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04 "$package" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/ollama-pin"
+          tar --zstd -xf "$package" -C "$RUNNER_TEMP/ollama-pin"
+      - name: Real Docker inference followed by independent verification
+        shell: bash
+        run: >-
+          python scripts/ci_delivery_closure.py
+          --ollama "$RUNNER_TEMP/ollama-pin/bin/ollama"
+          --task "$TASK_PATH" --mode "$TRIAL_MODE" --model "$MODEL_NAME"
+          --ollama-mode json --profile recent --label "closure-${{ github.run_id }}-${{ github.run_attempt }}"
+          --max-steps 24 --context-tokens 16000 --max-output-tokens 1500
+          --wall-seconds 1800 --request-timeout 300 --command-timeout 90 --seed 42
+          --output runs/delivery-closure-private --evidence runs/public-delivery-closure
+      - name: Publish only safe trial and independent verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: delivery-closure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runs/public-delivery-closure/summary.json
+            runs/public-delivery-closure/environment.json
+            runs/public-delivery-closure/baseline-receipt.json
+            runs/public-delivery-closure/context-preflight.json
+            runs/public-delivery-closure/repository-ablation.json
+            runs/public-delivery-closure/verification.json
+            runs/public-delivery-closure/official-export.json
+            runs/public-delivery-closure/official-predictions.jsonl
+            runs/public-delivery-closure/official-predictions.jsonl.attempts.json
+            runs/public-delivery-closure/model-runs/**/task.json
+            runs/public-delivery-closure/model-runs/**/model.patch
+            runs/public-delivery-closure/model-runs/**/evidence.json
+            runs/public-delivery-closure/model-runs/**/action-audit.jsonl
+          if-no-files-found: warn
+          retention-days: 30

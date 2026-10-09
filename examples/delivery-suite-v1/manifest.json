@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "suite_id": "delivery-suite-v1",
+  "description": "Four answer-free public contribution tasks on two immutable repositories. The first three are custom API requirements; Requests is a public probe of an existing official issue.",
+  "tasks": [
+    {
+      "path": "more-itertools-first-factory.json",
+      "instance_id": "more-itertools__first-factory-v1",
+      "sha256": "19174109b222e1b9eb1b7b4c281013cd09062f25fa31aebd03829f9d57062be8",
+      "fingerprint": "6dc11188f1c10a8c29c0ced4d11d8297e377d2c431dcc31faa25ac42b782724b",
+      "role": "source",
+      "api": "first",
+      "origin": "custom_public_requirement",
+      "strategy_sample_eligible": true
+    },
+    {
+      "path": "more-itertools-last-factory.json",
+      "instance_id": "more-itertools__last-factory-v1",
+      "sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "fingerprint": "21184c67303d6e684267548c8eb227bbf947466dcbce9e9490d435931c713228",
+      "role": "near_transfer",
+      "api": "last",
+      "origin": "custom_public_requirement",
+      "strategy_sample_eligible": true
+    },
+    {
+      "path": "more-itertools-split-after.json",
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "fingerprint": "ec13c75801df6c737e2f1571aaa548b108cb24478547eecf115aefb27d1c654c",
+      "role": "independent",
+      "api": "split_after",
+      "origin": "custom_public_requirement",
+      "strategy_sample_eligible": true
+    },
+    {
+      "path": "requests-2931-public.json",
+      "instance_id": "psf__requests-2931",
+      "sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+      "fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+      "role": "official_public_probe",
+      "api": "Request.prepare",
+      "origin": "official_public_bug_report",
+      "strategy_sample_eligible": false
+    }
+  ],
+  "batch_path": "batch.json",
+  "batch_sha256": "99aba185dddac73d11883046feced9aac8bc9bd96f344f1c933fbc99eec7ecb1",
+  "upstream_regression_snapshot": {
+    "repo": "more-itertools/more-itertools",
+    "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+    "path": "tests/test_more.py",
+    "method_count": 20,
+    "methods": [
+      [
+        "ChunkedTests",
+        "test_even"
+      ],
+      [
+        "ChunkedTests",
+        "test_negative"
+      ],
+      [
+        "ChunkedTests",
+        "test_none"
+      ],
+      [
+        "ChunkedTests",
+        "test_odd"
+      ],
+      [
+        "ChunkedTests",
+        "test_strict_being_true"
+      ],
+      [
+        "ChunkedTests",
+        "test_strict_being_true_with_size_none"
+      ],
+      [
+        "ChunkedTests",
+        "test_strict_false"
+      ],
+      [
+        "FirstTests",
+        "test_default"
+      ],
+      [
+        "FirstTests",
+        "test_empty"
+      ],
+      [
+        "FirstTests",
+        "test_many"
+      ],
+      [
+        "FirstTests",
+        "test_one"
+      ],
+      [
+        "LastTests",
+        "test_basic"
+      ],
+      [
+        "LastTests",
+        "test_default"
+      ],
+      [
+        "LastTests",
+        "test_empty"
+      ],
+      [
+        "LastTests",
+        "test_reversed_is_none"
+      ],
+      [
+        "SplitAfterTest",
+        "test_empty_collection"
+      ],
+      [
+        "SplitAfterTest",
+        "test_ends_with_sep"
+      ],
+      [
+        "SplitAfterTest",
+        "test_max_split"
+      ],
+      [
+        "SplitAfterTest",
+        "test_no_sep"
+      ],
+      [
+        "SplitAfterTest",
+        "test_starts_with_sep"
+      ]
+    ],
+    "ast_sha256": "2d3cb89c75b94ad611245c78e35854e6fb7fda9055751153922fd384a4dc5795",
+    "canonicalization": "Sort (class name, method name, ast.dump(entire method, include_attributes=False)); omit AST type_params fields; hash compact ensure_ascii JSON as UTF-8. Original method signatures, decorators and assertions remain fixed; added methods and formatting are allowed."
+  },
+  "requests_origin": {
+    "frozen_original_task": "../official-smoke/psf__requests-2931.json",
+    "frozen_original_task_sha256": "3ff859fc9db6c152cbcda6a777e3035f88b63798321519d3f22d30e7932cb892",
+    "problem_statement_utf8_sha256": "c36c337f6c5d918e8d193684510213e2eaed8633e575b819757674cca0d980fd",
+    "public_bug_report": "https://github.com/psf/requests/issues/2930",
+    "public_source": "https://github.com/psf/requests/tree/5f7a3a74aab1625c2bb65f643197ee885e3da576",
+    "public_probe_scope": "Offline preparation of nonempty binary request bodies, with text/form compatibility; no HTTP request is sent.",
+    "official_eval_image_available_to_agent": false,
+    "official_test_patch_available_to_agent": false,
+    "official_solution_available_to_agent": false
+  },
+  "knowledge_policy": {
+    "source_instance_id": "more-itertools__first-factory-v1",
+    "allowed_target_instance_ids": [
+      "more-itertools__last-factory-v1"
+    ],
+    "require_independent_verified_source_run": true,
+    "exclude_current_task_sources_in_search_and_read": true,
+    "agent_self_report_is_verified": false,
+    "cross_repository_sharing": false,
+    "namespace_isolation": "Hash-qualified repository namespace; current task IDs excluded from search and read.",
+    "source_failure_behavior": "Keep the failed source attempt. Do not manufacture or import a verified experience, and do not report an unseeded comparison as a verified-knowledge transfer."
+  },
+  "selection_policy": {
+    "frozen_before_model_runs": true,
+    "retain_all_candidates": true,
+    "retain_all_attempts": true,
+    "select_only_passing_results": false,
+    "candidate_task_ids": [
+      "more-itertools__first-factory-v1",
+      "more-itertools__last-factory-v1",
+      "more-itertools__split-after-keep-separator-v1",
+      "psf__requests-2931"
+    ],
+    "same_task_retries_are_new_independent_tasks": false
+  },
+  "comparison_policy": {
+    "transfer_pair": [
+      "more-itertools__first-factory-v1",
+      "more-itertools__last-factory-v1"
+    ],
+    "near_transfer_proves_general_improvement": false,
+    "same_task_retries_share_one_task_identity": true,
+    "requests_in_more_itertools_strategy_denominator": false,
+    "hold_constant": [
+      "provider",
+      "model_digest",
+      "temperature",
+      "seed_when_supported",
+      "maximum_steps",
+      "context_limit",
+      "generation_limit",
+      "base_commit",
+      "public_checks",
+      "runtime",
+      "tools"
+    ],
+    "tokens_from_provider_usage_only": true,
+    "tokenizer_change_is_a_causal_ablation": false
+  },
+  "scoring_policy": {
+    "fixture_is_model_performance": false,
+    "public_pass_requires_all_checks": true,
+    "submitted_delivery_reported_separately_from_public_check_pass": true,
+    "unsubmitted_and_failed_attempts_remain_in_attempt_denominator": true,
+    "official_public_probe_is_official_resolve_score": false,
+    "missing_usage_is_zero": false,
+    "scope": "Public compatibility and delivery checks only. Official hidden grading is a separate pipeline and result."
+  },
+  "baseline_evidence": "baseline-validation.json"
+}
