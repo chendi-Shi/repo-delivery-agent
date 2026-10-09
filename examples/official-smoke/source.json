@@ -1,0 +1,43 @@
+{
+  "dataset": "SWE-bench/SWE-bench_Verified",
+  "revision": "03e151cf5560b1af6a4363c6a9d766deaaea6b56",
+  "revision_verified_remotely": true,
+  "parquet_url": "https://huggingface.co/datasets/SWE-bench/SWE-bench_Verified/resolve/03e151cf5560b1af6a4363c6a9d766deaaea6b56/data/test-00000-of-00001.parquet",
+  "parquet_sha256": "bb5b123d29ce70107cc0951cf444894241c570a11d76aec452332c65b01e06d8",
+  "lfs_sha256": "bb5b123d29ce70107cc0951cf444894241c570a11d76aec452332c65b01e06d8",
+  "record_count": 500,
+  "selection": "preferred repositories, then shortest public problem statements; no gold consulted",
+  "instance_ids": [
+    "psf__requests-2931",
+    "pallets__flask-5014",
+    "psf__requests-1142"
+  ],
+  "preferred_repo_counts": {
+    "psf/requests": 8,
+    "pallets/flask": 1,
+    "more-itertools/more-itertools": 0
+  },
+  "manifest_sha256": "00c6cae4cd32269a2d57ce80141ab3a9ddf3e9ccf624eeaf9e1c74f3d284518b",
+  "private_grading_source": "data/official-smoke/grading-source.json",
+  "answers_committed": false,
+  "grading_metadata": [
+    {
+      "instance_id": "psf__requests-2931",
+      "image": "swebench/sweb.eval.x86_64.psf_1776_requests-2931:latest",
+      "eval_script_sha256": "b6593fe1c14bb2d1a637de476c40ce1e30e57ef1c94bdf37af81cc4d75057ce3",
+      "has_v5_grading_fields": true
+    },
+    {
+      "instance_id": "pallets__flask-5014",
+      "image": "swebench/sweb.eval.x86_64.pallets_1776_flask-5014:latest",
+      "eval_script_sha256": "a752d2d3520db71513c263dd476e8da457395a447a346f6b5c18782dc0faf034",
+      "has_v5_grading_fields": true
+    },
+    {
+      "instance_id": "psf__requests-1142",
+      "image": "swebench/sweb.eval.x86_64.psf_1776_requests-1142:latest",
+      "eval_script_sha256": "7c1b567c7a139bd101d845a0f1dca55fe4f95daaeceacfcb3ae8e5e0522ab972",
+      "has_v5_grading_fields": true
+    }
+  ]
+}

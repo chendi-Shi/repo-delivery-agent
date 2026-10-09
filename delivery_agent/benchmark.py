@@ -257,7 +257,7 @@ def export_predictions(
         if not isinstance(result, dict):
             raise BenchmarkError(f"{path.name}: result must be an object")
         reason = None
-        if result.get("fixture") is not False or result.get("provider") != "litellm":
+        if result.get("fixture") is not False or result.get("provider") not in {"litellm", "ollama_native"}:
             reason = "fixture_or_unverified_provider"
         else:
             instance_id = _identifier(result.get("instance_id"))
@@ -355,7 +355,7 @@ def aggregate_official_reports(
 ) -> dict[str, Any]:
     """Read canonical official reports for one run, retaining missing outcomes.
 
-    reports_dir is logs/run_evaluation/<run_id>, not a parent containing other
+    reports_dir is logs/evaluation/<run_id>, not a parent containing other
     runs. Each report must have a matching sibling patch.diff; stale or malformed
     reports count as invalid. No local result's self-reported resolution is read.
     """

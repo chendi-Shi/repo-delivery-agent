@@ -207,6 +207,8 @@ class ContextModel:
         self.input_tokens = 0
         self.output_tokens = 0
         self.calls_with_usage = 0
+        self.unknown_requests = 0
+        self.recovery = None
 
     def _log(self, event: dict[str, Any]) -> None:
         with (self.output_dir / "request-views.jsonl").open("a", encoding="utf-8") as stream:
@@ -215,12 +217,19 @@ class ContextModel:
     def query(self, messages: list[dict[str, Any]], **kwargs: Any) -> dict[str, Any]:
         view, metadata = self.policy.select(messages, self.history.notes())
         self.n_calls += 1
+        if self.recovery is not None:
+            self.recovery.begin_model({"messages": view, "kwargs": kwargs})
         self._log({"event": "request", "call": self.n_calls, **metadata,
                    "messages": [{key: value for key, value in message.items() if key != "extra"} for message in view]})
         started = time.monotonic()
         try:
             response = self.model.query(view, **kwargs)
         except BaseException as exc:
+            if self.recovery is not None:
+                from .recovery import _interrupt
+                interruption = _interrupt(exc)
+                if interruption is not None:
+                    self.recovery.complete_model({"interrupt": interruption})
             self._log({"event": "error", "call": self.n_calls, "exception_type": type(exc).__name__,
                        "elapsed_seconds": time.monotonic() - started})
             raise
@@ -234,6 +243,8 @@ class ContextModel:
                 self.input_tokens += prompt
                 self.output_tokens += completion
                 self.calls_with_usage += 1
+        if self.recovery is not None:
+            self.recovery.complete_model({"response": response})
         self._log({"event": "response", "call": self.n_calls, "usage": usage,
                    "cost": extra.get("cost"), "elapsed_seconds": time.monotonic() - started})
         return response
@@ -254,7 +265,8 @@ class ContextModel:
             "upstream_version": UPSTREAM_VERSION, "upstream_commit": UPSTREAM_COMMIT,
             "context": asdict(self.policy.config), "model_calls": self.n_calls,
             "usage": {"input_tokens": self.input_tokens, "output_tokens": self.output_tokens,
-                      "calls_with_usage": self.calls_with_usage, "complete": self.calls_with_usage == self.n_calls},
+                      "calls_with_usage": self.calls_with_usage, "unknown_requests": self.unknown_requests,
+                      "complete": self.calls_with_usage == self.n_calls and self.unknown_requests == 0},
             "artifacts": {"history": "history.sqlite", "requests": "request-views.jsonl",
                           "trajectory": "trajectory.json"},
         }
@@ -278,19 +290,51 @@ def make_agent_class(base_class: Any = None) -> Any:
 
     class DeliveryAgent(base):
         def __init__(self, model: Any, env: Any, *, output_dir: Path | str,
-                     context_config: ContextConfig | None = None, **kwargs: Any):
+                     context_config: ContextConfig | None = None, recovery_binding: dict[str, Any] | None = None,
+                     resume: bool = False, recovery_policy: str = "stop", toolbox: Any = None, **kwargs: Any):
             self.delivery_output = Path(output_dir)
             self.delivery_output.mkdir(parents=True, exist_ok=True)
-            if any((self.delivery_output / name).exists() for name in
+            if not resume and any((self.delivery_output / name).exists() for name in
                    ("history.sqlite", "request-views.jsonl", "trajectory.json")):
                 raise ValueError("output directory already contains agent artifacts; use a fresh trial directory")
             self.delivery_history = HistoryStore(self.delivery_output / "history.sqlite")
             wrapped_model = ContextModel(model, self.delivery_history, context_config or ContextConfig(), self.delivery_output)
-            wrapped_env = HistoryEnvironment(env, self.delivery_history)
+            wrapped_env = HistoryEnvironment(toolbox or env, self.delivery_history)
+            from .checkpoint import CheckpointStore, fingerprint
+            from .recovery import RecoveryController, RecoveryEnvironment
+            recovery_env = RecoveryEnvironment(wrapped_env)
+            self.delivery_recovery = None
+            self.delivery_resume = resume
+            self.delivery_recovery_binding = recovery_binding or {}
             kwargs["output_path"] = self.delivery_output / "trajectory.json"
             kwargs["instance_template"] = kwargs.get("instance_template", "{{task}}") + HISTORY_GUIDE
+            if toolbox is not None:
+                kwargs["instance_template"] += toolbox.guide()
             try:
-                super().__init__(wrapped_model, wrapped_env, **kwargs)
+                super().__init__(wrapped_model, recovery_env, **kwargs)
+                # Keep the optional protocol-double path usable for policy
+                # tests; genuine DefaultAgent provides all these counters.
+                if hasattr(self, "n_calls") and hasattr(self, "cost"):
+                    import hashlib
+                    code = {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                            for path in sorted(Path(__file__).parent.glob("*.py"))}
+                    binding = {"runtime": self.delivery_recovery_binding,
+                               "agent_config": fingerprint({key: value for key, value in kwargs.items()
+                                                            if key != "output_path"}),
+                               "context_config": fingerprint(asdict(wrapped_model.policy.config)),
+                               "model_config": fingerprint(model.serialize().get("info", {}).get("config", {}).get("model", {})),
+                               "upstream_version": UPSTREAM_VERSION,
+                               "code_hash": fingerprint(code)}
+                    store = CheckpointStore(self.delivery_output / "checkpoint.json", binding, resume=resume)
+                    try:
+                        self.delivery_recovery = RecoveryController(self, store, resume=resume, policy=recovery_policy)
+                    except BaseException:
+                        store.close()
+                        raise
+                    wrapped_model.recovery = self.delivery_recovery
+                    recovery_env.controller = self.delivery_recovery
+                else:
+                    self.env = wrapped_env
             except BaseException:
                 self.delivery_history.close()
                 raise
@@ -302,7 +346,16 @@ def make_agent_class(base_class: Any = None) -> Any:
             for message in messages:
                 source = self.delivery_history.append(message)
                 message.setdefault("extra", {})["delivery_source_id"] = source
-            return super().add_messages(*messages)
+            # A successfully formatted action observation completes a clean
+            # step. Persist its format-error reset with the observations, not
+            # only later in DefaultAgent.run's following statement.
+            if self.delivery_recovery is not None and self.delivery_recovery.in_actions:
+                self.n_consecutive_format_errors = 0
+            result = super().add_messages(*messages)
+            if self.delivery_recovery is not None:
+                clear = self.delivery_recovery.messages_complete_transition(messages)
+                self.delivery_recovery.commit(clear=clear)
+            return result
 
         def query(self) -> dict[str, Any]:
             # DefaultAgent increments its API counter before model.query(). A
@@ -312,10 +365,88 @@ def make_agent_class(base_class: Any = None) -> Any:
                 return super().query()
             except (ContextBudgetExceeded, InvalidToolHistory):
                 self.n_calls = previous_calls
+                if self.delivery_recovery is not None:
+                    self.delivery_recovery.commit()
                 raise
 
+        def execute_actions(self, message: dict[str, Any]) -> list[dict[str, Any]]:
+            if self.delivery_recovery is None:
+                return super().execute_actions(message)
+            self.delivery_recovery.begin_actions(message)
+            try:
+                return super().execute_actions(message)
+            finally:
+                self.delivery_recovery.in_actions = False
+
+        def run(self, task: str = "", **kwargs: Any) -> dict[str, Any]:
+            if self.delivery_recovery is None:
+                return super().run(task, **kwargs)
+            # The first user message includes templates/toolbox guidance, so
+            # bind the actual supplied task separately from message contents.
+            from .checkpoint import CheckpointMismatch, fingerprint
+            from .recovery import raise_recorded
+            from minisweagent.exceptions import FormatError, InterruptAgentFlow
+            recovery = self.delivery_recovery
+            task_hash = fingerprint({"task": task, "vars": kwargs})
+            if self.delivery_resume:
+                if recovery.store.data["state"].get("task_hash") != task_hash:
+                    raise CheckpointMismatch("resume task or template variables differ")
+                recovery.ensure_unambiguous()
+                if self.messages and self.messages[-1].get("role") == "exit":
+                    return self.messages[-1].get("extra", {})
+            else:
+                recovery.task_hash = task_hash
+                return super().run(task, **kwargs)
+            recovery.task_hash = task_hash
+            first = True
+            while True:
+                try:
+                    transition = recovery.transition
+                    if first and transition and transition["kind"] == "model" and transition.get("result"):
+                        result = transition["result"]
+                        if "interrupt" in result:
+                            raise_recorded(result["interrupt"])
+                        message = result["response"]
+                        self.cost += message.get("extra", {}).get("cost", 0.0)
+                        self.add_messages(message)
+                        self.execute_actions(message)
+                    elif first and self.messages and self.messages[-1].get("role") == "assistant":
+                        self.execute_actions(self.messages[-1])
+                    else:
+                        self.step()
+                    self.n_consecutive_format_errors = 0
+                except FormatError as exc:
+                    self.cost += exc.messages[0].get("extra", {}).get("cost", 0.0)
+                    self.n_consecutive_format_errors += 1
+                    if 0 < self.config.max_consecutive_format_errors <= self.n_consecutive_format_errors:
+                        self.add_messages(*exc.messages, {"role": "exit", "content": "RepeatedFormatError",
+                                                          "extra": {"exit_status": "RepeatedFormatError", "submission": ""}})
+                    else:
+                        self.add_messages(*exc.messages)
+                except InterruptAgentFlow as exc:
+                    self.add_messages(*exc.messages)
+                except Exception as exc:
+                    self.handle_uncaught_exception(exc)
+                    raise
+                finally:
+                    first = False
+                    self.save(self.config.output_path)
+                if self.messages[-1].get("role") == "exit":
+                    break
+            return self.messages[-1].get("extra", {})
+
+        def save(self, path: Any, *extra_dicts: dict[str, Any]) -> dict[str, Any]:
+            result = super().save(path, *extra_dicts)
+            if self.delivery_recovery is not None:
+                self.delivery_recovery.commit()
+            return result
+
         def close(self) -> None:
-            self.delivery_history.close()
+            try:
+                self.delivery_history.close()
+            finally:
+                if self.delivery_recovery is not None:
+                    self.delivery_recovery.store.close()
 
     DeliveryAgent.__module__ = __name__
     return DeliveryAgent
@@ -323,10 +454,14 @@ def make_agent_class(base_class: Any = None) -> Any:
 
 def run_agent(model: Any, env: Any, *, task: str, agent_config: dict[str, Any], output_dir: Path | str,
               profile: str = "retrieval", context_tokens: int = 12000, reserve_tokens: int = 1000,
-              recent_groups: int = 3, max_tool_chars: int = 4000, base_class: Any = None) -> dict[str, Any]:
+              recent_groups: int = 3, max_tool_chars: int = 4000, base_class: Any = None,
+              recovery_binding: dict[str, Any] | None = None, resume: bool = False,
+              recovery_policy: str = "stop", toolbox: Any = None) -> dict[str, Any]:
     agent = make_agent_class(base_class)(model, env, output_dir=output_dir,
                                        context_config=ContextConfig(profile, context_tokens, reserve_tokens,
                                                                     recent_groups, max_tool_chars),
+                                       recovery_binding=recovery_binding, resume=resume, recovery_policy=recovery_policy,
+                                       toolbox=toolbox,
                                        **copy.deepcopy(agent_config))
     try:
         result = agent.run(task)

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "repo-delivery-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Repository-level coding-agent delivery and SWE-bench evaluation with a pinned mini-swe-agent runtime"
 requires-python = ">=3.11"
 dependencies = []
@@ -17,3 +17,6 @@ delivery-agent = "delivery_agent.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["delivery_agent*"]
+
+[tool.setuptools.package-data]
+delivery_agent = ["resources/**/*.md"]

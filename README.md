@@ -1,27 +1,31 @@
 # Repo Delivery Agent
 
-面向真实 Git 仓库的 Python 编程 Agent 交付与评测系统。直接扩展固定版本 **mini-swe-agent 2.4.6**，输入仓库、完整 commit 和需求，输出可应用的 Git patch、完整运行证据与独立验证结果。
+面向真实 Git 仓库的 Python 编程 Agent 交付与评测系统。输入固定 commit 和需求，执行仓库修改，导出 Git patch，并保留可回查的上下文、恢复状态和独立验证证据。
 
-原创部分是任务局部历史检索、上下文选择记录、仓库交付流程和评测证据对接。模型适配、原生工具调用和 Agent 基础循环来自上游；没有把它们写成自研框架。
+基础 Agent 循环直接扩展 **mini-swe-agent 2.4.6**。本项目实现上下文与历史管理、Skills、跨任务知识库、检查点恢复、HTTP coordinator/worker、受控执行环境，以及真实仓库和 SWE-bench 的交付评测流程。
 
-## 能力
+详细说明见 [做了什么、怎么做、问题与修复](docs/implementation-walkthrough.md)。真实模型、语义检索和评分证据见 [experiments](experiments)，各阶段验证见 [验证记录](docs/validation.md)。实现功能、协议测试、真实模型提交、独立检查和官方 resolved 分别记录。
 
-| 层 | 实现 |
+## 已实现的能力
+
+| 能力 | 具体实现 |
 |---|---|
-| Agent runtime | 真实 `DefaultAgent` 扩展、上游 `get_model`、provider 工具协议与成本记录；强制版本检查 |
-| 上下文 | baseline / recent / retrieval，保留 system、原始需求和完整工具轮次；超预算在请求前停止 |
-| 证据 | SQLite 保存原始消息与 `extra.raw_output`；模型实际看到的请求视图单独保存，不删除原始轨迹 |
-| 历史工具 | 通过 bash 调用 `delivery-history`，由 harness 严格解释 search/read/note，不执行宿主 shell |
-| 仓库交付 | 独立固定 commit checkout；包含新增文件的 binary Git patch；应用到第二个干净 checkout |
-| 执行隔离 | 每 trial 一个持久 Docker 会话，网络关闭、资源限制；源码可写、`.git` 只读；同步回收容器 |
-| 并发 | 冻结 batch plan、有界 worker、每 trial 独立模型对象/工作区/容器/证据目录；CPU 默认 1 worker |
-| SWE-bench | 去除 gold/hidden test 的冻结任务清单、官方 predictions 导出、固定官方 grader 命令与报告核对 |
+| Agent 与模型 | 固定真实 DefaultAgent；上游 LiteLLM；直接 Ollama HTTP adapter，JSON command/native tools 模式，模型 digest 与实际 usage |
+| 上下文工程 | baseline/recent/retrieval；完整工具轮次不可拆；必要消息保护；请求前硬预算；实际 request view 留痕 |
+| 任务内历史 | SQLite 保存原始消息与 raw output；delivery-history search/read/note；笔记明确未验证 |
+| Skills | SKILL.md 元数据校验、资源 hash、概要→正文→资源渐进披露；两个内置 Python 研发 Skills |
+| 跨任务知识 | SQLite WAL、FTS5/BM25、可选真实 BGE embeddings、cosine/RRF；namespace、当前任务排除、来源/验证/过期状态 |
+| 恢复 | 原子 checkpoint、OS writer lock、pending→result→commit；已知结果回放、预算连续、未知操作默认停止 |
+| 分布式调度 | HTTP coordinator + 独立 worker；持久队列、claim、续租、generation/token fencing、幂等提交、取消和失败重排；可跨机器部署 |
+| 仓库交付 | 固定 commit 独立 checkout；新增/修改/删除文件的 binary patch；第二个干净 checkout 重应用 |
+| 执行环境 | 持久 Docker、只读 Git 元数据、关闭网络、资源限制和同步清理；或受限源码 files backend |
+| 评测 | 公开官方任务冻结、真实 attempts 分母、predictions 导出、固定官方 harness、patch/report 绑定与未知状态 |
 
-**任务已提交、patch 可应用、公开检查通过、SWE-bench 官方 resolved 是四种不同结果。** 没有官方评分的任务不会显示为已解决。
+**submitted、patch_valid、public_checks、official_resolved 是四种状态。** files backend 只能修改源码，检查保持 deferred；提交成功或 CLI 返回 0 都不能证明测试通过。
 
 ## 安装
 
-Python 3.11+、Git、运行中的 Docker。真实 Agent 运行需要 upstream extras；核心数据验证和上下文测试可仅用标准库。
+Python 3.11+ 和 Git。Docker backend 与独立验证需要运行中的 Linux Docker 和预制镜像；Ollama adapter 需要指定服务中的模型。
 
 ```bash
 python -m venv .venv
@@ -31,25 +35,39 @@ python -m pip install -e '.[agent]'
 python -m unittest discover -s tests -v
 ```
 
-云端模型密钥使用上游 provider 的环境变量；不要写进 task、配置、命令行或仓库。默认不重试模型请求，避免丢失响应后无意重复计费。本地 Ollama 不需要付费 API。
+标准库核心不依赖外部服务；真正运行 DefaultAgent 需要固定 upstream extras。云模型密钥使用 provider 环境变量。模型 endpoint 与密钥由 worker 本地配置，不写进远程 task payload。
 
-## 在真实仓库执行需求
+## 运行真实仓库需求
 
-示例使用 [more-itertools](https://github.com/more-itertools/more-itertools/tree/81c21a8db1c922260cd673841257fb9b112c1318) 的固定 commit，实现一个公开导出的单次遍历 `count_runs` 工具，并覆盖生成器、空输入和不可哈希元素。**这是本项目自建开发任务，不是上游真实 Issue 或 SWE-bench 测试题。** 仓库代码来自真实开源项目，开发验收命令对 Agent 可见。
+以下例子使用 [more-itertools 固定版本](https://github.com/more-itertools/more-itertools/tree/81c21a8db1c922260cd673841257fb9b112c1318)，实现单次遍历的 count_runs。这是本项目自建开发任务，包含对 Agent 可见的公开检查。三个官方真实 Issue 另见 [official-smoke](docs/official-smoke.md)。
 
 ```bash
-docker pull python:3.12-slim
 ollama pull qwen3:4b-instruct
+docker pull python:3.12-slim
 python -m delivery_agent run \
   --task examples/more-itertools-count-runs.json \
-  --model ollama_chat/qwen3:4b-instruct \
-  --api-base http://127.0.0.1:11434 \
+  --provider ollama_native --ollama-mode json --backend docker \
+  --model ollama_chat/qwen3:4b-instruct --api-base http://127.0.0.1:11434 \
   --profile retrieval --output runs/more-itertools-01
 ```
 
-PowerShell 将命令写成一行，或用反引号续行。本机执行参数、结果与能力边界见 [验证记录](docs/validation.md)。依赖镜像必须事先准备好；任务容器内不能联网安装依赖。自定义仓库应提供适合其语言和依赖的预制镜像。
+PowerShell 可写成一行，或使用反引号续行。每个新 trial 使用新输出目录。容器内无网络，运行依赖必须已经存在于镜像。
 
-任务 JSON：
+本机 Docker 不可用时，可先进行受限源码推理：
+
+```bash
+python -m delivery_agent run \
+  --task examples/official-smoke/psf__requests-2931.json \
+  --provider ollama_native --backend files --ollama-mode json \
+  --model ollama_chat/qwen3:4b-instruct --profile retrieval \
+  --output runs/requests-source-01
+```
+
+files backend 只允许 delivery-file list/read/search/write/append/replace，由 Python 解析受限文件操作，不运行模型生成的 shell/Python。测试由之后独立的 Docker verifier 或官方 grader 执行。
+
+云模型选择 --provider litellm 和 provider-prefixed model ID。--ollama-mode tools 使用原生函数调用；json 使用严格 command schema，适合缺少原生工具训练的本地模型。
+
+任务格式：
 
 ```json
 {
@@ -57,52 +75,135 @@ PowerShell 将命令写成一行，或用反引号续行。本机执行参数、
   "repo": "owner/repo",
   "base_commit": "完整的40字符Git提交SHA",
   "image": "准备好依赖的容器镜像",
-  "problem_statement": "需求与可公开的行为契约",
-  "public_checks": ["公开的容器内验证命令"]
+  "problem_statement": "公开需求与行为契约",
+  "public_checks": ["容器内公开验证命令"]
 }
 ```
 
-每次使用新输出目录。实现不自动恢复中断模型请求或未知命令副作用；失败的 trial 和部分补丁作为证据保留，重试是新 trial。
+run/batch 支持 --max-steps、--wall-seconds、--context-tokens、--max-output-tokens、--request-timeout、--command-timeout、--cost-limit、--seed。上下文预算必须大于生成及协议预留空间。
 
-主要产物：
+## Skills 与知识库
 
-```text
-spec.json                   task/config/upstream/source fingerprint
-workspace/                  Agent 编辑的独立 checkout
-agent/history.sqlite        完整消息与原始观察
-agent/request-views.jsonl   选择/丢弃来源、请求视图、实际 usage
-agent/trajectory.json       上游完整轨迹与 cost
-model.patch                 可审查的 Git 补丁
-validation/                 干净 checkout 应用补丁后的独立工作区
-result.json                 提交、patch、公开验证的分别记录
+默认加载两个内置 Skills 的概要。额外 skill roots 和持久知识库由操作者提供：
+
+```bash
+python -m delivery_agent run \
+  --task examples/more-itertools-count-runs.json \
+  --provider ollama_native --model ollama_chat/qwen3:4b-instruct \
+  --api-base http://127.0.0.1:11434 --profile retrieval \
+  --skills ./my-skills --knowledge-db data/knowledge.sqlite \
+  --knowledge-namespace python-project --embedding-model bge-m3 \
+  --embedding-api-base http://127.0.0.1:11434 \
+  --output runs/with-knowledge-01
 ```
 
-## 标准评测
+嵌入模型可选，默认词项检索不调用服务。--embedding-api-base 指定独立的 Ollama 嵌入服务，默认 http://127.0.0.1:11434；它与生成模型的 --api-base 分别配置。Skills 资源不会自动执行；知识工具只开放 search/read，当前 task ID 从检索和直接读取排除。
 
-从官方 SWE-bench 数据集导出 JSON/JSONL 到忽略的 `data/`，固定实际来源 revision。原文件可含 gold patch；冻结清单只包含 problem statement、repo、base commit、instance ID 与可选版本。原始数据不能挂进 Agent 容器。
+delivery-skill list/read、delivery-knowledge search/read 与历史工具均通过 bash tool 调用，由 harness 在 shell 前严格拦截。验证过的 run 自动导入知识库；缺少独立公开检查的记录保留 unverified，默认不进入搜索。详见 [Skills 与知识库](docs/skills-knowledge.md)。
+
+## 批量与分布式执行
+
+本机并发的 --task 指向 RepoTask 对象数组；下面的 examples/tasks.json 需自行准备。
+
+```bash
+python -m delivery_agent batch --task examples/tasks.json \
+  --provider ollama_native --model ollama_chat/qwen3:4b-instruct \
+  --workers 2 --trials 2 --output runs/batch-01
+```
+
+Coordinator 与 worker 可跨机器部署，不需要共享文件系统。环境提供同一个至少 32 字符的 DELIVERY_SCHEDULER_TOKEN；默认 loopback，跨机器使用受控网络或 TLS。
+
+```bash
+python -m delivery_agent scheduler-server \
+  --db runs/coordinator.sqlite --host 127.0.0.1 --port 8765
+python -m delivery_agent scheduler-worker --url http://127.0.0.1:8765 \
+  --submit task-payload.json --job-id task-01 --max-attempts 3
+python -m delivery_agent scheduler-worker --url http://127.0.0.1:8765 \
+  --worker-id worker-a --work-root runs/worker-a --api-base http://127.0.0.1:11434
+python -m delivery_agent scheduler-worker --url http://127.0.0.1:8765 --status task-01
+python -m delivery_agent scheduler-worker --url http://127.0.0.1:8765 --list
+python -m delivery_agent scheduler-worker --url http://127.0.0.1:8765 --cancel task-01
+```
+
+task-payload.json 包含 task 和 config；格式、TLS、worker-local Skills/KB 和提交语义见 [调度说明](docs/distributed.md)。generation 和 lease token 防止旧 worker 提交。崩溃后任务可能重执行，系统不承诺模型调用 exactly-once。实际验证包括本机独立进程 HTTP 集成，不能写成多台物理机器压力测试。
+
+## 断点恢复
+
+在相同 task、预算、模型、代码、Skills 和 runtime 身份下，对原目录重复相同命令并加入 --resume。已确认的响应/工具结果回放，不重新调用；step/cost/wall-time 预算连续。
+
+```bash
+python -m delivery_agent run \
+  --task examples/official-smoke/psf__requests-2931.json \
+  --provider ollama_native --backend files --ollama-mode json \
+  --model ollama_chat/qwen3:4b-instruct --profile retrieval \
+  --output runs/requests-source-01 --resume
+```
+
+pending 操作的结果未知时，默认停止。显式 --recovery-policy retry 记录决定并重试，可能重复费用或副作用；也可创建新 trial。Docker 恢复要求原容器仍在且挂载/网络/资源约束一致。可控暂停与接管 API 见 [恢复说明](docs/recovery.md)。
+
+## 官方评测与实验
+
+数据来源、三题公开输入、OCI 收据与 v5 schema 见 [官方 smoke](docs/official-smoke.md)。gold 和隐藏评分字段留在 ignored data；模型只接收公开 task。
 
 ```bash
 python -m delivery_agent freeze-swebench --source data/verified.jsonl \
-  --dataset princeton-nlp/SWE-bench_Verified --revision DATASET_COMMIT_SHA \
+  --dataset SWE-bench/SWE-bench_Verified --revision DATASET_COMMIT_SHA \
   --output data/frozen-verified
+python -m delivery_agent swebench-run \
+  --manifest examples/official-smoke/manifest.json \
+  --instance-id psf__requests-2931 --config examples/ollama-swebench-config.json \
+  --profile retrieval --output runs/swe-requests-01
+python -m delivery_agent export --results runs/swe-requests-01/result.json \
+  --output runs/predictions.jsonl
+python -m delivery_agent grade-command --predictions runs/predictions.jsonl \
+  --dataset data/official-smoke/grading-source.json --run-id unique-eval-01
+python -m delivery_agent official-report --predictions runs/predictions.jsonl \
+  --reports logs/evaluation/unique-eval-01 --output runs/official-report.json
 ```
 
-冻结记录实际文件 SHA256，并区分用户填写的 revision 与是否远程验证；不能仅凭标签宣称精确复现。`load_manifest` 会核对快照和 task 清单 hash。
+grade-command 输出固定官方 harness 命令，不自动执行。独立评分环境安装固定 harness commit 后运行它；不同补丁使用不同 run ID。官方解题结果仅来自 matching patch 的真实报告。
 
-标准任务执行与官方评分接口见 [SWE-bench 工作流](docs/swebench.md)。导出只使用真实模型提交的补丁，fixture 永远排除；缺失评分保留未知状态。导出能力不代表跑出了 benchmark 成绩。设计取舍、实验方案和岗位对应见 [设计说明](docs/design.md)。
+探索上下文策略时固定任务、模型 digest、镜像、seed 和预算，保留所有尝试：
 
-## 开源依据与取舍
+```bash
+python scripts/run_experiments.py --task examples/more-itertools-count-runs.json \
+  --output runs/live-ablation-01 --evidence experiments
+python scripts/grade_experiments.py --manifest experiments/repository-ablation.json \
+  --output runs/repository-verification.json --pull-images
+python scripts/semantic_smoke.py
+```
 
-- [mini-swe-agent 固定版本 DefaultAgent](https://github.com/SWE-agent/mini-swe-agent/blob/04d809ceab9df28f9adaed044884180159172930/src/minisweagent/agents/default.py)：直接继承，复用控制流与模型/环境协议。
-- [上游原始工具输出](https://github.com/SWE-agent/mini-swe-agent/blob/04d809ceab9df28f9adaed044884180159172930/src/minisweagent/models/utils/actions_toolcall.py)：索引 `extra.raw_output`，而不是已经缩短的 prompt 片段。
-- [OpenHands condenser](https://github.com/OpenHands/software-agent-sdk/blob/33044182505244749928644a4643368a9e998ee7/openhands-sdk/openhands/sdk/context/condenser/base.py)：参考原始事件与 prompt view 分离、完整工具轮次边界。没有移植其实现，也没有依赖整个 SDK。
-- [DeerFlow 任务连续性讨论](https://github.com/bytedance/deer-flow/issues/5378)：参考任务笔记＋历史回查，笔记是 Agent 声明，不是已验证事实。
-- [SWE-bench 官方 harness](https://github.com/SWE-bench/SWE-bench/blob/02e7a74ffd0b707aab73d203fe87bdc7c76afc8e/swebench/harness/run_evaluation.py)：导出兼容预测，独立容器评分。上游 batch runner 硬编码 agent class，因此本项目有自己的扩展入口。
+公开检查与官方评分使用不同验收。当前模型结果/检查状态以 [experiments 报告](experiments) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions) 为准；未完成评分保留 pending/unknown，不据此宣称成功率提升。
 
-## 当前边界
+## 产物与岗位对应
 
-上下文预算使用标记清楚的保守 UTF-8 字节估算，并预留 schema/生成空间，不是模型精确 tokenizer。token 用量以 provider response 为准；未知用量不记为零收益。费用以 trajectory 的 upstream cost 为准，本地模型不能从 token 数推算美元成本。
+```text
+spec.json                   任务/配置/Skills/代码/upstream指纹
+runtime.json                模型/环境与恢复绑定
+workspace/                  独立编辑工作区
+agent/history.sqlite        完整历史与原始观察
+agent/request-views.jsonl   请求、上下文选择、provider usage
+agent/checkpoint.json       原子恢复状态与未知操作
+agent/trajectory.json       真实DefaultAgent轨迹
+model.patch                 实际文件改动
+validation/                 干净checkout独立验证
+result.json                 提交、patch、公开检查与官方状态
+knowledge-ingestion.json    独立KB导入状态
+```
 
-历史检索是 task-local 的字面相关性排序，未训练学习排序模型；没有多租户服务、分布式调度或跨任务长期记忆。单元/协议/容器验证分别记录，不能替代真实模型成功率或公开基准成绩。公开性能结论需要冻结 task IDs、模型 digest、镜像、配置、源码、失败分母与重复 trial。
+| JD 方向 | 可展示内容 |
+|---|---|
+| AI Native 研发工具 | 公开需求→真实仓库修改→补丁→独立验收 |
+| Agent 框架与模型适配 | 成熟 runtime 扩展、直接 Ollama adapter、真实接口契约 |
+| Skills、上下文与知识库 | 渐进披露、原始证据、混合检索、namespace 和来源验证 |
+| 编排调度 | Coordinator/worker、租约、心跳、旧 worker 拒绝、取消与受控恢复 |
+| 评测与持续调优 | 真实任务冻结、失败分母、实际 usage/耗时、补丁/报告身份 |
+| 系统设计 | 执行边界、崩溃窗口、未知状态、可复现实验 |
 
-MIT License。上游依赖及其许可证仍归各项目所有。
+## 依据与边界
+
+复用 [mini-swe-agent 固定源码](https://github.com/SWE-agent/mini-swe-agent/tree/04d809ceab9df28f9adaed044884180159172930)，参考 [OpenHands 事件设计](https://github.com/OpenHands/software-agent-sdk/tree/33044182505244749928644a4643368a9e998ee7)、[Agent Skills 格式](https://agentskills.io/specification) 和 [固定官方 harness](https://github.com/SWE-bench/SWE-bench/tree/02e7a74ffd0b707aab73d203fe87bdc7c76afc8e)。复用范围和原创部分见实现说明。
+
+上下文预算是保守 UTF-8 字节估算，实际 token 来自 provider；缺失 usage 保留不完整标记。BGE+RRF 是固定混合排序，没有训练学习排序模型。SQLite coordinator 是单持久协调器，尚无多副本或多租户权限体系。artifact hash 证明内容身份，不是远程执行签名。
+
+MIT License。上游依赖及许可证归各项目所有。

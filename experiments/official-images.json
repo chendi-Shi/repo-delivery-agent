@@ -1,0 +1,38 @@
+{
+  "kind": "public_oci_registry_probe",
+  "layers_downloaded": false,
+  "official_grading_executed": false,
+  "images": [
+    {
+      "instance_id": "psf__requests-2931",
+      "image": "swebench/sweb.eval.x86_64.psf_1776_requests-2931:latest",
+      "available": true,
+      "tag_manifest_digest": "sha256:705258c23c73d25bc78ed6fa4b14836078d848a64ab9c3ea3032d1d523d7cca4",
+      "platform": "linux/amd64",
+      "manifest_digest": "sha256:852d3d1ddb3c859675e5bb7d9269cb27c1bf8a6e95965108ad8a38b3495fc1d0",
+      "image_config_digest": "sha256:d169b644e994bc20c0d77719b008e34fdd9afab2c211d7f52e27a578e692c75b",
+      "compressed_layer_bytes": 1015369405
+    },
+    {
+      "instance_id": "pallets__flask-5014",
+      "image": "swebench/sweb.eval.x86_64.pallets_1776_flask-5014:latest",
+      "available": true,
+      "tag_manifest_digest": "sha256:bde4fbdafa36141d4396944da88ec37aabdef612ed36920090675bccd0ca5d72",
+      "platform": "linux/amd64",
+      "manifest_digest": "sha256:eaf597005c159361cb8ee26018fb3741b320f331065f0c95726d83ccf2f1fba4",
+      "image_config_digest": "sha256:bf8242431f5c177d67996b3c888a0f51e4bb7bd0b67009bee6c70842baca1241",
+      "compressed_layer_bytes": 1145538311
+    },
+    {
+      "instance_id": "psf__requests-1142",
+      "image": "swebench/sweb.eval.x86_64.psf_1776_requests-1142:latest",
+      "available": true,
+      "tag_manifest_digest": "sha256:b2733e57feb4cfaeac24ab5ec496d4cb89a37db53bd0ca72eaededdb2ce19d1c",
+      "platform": "linux/amd64",
+      "manifest_digest": "sha256:fa9c859412109d003a68c2bbe3c65541ca4714526afeb6906fe589c18af0b30d",
+      "image_config_digest": "sha256:ebfed0b9a44723b3ab1e934f0b040f843abf01e1a3a8b248e150d314e949cfaa",
+      "compressed_layer_bytes": 1013737194
+    }
+  ],
+  "all_available": true
+}

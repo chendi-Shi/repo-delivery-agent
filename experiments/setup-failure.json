@@ -1,0 +1,11 @@
+{
+  "fixture": false,
+  "stage": "repository_checkout",
+  "state": "interrupted_before_model_request",
+  "model_requests": 0,
+  "operation": "full_history_git_clone",
+  "observation": "Only spec.json and the partial workspace existed; the owned experiment process had no remaining children and was stopped.",
+  "diagnosis": "An inherited remote-helper pipe after a Windows Git timeout is a plausible cause; this is an inference, not a measured network diagnosis.",
+  "fix": "Fetch only the frozen full SHA, terminate the task-owned Git process tree on timeout, and bound the subsequent pipe wait.",
+  "performance_result": null
+}

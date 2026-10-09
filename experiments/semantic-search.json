@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "kind": "real_embedding_functional_smoke",
+  "fixture": false,
+  "model": "bge-m3",
+  "success": true,
+  "scope": "three independent public-document summaries; no coding-task answers",
+  "knowledge_verified": false,
+  "official_benchmark_result": false,
+  "limitation": "small smoke corpus; no claimed improvement in coding-agent success rate",
+  "corpus": [
+    {
+      "title": "Iterator protocol",
+      "source_ref": "https://docs.python.org/3/library/stdtypes.html#iterator-types",
+      "body_sha256": "df89d75e277164d092933e8ef650b53bbaa623a19d90aaac88be4166633beffc"
+    },
+    {
+      "title": "Socket networking",
+      "source_ref": "https://docs.python.org/3/library/socket.html",
+      "body_sha256": "828910ce34c109b567f517669993c54346f96034660aa38fa6fdd3d2e8275945"
+    },
+    {
+      "title": "SQLite transactions",
+      "source_ref": "https://www.sqlite.org/lang_transaction.html",
+      "body_sha256": "1e45b41894cbbc2a3f6cf977a61ed330752d5606c9e22062df27be66ee3b06ac"
+    }
+  ],
+  "embedding": {
+    "provider": "ollama",
+    "model": "bge-m3",
+    "model_digest": "7907646426070047a77226ac3e684fbbe8410524f7b4a74d02837e43f2146bab",
+    "dimension": 1024
+  },
+  "embedded_count": 3,
+  "query": "Do not scan this collection twice because it gets depleted",
+  "lexical_hit_count": 0,
+  "semantic_method": "fts5_bm25+cosine_rrf",
+  "semantic_top_matches_expected": true,
+  "semantic_hits": [
+    {
+      "source_id": "k61a06f574a4cd3d8916839836af530bd",
+      "title": "Iterator protocol",
+      "source_ref": "https://docs.python.org/3/library/stdtypes.html#iterator-types",
+      "lexical_rank": null,
+      "semantic_rank": 1,
+      "rrf_score": 0.01639344262295082
+    },
+    {
+      "source_id": "ka7cce0840787cbefd6b0f5dffe5ebb63",
+      "title": "SQLite transactions",
+      "source_ref": "https://www.sqlite.org/lang_transaction.html",
+      "lexical_rank": null,
+      "semantic_rank": 2,
+      "rrf_score": 0.016129032258064516
+    },
+    {
+      "source_id": "k126f707437a21f320447fbbcdbe27cb4",
+      "title": "Socket networking",
+      "source_ref": "https://docs.python.org/3/library/socket.html",
+      "lexical_rank": null,
+      "semantic_rank": 3,
+      "rrf_score": 0.015873015873015872
+    }
+  ],
+  "namespace_isolated": true,
+  "cross_namespace_read_blocked": true,
+  "active_task_excluded": true,
+  "seconds": 53.546999999991385
+}

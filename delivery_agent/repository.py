@@ -6,6 +6,8 @@ import json
 import os
 import re
 import subprocess
+import tempfile
+import signal
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -23,9 +25,38 @@ def git(path, *args, input=None, timeout=120, check=True):
     for key in list(env):
         if key == "GIT_CONFIG_COUNT" or key.startswith(("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_")):
             env.pop(key)
-    result = subprocess.run(["git", "-c", "core.hooksPath=" + os.devnull,
-        "-c", "core.fsmonitor=false", "-c", "core.autocrlf=false", "-c", "core.safecrlf=false", "-C", str(path), *args],
-        input=input, capture_output=True, timeout=timeout, env=env)
+    command = ["git", "-c", "core.hooksPath=" + os.devnull,
+        "-c", "core.fsmonitor=false", "-c", "core.autocrlf=false", "-c", "core.safecrlf=false", "-C", str(path), *args]
+    # Files avoid inherited remote-helper pipes keeping communicate() alive
+    # after a Windows timeout. The process wait and subsequent reads are bounded.
+    with tempfile.TemporaryFile() as source, tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as error:
+        if input is not None:
+            source.write(input)
+            source.seek(0)
+        process = subprocess.Popen(command, stdin=source, stdout=output, stderr=error,
+                                   env=env, start_new_session=os.name != "nt")
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            if os.name == "nt":
+                try:
+                    subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+            else:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            process.wait(timeout=10)
+            raise
+        output.seek(0); error.seek(0)
+        stdout, stderr = output.read(16 * 1024 * 1024 + 1), error.read(1024 * 1024 + 1)
+        if len(stdout) > 16 * 1024 * 1024 or len(stderr) > 1024 * 1024:
+            raise ValueError("Git output exceeded its evidence budget")
+        result = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
     if check and result.returncode:
         raise RuntimeError("Git operation failed: " + result.stderr.decode("utf-8", "replace")[:2000])
     return result
@@ -73,8 +104,16 @@ def checkout(task, destination, source=None):
     if destination.exists():
         raise ValueError("Checkout must use a fresh directory")
     destination.parent.mkdir(parents=True, exist_ok=True)
-    source = str(Path(source).resolve()) if source is not None else "https://github.com/" + task.repo + ".git"
-    git(destination.parent, "clone", "--no-checkout", "--no-local", "--", source, str(destination))
+    if source is None:
+        # Fetch the exact immutable commit instead of all historical blobs.
+        # GitHub permits full-SHA fetches; the model receives a complete working
+        # tree after this trusted host-side fetch, before networkless execution.
+        git(destination.parent, "init", str(destination))
+        git(destination, "remote", "add", "origin", "https://github.com/" + task.repo + ".git")
+        git(destination, "fetch", "--depth=1", "origin", task.base_commit)
+    else:
+        source = str(Path(source).resolve())
+        git(destination.parent, "clone", "--no-checkout", "--no-local", "--", source, str(destination))
     # Git commit arguments are validated before invoking checkout.
     git(destination, "checkout", "--detach", task.base_commit)
     actual = git(destination, "rev-parse", "HEAD").stdout.decode().strip()

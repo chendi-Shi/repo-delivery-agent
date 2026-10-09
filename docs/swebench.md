@@ -8,6 +8,8 @@
 
 将实际下载的完整官方数据快照保存为 `data/private/verified.jsonl`，并从下载记录设置 `DATASET_REVISION` 为该快照来源的真实 40 位 revision。设置 `INSTANCE_ID` 为文件中存在的任务 ID。这里不提供假的 revision 或未核对的样例 ID。
 
+项目已冻结并核验三个官方 smoke 任务，来源完整 revision、原始 Parquet hash 和下载收据见 [官方 smoke](official-smoke.md)。使用这组任务时公开输入为 `examples/official-smoke/manifest.json`，评分输入为 ignored 的 `data/official-smoke/grading-source.json`。
+
 ```bash
 : "${DATASET_REVISION:?Set the actual 40-character dataset revision first}"
 : "${INSTANCE_ID:?Set an instance ID present in the local snapshot}"
@@ -39,6 +41,8 @@ python -m delivery_agent freeze-swebench --source data/private/verified.jsonl --
 
 示例配置是 [`examples/ollama-swebench-config.json`](../examples/ollama-swebench-config.json)。模型服务运行在宿主机，容器中的任务代码不能联网。配置采用 `litellm` provider；密钥应通过 provider 环境变量提供，配置中禁止 `api_key`、Authorization、凭据 headers 等字段。
 
+也支持直接 Ollama：另存一份配置，将 `model.model_class` 改为 `ollama_native`，在 `model.model_kwargs` 中设置 `mode: "json"` 或 `mode: "tools"`，并按需设置独立服务的 `api_base`。这个入口同样调用真实 DefaultAgent，默认提供内置 Skills；它仍需真实 Docker 任务镜像，files backend 属于普通 `run` 入口。
+
 ```bash
 export MSWEA_MODEL_RETRY_STOP_AFTER_ATTEMPT=1
 python -m delivery_agent swebench-run --manifest data/frozen-verified/manifest.json --config examples/ollama-swebench-config.json --instance-id "$INSTANCE_ID" --profile retrieval --context-tokens 16384 --reserve-tokens 3048 --output "runs/swebench/${INSTANCE_ID}/retrieval-01"
@@ -52,7 +56,7 @@ python -m delivery_agent swebench-run --manifest data/frozen-verified/manifest.j
 
 产物包括 `task.json`、`spec.json`、`agent/history.sqlite`、`agent/request-views.jsonl`、`agent/trajectory.json`、`model.patch`、`outcome.json` 和 `result.json`。配置只冻结可公开参数及模板 hash，不写入原始凭据。模型调用开始前失败时，可能没有 `agent/` 或 patch 文件。
 
-本地配置的 `cost_tracking: ignore_errors` 对应上游允许值；另一个允许值是 `default`。`ignore` 不是合法值。缺失费用信息不能解释为免费或成本改善。这个 SWE-bench 入口记录模型名称，尚未自动查询 Ollama 权重 digest；可复现对照还需要保存并固定实际模型权重，不能只依靠可变模型 tag。
+本地配置的 `cost_tracking: ignore_errors` 对应上游允许值；另一个允许值是 `default`。`ignore` 不是合法值。缺失费用信息不能解释为免费或成本改善。直接 Ollama adapter 会查询并冻结模型 digest；LiteLLM 的 SWE-bench 入口仍需操作者另外保存并固定模型权重，不能只依靠可变模型 tag。
 
 ## 4. 导出提交与完整尝试分母
 
@@ -62,7 +66,7 @@ python -m delivery_agent export --results "runs/swebench/${INSTANCE_ID}/retrieva
 
 一组多任务实验应在 `--results` 后列出**该组所有** `result.json`，包括失败和停止的 trial。不要只挑成功提交文件。重复任务的不同 trial 单独导出，不会自动挑选最好补丁。
 
-仅 `provider: litellm`、`fixture: false`、`status: submitted`、`exit_status: Submitted` 的真实结果进入官方 JSONL，字段为 `model_name_or_path`、`instance_id`、`model_patch`。空 patch 仍如实保留；它代表空提交，不能解释为解决问题。局部 patch 检查失败也不会被静默剔除。
+仅 `provider: litellm` 或 `ollama_native`、`fixture: false`、`status: submitted`、`exit_status: Submitted` 的真实结果进入官方 JSONL，字段为 `model_name_or_path`、`instance_id`、`model_patch`。空 patch 仍如实保留；它代表空提交，不能解释为解决问题。局部 patch 检查失败也不会被静默剔除。
 
 同时生成 `retrieval.jsonl.attempts.json`，记录全部提供的真实模型尝试、失败状态与源结果 hash，绑定 predictions 文件 hash。fixture 不进入分母。这个 sidecar 只能记录明确提供的结果文件，不能推断未执行或未提供的计划任务。
 
@@ -89,7 +93,7 @@ python -m delivery_agent grade-command --predictions runs/predictions/retrieval.
 ## 6. 核对官方报告
 
 ```bash
-python -m delivery_agent official-report --predictions runs/predictions/retrieval.jsonl --reports logs/run_evaluation/retrieval-01 --output runs/retrieval-official-summary.json
+python -m delivery_agent official-report --predictions runs/predictions/retrieval.jsonl --reports logs/evaluation/retrieval-01 --output runs/retrieval-official-summary.json
 ```
 
 `--reports` 指向单个 run 的目录。聚合器读取官方布局 `<model_name_or_path 将 / 替换为 __>/<instance_id>/report.json`，核对同目录 `patch.diff` 与提交。CRLF/LF 差异可比较，原提交与日志的精确 SHA256 各自保留。报告缺失、布尔字段不合法或 patch 不匹配均保留为缺失/无效，不能记成已解决。

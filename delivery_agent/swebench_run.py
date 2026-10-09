@@ -21,7 +21,7 @@ from .upstream import UPSTREAM_COMMIT, UPSTREAM_VERSION, require_upstream, run_a
 
 _CREDENTIAL = re.compile(r"api.?key|authorization|password|secret|credentials|access.?token|bearer|headers", re.I)
 _MODEL_KWARGS = {"temperature", "seed", "max_tokens", "timeout", "num_retries", "drop_params",
-                 "parallel_tool_calls", "think", "num_ctx", "api_base"}
+                 "parallel_tool_calls", "think", "num_ctx", "api_base", "mode"}
 _AGENT_FIELDS = {"system_template", "instance_template", "step_limit", "cost_limit",
                  "wall_time_limit_seconds", "max_consecutive_format_errors"}
 
@@ -48,12 +48,16 @@ def _validated_config(config):
     if set(model) - {"model_name", "model_class", "model_kwargs", "cost_tracking"}:
         raise ValueError("unknown model configuration fields")
     model["model_name"] = _model_name(model.get("model_name"))
-    if model.get("model_class", "litellm") != "litellm":
-        raise ValueError("real SWE-bench runs require the litellm provider, not a fixture model")
-    model["model_class"] = "litellm"
+    native_class = "delivery_agent.ollama_model.OllamaModel"
+    model_class = model.get("model_class", "litellm")
+    if model_class not in {"litellm", "ollama_native", native_class}:
+        raise ValueError("real SWE-bench runs require an approved real model provider")
+    model["model_class"] = native_class if model_class in {"ollama_native", native_class} else "litellm"
     kwargs = model.get("model_kwargs", {})
     if not isinstance(kwargs, dict) or set(kwargs) - _MODEL_KWARGS:
         raise ValueError("unsupported model_kwargs; credentials and arbitrary fields are prohibited")
+    if model["model_class"] == native_class and set(kwargs) - {"temperature", "seed", "max_tokens", "timeout", "think", "num_ctx", "api_base", "mode"}:
+        raise ValueError("unsupported native Ollama model options")
     for key, value in kwargs.items():
         if key == "api_base":
             if not isinstance(value, str):
@@ -62,6 +66,9 @@ def _validated_config(config):
             if (parts.scheme not in {"http", "https"} or not parts.hostname or parts.username
                     or parts.password or parts.query or parts.fragment):
                 raise ValueError("api_base cannot contain credentials or query strings")
+        elif key == "mode":
+            if model["model_class"] != native_class or value not in {"json", "tools"}:
+                raise ValueError("mode applies only to native Ollama JSON or tools")
         elif not isinstance(value, (bool, int, float)) or (isinstance(value, float) and not float("-inf") < value < float("inf")):
             raise ValueError("model kwargs must contain only finite numeric or boolean settings")
     if model.get("cost_tracking", "default") not in {"default", "ignore_errors"}:
@@ -172,7 +179,8 @@ def run_swebench_instance(instance, config, output_dir, profile="retrieval", con
     atomic_json(output_dir / "task.json", public)
     atomic_json(output_dir / "spec.json", provenance)
     result = {"instance_id": public["instance_id"], "model_name_or_path": effective["model"]["model_name"],
-              "provider": "litellm", "fixture": False, "status": "failed", "exit_status": None,
+              "provider": "ollama_native" if effective["model"]["model_class"] != "litellm" else "litellm",
+              "fixture": False, "status": "failed", "exit_status": None,
               "model_patch": "", "patch_valid": None, "official_resolved": None,
               "changed_files": [], "public_checks": [], "provenance": provenance}
     env, started = None, time.monotonic()
@@ -193,11 +201,19 @@ def run_swebench_instance(instance, config, output_dir, profile="retrieval", con
         if _execute(env, "git status --porcelain").strip():
             raise RuntimeError("task image contains preexisting working tree changes")
         model = get_model(config=effective["model"])
+        if hasattr(model, "resolve_identity"):
+            provenance["model_digest"] = model.resolve_identity()["digest"]
         if getattr(getattr(model, "config", None), "model_name", None) != result["model_name_or_path"]:
             raise RuntimeError("resolved model differs from frozen configuration")
+        from .skills import SkillRegistry
+        from .toolbox import ToolboxEnvironment
+        skills = SkillRegistry([Path(__file__).parent / "resources" / "skills"])
         outcome = run_agent(model, env, task=public["problem_statement"], agent_config=effective["agent"],
                             output_dir=output_dir / "agent", profile=profile,
-                            context_tokens=context_tokens, reserve_tokens=reserve_tokens)
+                            context_tokens=context_tokens, reserve_tokens=reserve_tokens,
+                            toolbox=ToolboxEnvironment(env, skills, task_id=public["instance_id"]),
+                            recovery_binding={"container_id": env.container_id, "image_id": image,
+                                "base_commit": before, "task_sha256": provenance["task_sha256"], "skills": skills.manifest()})
         if not isinstance(outcome, dict) or not isinstance(outcome.get("exit_status"), str):
             raise RuntimeError("agent returned an invalid outcome")
         result["exit_status"] = outcome["exit_status"]
