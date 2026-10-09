@@ -1,0 +1,31 @@
+name: tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  unit:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e ".[agent]"
+      - run: python -m unittest discover -s tests -v
+  docker-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - run: docker pull python:3.12-slim
+      - run: python scripts/docker_smoke.py --output runs/docker-validation.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-integration-evidence
+          path: runs/docker-validation.json
