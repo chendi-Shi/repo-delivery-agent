@@ -27,13 +27,17 @@ class DockerSession:
                 "--cpus", cpus, "--pids-limit", "128", "--cap-drop", "ALL", "--security-opt",
                 "no-new-privileges", "--read-only", "--tmpfs", "/tmp:rw,size=128m",
                 "--mount", f"type=bind,source={self.workspace},target=/workspace", "-w", "/workspace"]
+        if hasattr(os, "getuid") and hasattr(os, "getgid"):
+            # With capabilities dropped, container root cannot write a checkout
+            # owned by the Linux host user. Use that identity for bind mounts.
+            argv += ["--user", f"{os.getuid()}:{os.getgid()}"]
         metadata = self.workspace / ".git"
         if not metadata.is_dir() or metadata.is_symlink():
             raise ValueError("Session requires an isolated checkout with real Git metadata")
         # Agent can edit source but cannot inject host Git fsmonitor/clean filters,
         # replace repository identity, or point its metadata at another checkout.
         argv += ["--mount", f"type=bind,source={metadata},target=/workspace/.git,readonly",
-                 "-e", "PYTHONDONTWRITEBYTECODE=1", self.image_id, "sleep", "3600"]
+                 "-e", "PYTHONDONTWRITEBYTECODE=1", "-e", "HOME=/tmp", self.image_id, "sleep", "3600"]
         try:
             self.container_id = subprocess.run(argv, check=True, capture_output=True, timeout=120).stdout.decode().strip()
         except BaseException as original:

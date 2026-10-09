@@ -4,7 +4,7 @@
 
 ## 已执行验证
 
-最终稳定源码测试：**86 项全部通过，0 error、0 skipped**，用时 131.644 秒。另已完成全部 Python 源文件的语法编译和待提交 Git whitespace 检查。
+修复首次 CI 暴露的 Linux 容器用户权限和 Windows 临时目录路径比较后，本机完整回归：**87 项全部通过，0 error、0 skipped**，用时 25.340 秒。另已完成全部 Python 源文件的语法编译和待提交 Git whitespace 检查。
 
 标准库测试覆盖上下文选择、完整工具轮次、历史 search/read/note、原始观察保存、无答案 task manifest 与 hash 核对、固定 commit checkout、新增/删除/修改文件的 patch 导出和干净重应用、Git 回调禁用、Docker 执行生命周期的故障协议，以及官方 predictions/报告绑定和失败分母。
 

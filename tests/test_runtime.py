@@ -96,6 +96,14 @@ class RuntimeCase(unittest.TestCase):
 
 
 class RuntimeTests(RuntimeCase):
+    def test_linux_bind_mount_uses_host_identity_with_dropped_capabilities(self):
+        with patch("delivery_agent.runtime.os.getuid", return_value=1001, create=True), \
+                patch("delivery_agent.runtime.os.getgid", return_value=1002, create=True):
+            self.session()
+        argv = next(argv for argv, _ in self.docker.calls if argv[:2] == ["docker", "run"])
+        self.assertEqual(argv[argv.index("--user") + 1], "1001:1002")
+        self.assertIn("HOME=/tmp", argv)
+
     def test_container_is_isolated_and_uses_resolved_image_with_readonly_metadata(self):
         session = self.session()
         argv = next(argv for argv, _ in self.docker.calls if argv[:2] == ["docker", "run"])

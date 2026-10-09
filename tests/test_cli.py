@@ -23,7 +23,10 @@ class CliTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        # Windows runners may expose TEMP through an 8.3 path or junction. The
+        # runner canonicalizes its output directory, so fixtures must compare
+        # canonical paths rather than two spellings of the same directory.
+        self.root = Path(self.temp.name).resolve()
         self.task = RepoTask.parse({
             "instance_id": "owner__repo-1", "repo": "owner/repo", "base_commit": "a" * 40,
             "problem_statement": "Fix the incorrect module value.", "image": "python:mutable-tag",
@@ -128,7 +131,7 @@ class CliTests(unittest.TestCase):
 
     def test_public_verification_uses_fresh_checkout_and_resolved_image_only(self):
         result = self.run_with(self.submitted)
-        self.assertEqual(result["status"], "submitted")
+        self.assertEqual(result["status"], "submitted", result.get("error_type"))
         self.assertTrue(result["patch_valid"])
         self.assertIsNone(result["official_resolved"])
         self.assertEqual(len(self.sessions), 2)

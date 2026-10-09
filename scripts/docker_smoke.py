@@ -35,14 +35,19 @@ def main():
             first = env.execute({"command": "python -c \"from pathlib import Path; Path('module.py').write_text('value = 2\\n'); Path('added.py').write_text('from module import value\\n')\""})
             second = env.execute({"command": "python -c \"from module import value; assert value == 2; print('persistent files checked')\""})
             blocked = env.execute({"command": "printf malicious >> .git/config"})
-            assert first["returncode"] == second["returncode"] == 0
-            assert blocked["returncode"] != 0, "Agent metadata should be read-only"
-            assert env.execute({"command": "python -c \"import socket; s=socket.socket(); s.settimeout(1); s.connect(('1.1.1.1',443))\""})["returncode"] != 0
+            if first["returncode"] or second["returncode"]:
+                raise RuntimeError("Persistent workspace check failed: " + json.dumps({"write": first, "read": second}))
+            if blocked["returncode"] == 0:
+                raise RuntimeError("Agent metadata should be read-only")
+            network = env.execute({"command": "python -c \"import socket; s=socket.socket(); s.settimeout(1); s.connect(('1.1.1.1',443))\""})
+            if network["returncode"] == 0:
+                raise RuntimeError("Container network should be disabled")
         patch = capture_patch(work, commit)
         fresh = apply_fresh(task, patch["model_patch"], root / "validation", source)
         with DockerSession(fresh, image) as verifier:
             checked = verifier.execute({"command": "python -c \"from added import value; assert value == 2; print('fresh patch verified')\""})
-            assert checked["returncode"] == 0
+            if checked["returncode"]:
+                raise RuntimeError("Fresh patch verification failed: " + json.dumps(checked))
         result = {"fixture": True, "label": "TRUSTED INTEGRATION CHECK; NOT MODEL PERFORMANCE",
             "image": image, "passed": True, "checks": ["persistent session", "read-only Git metadata",
             "disabled container network", "new-file patch export", "fresh patch application", "independent container check"],
