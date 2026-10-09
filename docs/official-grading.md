@@ -88,3 +88,31 @@ python scripts/official_smoke_grade.py --output runs/official-smoke
 
 本机 Docker 引擎不可连接时不生成评分结论。此流程需要真实 Linux Docker
 runner 完成，并从该次 GitHub Actions artifact 读取实际结果。
+
+## 独立官方容器契约 fixture
+
+`.github/workflows/official-harness-contract.yml` 运行
+`scripts/official_harness_smoke.py`，无需等待模型提交。它复用上述数据与
+harness 固定版本，只取公开任务 `psf__requests-2931`，提交固定的
+`harness-contract-fixture` 补丁：仅新增 `delivery_harness_smoke.txt`，内容
+明示没有 LLM 调用、不是 issue 的解答。补丁不依赖 gold，不修改应用代码。
+私有临时目录中的这条 fixture 预测直接交给原始官方 CLI，不经过真实模型
+`export_predictions`，不生成 Submitted 证据或 attempts sidecar。
+
+只有 CLI 正常退出、无超时，且官方报告与固定补丁一致，三个 boolean
+严格为 `patch_successfully_applied=true`、`resolved=false`、
+`infra_failure=false`，契约才通过。固定官方
+[`get_logs_eval` / `get_eval_report`](https://github.com/SWE-bench/SWE-bench/blob/02e7a74ffd0b707aab73d203fe87bdc7c76afc8e/swebench/harness/grading.py)
+需要实际可解析测试输出才会把 `patch_successfully_applied` 设为 true；
+缺报告、缺字段、补丁不匹配或测试基础设施异常均使 job 失败。
+
+该单任务 job 上限 30 分钟，测试 900 秒、操作 1500 秒，复用原有磁盘、
+私有日志和容器清理限制，并只清理本任务新拉取的镜像。只上传 boolean
+report、固定 fixture patch 和安全契约 metadata。summary 明确写入
+`fixture=true`、`llm_calls=0`、`scope=functional_contract`、
+`model_score_eligible=false`；模型评分字段为 null。这个结果验证容器评分
+链路，永远不计入真实模型成绩；原真实预测工作流的 Submitted gate 不变。
+
+```bash
+python scripts/official_harness_smoke.py --output runs/official-harness-fixture
+```

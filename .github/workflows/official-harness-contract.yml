@@ -1,0 +1,40 @@
+name: official harness container contract (fixture, no LLM score)
+on:
+  push:
+    paths:
+      - 'scripts/official_harness_smoke.py'
+      - 'examples/official-smoke/**'
+      - '.github/workflows/official-harness-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: official-harness-contract-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  official-harness-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install exact official harness and Parquet reader
+        run: >-
+          python -m pip install -e . pyarrow
+          "swebench @ git+https://github.com/SWE-bench/SWE-bench.git@02e7a74ffd0b707aab73d203fe87bdc7c76afc8e"
+      - name: Run one official container fixture (zero LLM calls, no model score)
+        run: python scripts/official_harness_smoke.py --test-timeout 900 --operation-timeout 1500
+      - name: Publish only fixture contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-harness-fixture-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runs/official-harness-fixture/summary.json
+            runs/official-harness-fixture/fixture.patch
+            runs/official-harness-fixture/reports/**/*.json
+            runs/official-harness-fixture/reports/**/patch.diff
+          if-no-files-found: warn
+          retention-days: 30

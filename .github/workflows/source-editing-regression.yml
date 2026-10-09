@@ -1,0 +1,67 @@
+name: source editing tools regression (single live 3B case)
+on:
+  push:
+    paths:
+      - '.github/workflows/source-editing-regression.yml'
+      - 'delivery_agent/file_environment.py'
+      - 'delivery_agent/cli.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: source-editing-regression-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source-editing-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OLLAMA_NO_CLOUD: '1'
+      NO_PROXY: 127.0.0.1,localhost
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the pinned agent runtime
+        run: python -m pip install -e ".[agent]"
+      - name: Install the verified fixed Ollama release locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$RUNNER_TEMP/ollama-v0.40.2.tar.zst"
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 600 \
+            https://github.com/ollama/ollama/releases/download/v0.40.2/ollama-linux-amd64.tar.zst \
+            --output "$package"
+          printf '%s  %s\n' 726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04 "$package" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/ollama-pin"
+          tar --zstd -xf "$package" -C "$RUNNER_TEMP/ollama-pin"
+      - name: Execute one real source editing attempt (16 steps, 1200-second agent budget)
+        run: >-
+          python scripts/ci_live_experiment.py
+          --ollama "${{ runner.temp }}/ollama-pin/bin/ollama"
+          --task examples/more-itertools-count-runs.json --profile recent
+          --model qwen2.5-coder:3b --label file-tools-v3 --max-steps 16
+          --output runs/source-regression --evidence runs/public-experiments
+      - name: Verify the saved patch in an independent Docker workspace
+        if: always() && hashFiles('runs/public-experiments/repository-ablation.json') != ''
+        run: >-
+          python scripts/grade_experiments.py
+          --manifest runs/public-experiments/repository-ablation.json
+          --output runs/public-experiments/verification.json
+          --pull-images
+      - name: Publish only safe experiment and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-editing-regression-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runs/public-experiments/ci-environment.json
+            runs/public-experiments/ci-infrastructure-failure.json
+            runs/public-experiments/repository-ablation.json
+            runs/public-experiments/model-runs/**/evidence.json
+            runs/public-experiments/model-runs/**/task.json
+            runs/public-experiments/model-runs/**/model.patch
+            runs/public-experiments/verification.json
+          if-no-files-found: warn
+          retention-days: 30

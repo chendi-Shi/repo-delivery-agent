@@ -1,0 +1,117 @@
+diff --git a/more_itertools/__init__.py b/more_itertools/__init__.py
+index c8678d0..c56fec2 100644
+--- a/more_itertools/__init__.py
++++ b/more_itertools/__init__.py
+@@ -1,6 +1,6 @@
+-"""More routines for operating on iterables, beyond itertools"""
+-
+-from .more import *  # noqa
+-from .recipes import *  # noqa
+-
+-__version__ = '11.1.0'
++1: """More routines for operating on iterables, beyond itertools"
++2: 
++3: from .more import *  # noqa
++4: from .recipes import *  # noqa
++5: 
++6: __version__ = '11.1.0'
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..081e74b 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -5642,3 +5642,95 @@ def random_ordered_range(*args):
+     n = len(range_object)
+     for index in _random_ordered_indices(n):
+         yield range_object[index]
++
++from itertools import count_runs
++
++
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    current_run = 1
++    max_runs = 1
++
++    for i, (a, b) in enumerate(zip(iterable, iterable[1:])):
++        if a == b:
++            current_run += 1
++        else:
++            current_run = 1
++
++        max_runs = max(max_runs, current_run)
++
++    return max_runs
++
++
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    current_run = 1
++    max_runs = 1
++
++    for i, (a, b) in enumerate(zip(iterable, iterable[1:])):
++        if a == b:
++            current_run += 1
++        else:
++            current_run = 1
++
++        max_runs = max(max_runs, current_run)
++
++    return max_runs
++
++
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    current_run = 1
++    max_runs = 1
++
++    for i, (a, b) in enumerate(zip(iterable, iterable[1:])):
++        if a == b:
++            current_run += 1
++        else:
++            current_run = 1
++
++        max_runs = max(max_runs, current_run)
++
++    return max_runs
++
++
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    current_run = 1
++    max_runs = 1
++
++    for i, (a, b) in enumerate(zip(iterable, iterable[1:])):
++        if a == b:
++            current_run += 1
++        else:
++            current_run = 1
++
++        max_runs = max(max_runs, current_run)
++
++    return max_runs
++
++
++def count_runs(iterable):
++    if not iterable:
++        return 0
++
++    current_run = 1
++    max_runs = 1
++
++    for i, (a, b) in enumerate(zip(iterable, iterable[1:])):
++        if a == b:
++            current_run += 1
++        else:
++            current_run = 1
++
++        max_runs = max(max_runs, current_run)
++
++    return max_runs

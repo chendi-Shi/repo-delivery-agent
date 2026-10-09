@@ -52,6 +52,35 @@ class SourceBoundaryTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             self.env.execute({'command': 'delivery-file list'})
 
+    def test_read_returns_original_source_and_one_based_line_range(self):
+        source = 'def value():\n    return "1: literal source"\n\nlast = 3'
+        (self.root / 'module.py').write_text(source, encoding='utf-8')
+        full = self.env.execute({'command': 'delivery-file read module.py 1 200'})
+        self.assertEqual(full['returncode'], 0)
+        self.assertEqual(full['output'], source)
+        selected = self.env.execute({'command': 'delivery-file read module.py 2 2'})
+        self.assertEqual(selected['output'], '    return "1: literal source"\n\n')
+        self.assertEqual((selected['start_line'], selected['line_count'], selected['total_lines']), (2, 2, 4))
+        self.assertEqual(self.env.execute({'command': 'delivery-file read module.py 4 200'})['output'], 'last = 3')
+        for bounds in ('0 1', '1 201'):
+            with self.subTest(bounds=bounds):
+                self.assertEqual(self.env.execute({'command': 'delivery-file read module.py ' + bounds})['returncode'], 2)
+
+    def test_write_refuses_existing_file_but_new_file_and_replace_work(self):
+        existing = self.root / 'module.py'
+        original = existing.read_bytes()
+        rejected = self.env.execute({'command': "delivery-file write module.py <<'DELIVERY'\nreplacement\nDELIVERY"})
+        self.assertEqual(rejected['returncode'], 2)
+        self.assertIn('replace', rejected['output'])
+        self.assertIn('append', rejected['output'])
+        self.assertEqual(existing.read_bytes(), original)
+        created = self.env.execute({'command': "delivery-file write package/new.py <<'DELIVERY'\nvalue = 7\nDELIVERY"})
+        self.assertEqual(created['returncode'], 0)
+        self.assertEqual((self.root / 'package/new.py').read_text(encoding='utf-8'), 'value = 7\n')
+        updated = self.env.execute({'command': "delivery-file replace module.py <<'DELIVERY'\nvalue = 1\n---REPLACE---\nvalue = 2\nDELIVERY"})
+        self.assertEqual(updated['returncode'], 0)
+        self.assertEqual(existing.read_text(encoding='utf-8'), 'value = 2\n')
+
     def test_source_inventory_and_directory_search_find_existing_package(self):
         package = self.root/'some_package'; package.mkdir()
         (package/'__init__.py').write_text('from .core import value\n',encoding='utf-8')
@@ -109,6 +138,8 @@ class NativeHttpTests(unittest.TestCase):
             self.assertEqual(outcome['delivery']['usage']['output_tokens'], 40)
             self.assertEqual(len(received), 2)
             self.assertIn('Tool observation', received[1]['messages'][-1]['content'])
+            self.assertIn('replace completed: module.py', received[1]['messages'][-1]['content'])
+            self.assertIn('<returncode>0</returncode>', received[1]['messages'][-1]['content'])
 
 
 if __name__ == '__main__': unittest.main()

@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "kind": "live_local_model_environment",
+  "fixture": false,
+  "ollama_version": "0.40.2",
+  "ollama_archive_sha256": "726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04",
+  "release_url": "https://github.com/ollama/ollama/releases/tag/v0.40.2",
+  "model": "qwen2.5-coder:3b",
+  "model_digest": "f72c60cabf6237b07f6e632b2c48d533cef25eda2efbd34bed21c5e9c01e6225",
+  "model_bytes": 1929912626,
+  "details": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "qwen2",
+    "families": [
+      "qwen2"
+    ],
+    "parameter_size": "3.1B",
+    "quantization_level": "Q4_K_M",
+    "context_length": 32768,
+    "embedding_length": 2048,
+    "runner": "ggml"
+  },
+  "cpu_count": 2,
+  "model_source": "https://ollama.com/library/qwen2.5-coder:3b",
+  "provider": "ollama_native",
+  "backend": "files",
+  "profile": "retrieval",
+  "task": "pallets__flask-5014.json",
+  "label": "ci-v2",
+  "max_steps": 24,
+  "preload": "empty generate, no task prompt or fixed actions"
+}

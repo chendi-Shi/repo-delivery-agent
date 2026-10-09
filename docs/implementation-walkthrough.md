@@ -121,6 +121,8 @@ files backend 把模型动作限定为来源目录内的读、搜索、写、追
 | response 已返回但进程崩溃 | 盲目重试造成重复调用/命令 | pending/result/commit checkpoint，已知结果回放 |
 | 旧 worker 晚到提交 | 覆盖新一代结果 | generation/token fencing 和 exact completion hash |
 | 只统计提交结果 | 未提交失败从分母消失 | predictions 另附全真实 attempts sidecar，报告两种分母 |
+| 读取的行号被复制进源码 | 第二轮真实补丁出现 `1:` 前缀，Python SyntaxError | files read 返回原始源码，范围信息单独记录，避免混入可复制内容 |
+| 用读取片段覆盖整个文件 | 第二轮将数千行模块和测试缩成十几行 | write 只创建新文件，已有文件使用精确 replace/append；拒绝操作不改变原文件 |
 | 官方 CLI 保留旧名字但内部已是 v5 | 旧数据字段不足而无法评分 | 固定数据 revision，私有来源保留 image/eval_script/log_parser/eval_type，公开输入去答案 |
 
 真实测试结果、后续 CI 修复和模型逐题记录见实验报告；这里不将“实现了处理分支”当成“所有运行环境都已验证”。

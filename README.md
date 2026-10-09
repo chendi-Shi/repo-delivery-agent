@@ -63,7 +63,7 @@ python -m delivery_agent run \
   --output runs/requests-source-01
 ```
 
-files backend 只允许 delivery-file list/read/search/write/append/replace，由 Python 解析受限文件操作，不运行模型生成的 shell/Python。测试由之后独立的 Docker verifier 或官方 grader 执行。
+files backend 只允许 delivery-file list/read/search/write/append/replace，由 Python 解析受限文件操作，不运行模型生成的 shell/Python。read 返回原始源码；write 只创建新文件，已有文件通过精确 replace 或 append 修改，防止用读取片段覆盖整个模块。测试由之后独立的 Docker verifier 或官方 grader 执行。
 
 云模型选择 --provider litellm 和 provider-prefixed model ID。--ollama-mode tools 使用原生函数调用；json 使用严格 command schema，适合缺少原生工具训练的本地模型。
 
@@ -167,13 +167,14 @@ grade-command 输出固定官方 harness 命令，不自动执行。独立评分
 
 ```bash
 python scripts/run_experiments.py --task examples/more-itertools-count-runs.json \
-  --output runs/live-ablation-01 --evidence experiments
-python scripts/grade_experiments.py --manifest experiments/repository-ablation.json \
+  --model ollama_chat/qwen2.5-coder:3b --label local-01 --max-steps 24 \
+  --output runs/live-ablation-01 --evidence experiments/local-ablation-01
+python scripts/grade_experiments.py --manifest experiments/local-ablation-01/repository-ablation.json \
   --output runs/repository-verification.json --pull-images
 python scripts/semantic_smoke.py
 ```
 
-公开检查与官方评分使用不同验收。当前模型结果/检查状态以 [experiments 报告](experiments) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions) 为准；未完成评分保留 pending/unknown，不据此宣称成功率提升。
+每次复跑使用新的 output、evidence 目录和 label；脚本拒绝覆盖已有 run ID。CI 固定模型和预算的复现入口见 [真实模型实验](docs/live-experiments.md)。两轮真实结果分别保存为 [1.5B](experiments/round-1-1_5b) 和 [3B](experiments/round-2-3b)，失败补丁也完整保留。公开检查与官方评分使用不同验收。当前模型结果/检查状态以 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions) 为准；未完成评分保留 pending/unknown，不据此宣称成功率提升。
 
 ## 产物与岗位对应
 

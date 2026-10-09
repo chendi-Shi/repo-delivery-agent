@@ -13,10 +13,10 @@ from pathlib import Path, PureWindowsPath
 
 FILE_GUIDE = """Use only these source-editing commands through bash:
 delivery-file list [relative-directory]
-delivery-file read relative-path [start-line] [line-count]
+delivery-file read relative-path [start-line 1-based] [line-count 1..200]
 delivery-file search 'literal query' [relative-path]
 delivery-file write relative-path <<'DELIVERY'
-full new file text
+full text for a NEW file only
 DELIVERY
 delivery-file append relative-path <<'DELIVERY'
 additional file text
@@ -26,7 +26,11 @@ exact old text
 ---REPLACE---
 new text
 DELIVERY
-One command per call. Replacement must match exactly once. Never edit .git or escape
+Read returns the original selected source text, without added line numbers. It is a
+partial view: never use a read fragment to overwrite a whole existing file.
+Write only creates a new file and refuses existing paths. To edit an existing file,
+use replace with an old fragment that matches exactly once, or append new text.
+One command per call. Never edit .git or escape
 the workspace. Shell/python/test commands are unavailable; independent tests run later
 in Docker. To submit use exactly: echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT
 Locate existing package modules and their exports before editing. Extend the existing
@@ -111,6 +115,7 @@ class FileEnvironment:
             from minisweagent.exceptions import Submitted
             raise Submitted({"role": "exit", "content": "", "extra": {"exit_status": "Submitted", "submission": ""}})
         try:
+            metadata = {}
             edit = re.fullmatch(r"delivery-file (write|append|replace) ([^\s]+) <<'([A-Za-z][A-Za-z0-9_]*)'\n(.*)\n\3\s*", command, re.S)
             if edit:
                 operation, name, _, body = edit.groups()
@@ -124,11 +129,16 @@ class FileEnvironment:
                 elif operation == "append":
                     text = self._read(path) + body + "\n"
                 else:
+                    if path.exists():
+                        raise ValueError("Write only creates new files; this path already exists. Use replace with an exact old fragment or append to edit it")
                     text = body + "\n"
                 if len(text.encode()) > 2 * 1024 * 1024:
                     raise ValueError("Source file exceeds 2 MiB")
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(text, encoding="utf-8", newline="\n")
+                # Exclusive creation also protects a path that appeared after
+                # the existence check; existing-file edits keep their contract.
+                with path.open("x" if operation == "write" else "w", encoding="utf-8", newline="\n") as stream:
+                    stream.write(text)
                 output = f"{operation} completed: {name}"
             else:
                 tokens = shlex.split(command)
@@ -140,11 +150,14 @@ class FileEnvironment:
                     output = "\n".join(sorted(p.name + ("/" if p.is_dir() else "") for p in directory.iterdir()
                                                if p.name.casefold() != ".git" and not p.is_symlink())[:200])
                 elif operation == "read" and len(tokens) in (3, 4, 5):
-                    lines = self._read(self._path(tokens[2])).splitlines()
+                    lines = self._read(self._path(tokens[2])).splitlines(keepends=True)
                     start, count = int(tokens[3]) if len(tokens) > 3 else 1, int(tokens[4]) if len(tokens) > 4 else 60
                     if start < 1 or not 1 <= count <= 200:
                         raise ValueError("Read bounds are 1-based and at most 200 lines")
-                    output = "\n".join(f"{i+1}: {line}" for i, line in enumerate(lines[start-1:start-1+count], start-1))
+                    selected = lines[start-1:start-1+count]
+                    output = "".join(selected)
+                    metadata = {"source_path": tokens[2], "start_line": start,
+                                "line_count": len(selected), "total_lines": len(lines)}
                 elif operation == "search" and len(tokens) in (3, 4):
                     query = tokens[2]
                     if not query or len(query) > 200:
@@ -168,7 +181,7 @@ class FileEnvironment:
                     output = "\n".join(hits)
                 else:
                     raise ValueError("Invalid delivery-file operation")
-            return {"output": output[:16000], "returncode": 0, "exception_info": ""}
+            return {"output": output[:16000], "returncode": 0, "exception_info": "", **metadata}
         except (ValueError, OSError, UnicodeError, IndexError) as exc:
             return {"output": str(exc), "returncode": 2, "exception_info": type(exc).__name__}
 

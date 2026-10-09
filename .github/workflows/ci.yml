@@ -41,11 +41,11 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -e .
-        if: ${{ hashFiles('experiments/repository-ablation.json') != '' }}
-      - run: python scripts/grade_experiments.py --pull-images --output runs/repository-verification.json
-        if: ${{ hashFiles('experiments/repository-ablation.json') != '' }}
+        if: ${{ hashFiles('experiments/round-2-3b/repository-ablation.json') != '' }}
+      - run: python scripts/grade_experiments.py --manifest experiments/round-2-3b/repository-ablation.json --pull-images --output runs/repository-verification.json
+        if: ${{ hashFiles('experiments/round-2-3b/repository-ablation.json') != '' }}
       - uses: actions/upload-artifact@v4
-        if: ${{ always() && hashFiles('experiments/repository-ablation.json') != '' }}
+        if: ${{ always() && hashFiles('experiments/round-2-3b/repository-ablation.json') != '' }}
         with:
           name: real-model-public-check-verification
           path: runs/repository-verification.json
