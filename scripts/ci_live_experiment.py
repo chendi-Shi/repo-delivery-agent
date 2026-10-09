@@ -46,12 +46,8 @@ def main(argv=None):
             return json.loads(raw)
 
     # Never borrow or terminate an unrelated service on this machine.
-    probe = socket.socket()
-    try:
-        probe.bind(("127.0.0.1", 11434))
-    finally:
-        probe.close()
     environment = {**os.environ, "OLLAMA_HOST": "127.0.0.1:11434", "OLLAMA_NO_CLOUD": "1",
+                   "OLLAMA_MODELS": str(Path(os.environ.get("RUNNER_TEMP", str(Path(args.output).resolve().parent))) / "ollama-models"),
                    "OLLAMA_NUM_PARALLEL": "1", "OLLAMA_MAX_LOADED_MODELS": "1",
                    "OLLAMA_KEEP_ALIVE": "20m", "OLLAMA_CONTEXT_LENGTH": "12000",
                    "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"}
@@ -62,6 +58,11 @@ def main(argv=None):
     daemon = None
     with private_logs.open("wb") as log:
         try:
+            probe = socket.socket()
+            try:
+                probe.bind(("127.0.0.1", 11434))
+            finally:
+                probe.close()
             daemon = subprocess.Popen([str(binary), "serve"], stdout=log, stderr=subprocess.STDOUT,
                                       env=environment, start_new_session=True)
             deadline = time.monotonic() + 120
@@ -114,11 +115,17 @@ def main(argv=None):
             if daemon is not None and daemon.poll() is None:
                 # This process created this session; the group contains only its
                 # daemon/model children. Never use pkill or stop a system service.
-                os.killpg(daemon.pid, signal.SIGTERM)
+                try:
+                    os.killpg(daemon.pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
                 try:
                     daemon.wait(timeout=15)
                 except subprocess.TimeoutExpired:
-                    os.killpg(daemon.pid, signal.SIGKILL)
+                    try:
+                        os.killpg(daemon.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
                     daemon.wait(timeout=5)
     return 0
 

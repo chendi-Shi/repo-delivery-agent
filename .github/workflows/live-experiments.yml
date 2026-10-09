@@ -43,7 +43,6 @@ jobs:
             task: examples/official-smoke/psf__requests-2931.json
             profile: retrieval
     env:
-      OLLAMA_MODELS: ${{ runner.temp }}/ollama-models
       OLLAMA_NO_CLOUD: '1'
       NO_PROXY: 127.0.0.1,localhost
     steps:

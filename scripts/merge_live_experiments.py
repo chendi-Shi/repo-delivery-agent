@@ -22,11 +22,16 @@ def merge(shards, output, *, expected_runs=6):
         raise ValueError("Missing experiment shard manifest")
     output.mkdir(parents=True)
     plan = {"schema": 1, "kind": "real_model_repository_ablation", "runs": [], "limitations": []}
-    seen = set()
+    seen, identities = set(), set()
     for manifest in manifests:
         loaded = load_plan(manifest)
         if len(loaded) != 1:
             raise ValueError("Each shard must contain exactly one actual attempt")
+        evidence = loaded[0]["evidence"]
+        if evidence["model_digest"]:
+            identities.add((evidence["model_name"], evidence["model_digest"]))
+        if len(identities) > 1:
+            raise ValueError("Live model identities differ across experiment shards")
         original = json.loads(manifest.read_text(encoding="utf-8"))
         for value in original.get("limitations", []):
             if value not in plan["limitations"]:
