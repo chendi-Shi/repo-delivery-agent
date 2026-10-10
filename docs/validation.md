@@ -2,9 +2,21 @@
 
 验证日期：2026-10-10。这里分别记录实现契约、真实容器、真实模型、公开检查和官方评分。CI job 成功表示流程执行成功，不能替代模型交付成功。
 
+## 已完成的真实模型交付
+
+Codex 第四轮已跑通完整链路：冻结的 Requests 需求 → 真实模型修改源码和测试 → Submitted → 新 checkout 与独立 Docker 公开检查 → 固定官方 SWE-bench 评分。模型使用 `gpt-6-astra`，记录 20 次 CLI 调用、350,416 / 1,312 输入/输出 tokens、254.041 秒；原始 [summary](../experiments/codex-cli-proof-v4/summary.json) 保留推理结束时的验收未知状态，后续验收另存，未回写原始记录。
+
+- [独立公开验收](../experiments/codex-cli-proof-v4-verification/codex-cli-proof-v4-verification.json)：1 次尝试、1 次提交、1 次成功，文本/表单兼容与二进制请求体检查均通过。
+- [官方评分](../experiments/codex-cli-proof-v4-official/summary.json)：`psf__requests-2931` 为 `resolved=true`，评估完整，无基础设施或歧义失败。harness 为固定 v5.0.2 源码；预测、实际原始补丁和评分记录的 patch SHA256 均为 `7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28`。
+- [工程 CI](../experiments/ci-checkpoint-rename/validation.json)：源码 `758d1e5` 在 Linux / Windows 各通过 321 项测试，0 skip，实际用时分别 35.747 / 120.816 秒；真实 Docker 执行与恢复也通过。
+
+这是单题 smoke 的一次成功验收，不是 Verified 全集成绩。四轮 Codex 迭代中，前三轮均未提交：v1 为未确定原因的 PermissionError；v2 为 24 步只读循环；v3 已生成局部补丁，但 checkpoint 原子替换遇到 WinError 5 后中断。v3 的公开检查虽通过，未提交仍不计交付成功。v4 修复有限 rename 重试后提交并经官方验证。不同轮次改变了 profile、预算或实现，不能当作单变量策略对照。详见 [案例讲解](real-delivery-case.md)、[闭环收据](../experiments/codex-cli-proof-v4/closure.json)。
+
+第二轮知识迁移队列也已结束。源任务真实运行 16 次请求、74,183 / 215 tokens、3,629.642 秒后 TimeExceeded，内部与独立公开检查失败，未生成 verified 知识。该版本工作流按预设来源门禁跳过全部十个目标，汇总保留十项未知、`complete=false` 并返回 1；没有 Python 汇总异常。源阶段 job 成功仅表示流程结束。原始产物与解释见 [队列分析](../experiments/closure-cohort-v2/analysis.json)，不能据此报告知识库成功率或节省比例。
+
 ## Codex 适配与真实尝试
 
-源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 已通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。四个 job 的源码 SHA 均已核对，见 [收据](../experiments/ci-codex-adapter/validation.json)。
+此前源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。四个 job 的源码 SHA 均已核对，见 [收据](../experiments/ci-codex-adapter/validation.json)。后续 060c1b9 的两端各 318 项记录见 [profile 配置 CI](../experiments/ci-codex-profiles/validation.json)，最新源码验证为本文开头的 321 项。
 
 首个 Codex 真实尝试在一次成功目录读取后发生 PermissionError，保留实际用量、空补丁和失败状态；原因尚未确定，见 [首轮分析](../experiments/codex-cli-proof-v1/analysis.md)。每轮使用独立目录，后续重跑不能覆盖首轮失败。公开检查和官方评分各自保留验收结果，提交状态不能替代它们。
 
@@ -12,7 +24,7 @@
 
 ## 新增 Docker 交付验证
 
-最新 [0fcd3a2 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 已通过 Linux 290 项（32.537 秒）、Windows 290 项（99.273 秒），均无 skip；真实 Docker 执行与进程崩溃恢复、既有模型补丁的独立 verifier job 同时通过。四个 job 的 checkout SHA 均匹配 `0fcd3a2490279ada546fdd6918b23d743a7b3e45`，实际日志计数和来源见 [恢复与证据校验 CI 收据](../experiments/ci-closure-recovery/validation.json)。截至 2026-10-10 11:11（北京时间），[单任务模型试验 38019441864](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 仍在推理，[固定队列 38019441857](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行来源任务，尚无本轮交付结论。
+该阶段 [0fcd3a2 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 通过 Linux 290 项（32.537 秒）、Windows 290 项（99.273 秒），均无 skip；真实 Docker 执行与进程崩溃恢复、既有模型补丁的独立 verifier job 同时通过。四个 job 的 checkout SHA 均匹配 `0fcd3a2490279ada546fdd6918b23d743a7b3e45`，实际日志计数和来源见 [恢复与证据校验 CI 收据](../experiments/ci-closure-recovery/validation.json)。该提交的 [单任务模型试验 38019441864](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 和 [固定队列 38019441857](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 均已结束，结果分别见本文第三次 7B 试验和第二轮知识迁移队列记录。
 
 此前 [5ee0e9a 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017726472) 通过 Linux 271 项（32.067 秒）、Windows 271 项（84.719 秒），均无 skip；真实 Docker 与独立 verifier job 也通过。此前 a662b2b 的 Windows 267 项中有一项临时目录短路径别名错误，Linux 同批 267 项通过；该原始失败保留在 [CI 记录](../experiments/ci-closure-cohort-initial/validation.json)。修复统一了根目录与子路径的规范化，并加入真实 Windows 短路径回归。
 

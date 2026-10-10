@@ -1,0 +1,475 @@
+{
+  "schema": 1,
+  "kind": "single_case_delivery_closure",
+  "fixture": false,
+  "singlecase": true,
+  "status": "closed",
+  "instance_id": "psf__requests-2931",
+  "source_commit": "758d1e536b7961f838ac607abb047c041bb0b142",
+  "publication_commit": "d055ba804ed5bbaad65c1b13f317566e9a4e85dc",
+  "closure_definition": "A real model produced and submitted a nonempty patch for the frozen public issue; a fresh independent Docker checkout passed all frozen public checks; the pinned official harness graded the same patch resolved.",
+  "result": {
+    "submitted": true,
+    "patch_valid": true,
+    "independent_public_checks_passed": true,
+    "official_resolved": true,
+    "delivery_success": true,
+    "complete": true
+  },
+  "task": {
+    "repo": "psf/requests",
+    "base_commit": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
+    "public_task_file_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+    "task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+    "task_artifact": {
+      "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/task.json",
+      "sha256": "5a3716d8125bfc7e449a227eb23fcd58e5c3ab22b2db4e5a4f51bb93faeb18b0"
+    },
+    "original_public_issue_fields_unchanged": true
+  },
+  "source": {
+    "tracked_tree_clean_at_run": true,
+    "implementation_sha256_reported": "ca1d39a141a43b6b951894ee29d7aa7f0f968719311f2d3bce27c25991f2ce01",
+    "source_file_sha256": {
+      "delivery_agent/checkpoint.py": "9cd750040451b6a3401b5a68d0d45b48ad4b0d22e9a59b189917e00787655e71",
+      "delivery_agent/codex_model.py": "44950d95d549c0a966f0b64bf6cb432dc544368579bbd83e6046fa32ccd94da5",
+      "scripts/run_codex_trial.py": "a801873cee6b49a48d6cac055fc3a3e924cbbda327f985d326dce5dccc6980e6",
+      "examples/delivery-suite-v1/requests-2931-public.json": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499"
+    },
+    "source_file_hash_scope": "Bytes read from Git objects at source_commit.",
+    "publication_file_sha256": {
+      ".github/workflows/official-smoke.yml": "abfad5bc02a7b991b49029663d46853fe094db91b69995436a16667e0e284713",
+      ".github/workflows/codex-delivery-verification.yml": "52d14e31e4b08de8fdae7de5a3ec4d7e54ba5b4daed173c32d5bdbed078df8e3",
+      "scripts/official_smoke_grade.py": "61d5ff6b40f93b1f0bbbf510756b199d8bf4827566bc888d104287b4acd5e975",
+      "scripts/grade_experiments.py": "39f557fcc4b7165436c5d40c4a95a0ed6e7455187c779ed922ecf4d4dd6af6f9",
+      "experiments/official-predictions.jsonl": "5cb8f1b9256e51ac3a17d8dbba0fab9919d843f0c982645711bafe9b72bfd93b",
+      "experiments/official-predictions.jsonl.attempts.json": "63ff119ae34fdc55e95ffb4ec4f75236c3a64a4bf7d346f18bbf487f7a82d9e4"
+    },
+    "publication_file_hash_scope": "Bytes read from Git objects at publication_commit.",
+    "original_nine_outputs_match_publication_commit_bytes": true
+  },
+  "model": {
+    "provider": "codex_cli",
+    "name": "gpt-6-astra",
+    "identity": {
+      "cli_version": "codex-cli 0.154.0",
+      "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+      "weight_digest_available": false,
+      "reasoning_effort": "low"
+    },
+    "profile": "baseline",
+    "selected_context_byte_budget": 64000,
+    "weight_pinning_available": false,
+    "sampling_seed_enforced": false,
+    "generation_token_cap_enforced": false,
+    "cli_prompt_overhead_outside_selected_budget": true
+  },
+  "measured_v4": {
+    "attempted_count": 1,
+    "model_calls": 20,
+    "model_call_unit": "cli_invocations",
+    "underlying_transport_request_count": null,
+    "usage": {
+      "complete": true,
+      "input_tokens": 350416,
+      "output_tokens": 1312,
+      "calls_with_usage": 20,
+      "unknown_requests": 0
+    },
+    "seconds": 254.04139209999994,
+    "usage_scope": "CLI-reported completed turns; internal transport retries may have unreported usage.",
+    "cost_source": "chatgpt_plan_unpriced",
+    "reported_monetary_total": null,
+    "monetary_cost_complete": false
+  },
+  "submitted_patch": {
+    "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/model.patch",
+    "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+    "bytes": 2583,
+    "changed_files": [
+      "requests/models.py",
+      "test_requests.py"
+    ],
+    "model_generated": true,
+    "manually_edited_after_run": false
+  },
+  "public_verification": {
+    "status": "passed",
+    "delivery_success": true,
+    "checks_passed": 2,
+    "checks_total": 2,
+    "infrastructure_failures": 0,
+    "report": {
+      "path": "../codex-cli-proof-v4-verification/codex-cli-proof-v4-verification.json",
+      "sha256": "34784ab901e7c9442fa9aacd34276549e6115dbd4ba8290e4072505ba63f22f0"
+    },
+    "workflow_run_id": 38023235959,
+    "artifact_id": 11659755110,
+    "manifest": {
+      "path": "repository-ablation.json",
+      "sha256": "e6e8dd53462ba280d0bad1fbacd03b11a4e9848c9ca25146f7f04b809f904fb5"
+    },
+    "resolved_image_id": "sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed17f45ee3",
+    "task_hash_matches": true,
+    "evidence_hash_matches": true,
+    "patch_hash_matches": true,
+    "model_identity_matches": true,
+    "complete_frozen_check_command_list_matches": true,
+    "all_public_check_returncodes_zero": true,
+    "all_public_check_passed_flags_true": true,
+    "workflow": {
+      "repository_path": ".github/workflows/codex-delivery-verification.yml",
+      "commit": "d055ba804ed5bbaad65c1b13f317566e9a4e85dc",
+      "workflow_sha256": "52d14e31e4b08de8fdae7de5a3ec4d7e54ba5b4daed173c32d5bdbed078df8e3",
+      "run_id": 38023235959,
+      "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38023235959",
+      "artifact_id": 11659755110,
+      "artifact_archive_sha256": "4bc163af93c7a349410a66d1439562aec0bfa403f8020d8847affb111a8e1bcc",
+      "archive_bytes_sha256_verified": true,
+      "all_extracted_file_bytes_match_archive": true,
+      "provenance": {
+        "path": "../codex-cli-proof-v4-verification/artifact-provenance.json",
+        "sha256": "0fb15ec8751f0f979429f72e3e60db46b4085512f1e08f0c5b7e56e3adcb31a1"
+      }
+    }
+  },
+  "official_verification": {
+    "status": "resolved",
+    "resolved": true,
+    "attempted_count": 1,
+    "evaluated_count": 1,
+    "resolved_count": 1,
+    "infrastructure_failures": 0,
+    "summary": {
+      "path": "../codex-cli-proof-v4-official/summary.json",
+      "sha256": "edb5d3a88680885b06e54ebc4f2e48b0a97b7ce62544df2b6369be359858dece"
+    },
+    "report": {
+      "path": "../codex-cli-proof-v4-official/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/report.json",
+      "sha256": "8a14505109641d92c9ffaace4d1adbc3f9c7240520f41e07dbd912321fa0c7a6"
+    },
+    "patch": {
+      "path": "../codex-cli-proof-v4-official/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/patch.diff",
+      "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28"
+    },
+    "report_provenance": {
+      "path": "../codex-cli-proof-v4-official/reports/report-provenance.json",
+      "sha256": "234e6545cc1a103a1a039f1e96db49f5f745d92d979c7b41b4f76a820b0f7410"
+    },
+    "workflow_run_id": 38023235934,
+    "artifact_id": 11659285364,
+    "predictions": {
+      "path": "official-predictions.jsonl",
+      "sha256": "5cb8f1b9256e51ac3a17d8dbba0fab9919d843f0c982645711bafe9b72bfd93b"
+    },
+    "attempts": {
+      "path": "official-predictions.jsonl.attempts.json",
+      "sha256": "63ff119ae34fdc55e95ffb4ec4f75236c3a64a4bf7d346f18bbf487f7a82d9e4"
+    },
+    "workflow_inputs_match_v4_exports_bytes": true,
+    "predictions_hash_matches_summary": true,
+    "logged_patch_matches_v4_and_prediction_bytes": true,
+    "report_resolved_matches_summary": true,
+    "exported_report_fields_match_provenance": true,
+    "private_original_report_sha256_attested": "3f0d54a1d11a455c92d273b927b72b708027250bc38ac8d3f21c6d489fa3b3ba",
+    "private_original_report_bytes_available": false,
+    "private_original_report_hash_independently_recomputed": false,
+    "private_original_report_hash_scope": "Recorded by the trusted grader before safe report field filtering; the exported report has its own independently verified file hash.",
+    "dataset": {
+      "dataset": "SWE-bench/SWE-bench_Verified",
+      "revision": "03e151cf5560b1af6a4363c6a9d766deaaea6b56",
+      "parquet_sha256": "bb5b123d29ce70107cc0951cf444894241c570a11d76aec452332c65b01e06d8"
+    },
+    "harness": {
+      "commit": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+      "distribution_version": "5.0.2",
+      "run_evaluation_sha256": "04b5dab584fbe62ae9d1ff025edf52d714e584102d587c7e647805d1efb37d84",
+      "python_version": "3.12.15",
+      "pyarrow_version": "26.0.0",
+      "run_log_root": "logs/evaluation"
+    },
+    "image": {
+      "instance_id": "psf__requests-2931",
+      "exit_code": 0,
+      "stop_reason": null,
+      "elapsed_seconds": 72.012535768,
+      "image_id": "sha256:d169b644e994bc20c0d77719b008e34fdd9afab2c211d7f52e27a578e692c75b",
+      "repo_digests": [
+        "swebench/sweb.eval.x86_64.psf_1776_requests-2931@sha256:705258c23c73d25bc78ed6fa4b14836078d848a64ab9c3ea3032d1d523d7cca4"
+      ]
+    },
+    "workflow": {
+      "repository_path": ".github/workflows/official-smoke.yml",
+      "commit": "d055ba804ed5bbaad65c1b13f317566e9a4e85dc",
+      "workflow_sha256": "abfad5bc02a7b991b49029663d46853fe094db91b69995436a16667e0e284713",
+      "run_id": 38023235934,
+      "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38023235934",
+      "artifact_id": 11659285364,
+      "artifact_archive_sha256": "3153341affbede931545cd0247ef9a99080f569764cfba078fedcf8518837f28",
+      "archive_bytes_sha256_verified": true,
+      "all_extracted_file_bytes_match_archive": true,
+      "provenance": {
+        "path": "../codex-cli-proof-v4-official/artifact-provenance.json",
+        "sha256": "e0ef85385caaffccd8fdd3fcf613d7c1e6c05a84cc5bf3a34fec53e93d0d9839"
+      }
+    }
+  },
+  "checkpoint_recovery": {
+    "observed_handled_permission_exceptions": 1,
+    "errno": 13,
+    "winerror": 5,
+    "module_file": "checkpoint.py",
+    "function": "_replace_checkpoint",
+    "diagnostics": {
+      "path": "permission-diagnostics.json",
+      "sha256": "605c08572f41875eb02955057fb1a8964965ff2413ddf0bb6d0e86227b7b4245"
+    },
+    "retry_scope": "The same fsynced temporary file rename only; no model or tool replay.",
+    "terminal_permission_error": false,
+    "underlying_lock_owner_known": false
+  },
+  "engineering_retry_history": {
+    "unique_instance_count": 1,
+    "round_count": 4,
+    "successful_submission_round": 4,
+    "previous_unsuccessful_rounds_retained": true,
+    "rounds": [
+      {
+        "round": 1,
+        "label": "codex-cli-proof-v1",
+        "source_commit": "564d8e36fc510896c791f09457cc01775572603d",
+        "profile": "recent",
+        "selected_context_byte_budget": 32000,
+        "model_calls": 1,
+        "model_call_unit": "cli_invocations",
+        "usage": {
+          "complete": true,
+          "input_tokens": 10995,
+          "output_tokens": 17,
+          "calls_with_usage": 1,
+          "unknown_requests": 0
+        },
+        "seconds": 66.45785550000437,
+        "model_status": "failed",
+        "exit_status": null,
+        "error_type": "PermissionError",
+        "submitted": false,
+        "patch_bytes": 0,
+        "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "official_evaluated_in_this_grading_run": false,
+        "official_resolved": null,
+        "summary": {
+          "path": "../codex-cli-proof-v1/summary.json",
+          "sha256": "8df6b62ac2fa3731d880d12fbf61944d020be43b125d47e594744a32f2889e38"
+        },
+        "evidence": {
+          "path": "../codex-cli-proof-v1/model-runs/psf__requests-2931-recent-codex-cli-proof-v1/evidence.json",
+          "sha256": "662b3df733ae4ca0434c500a75f7ff2ce7d38c8b69663d8f2ed660e982e70f2f"
+        },
+        "patch": {
+          "path": "../codex-cli-proof-v1/model-runs/psf__requests-2931-recent-codex-cli-proof-v1/model.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "round": 2,
+        "label": "codex-cli-proof-v2",
+        "source_commit": "564d8e36fc510896c791f09457cc01775572603d",
+        "profile": "recent",
+        "selected_context_byte_budget": 32000,
+        "model_calls": 24,
+        "model_call_unit": "cli_invocations",
+        "usage": {
+          "complete": true,
+          "input_tokens": 301010,
+          "output_tokens": 543,
+          "calls_with_usage": 24,
+          "unknown_requests": 0
+        },
+        "seconds": 357.88484950001293,
+        "model_status": "stopped",
+        "exit_status": "LimitsExceeded",
+        "error_type": null,
+        "submitted": false,
+        "patch_bytes": 0,
+        "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "official_evaluated_in_this_grading_run": false,
+        "official_resolved": null,
+        "summary": {
+          "path": "../codex-cli-proof-v2/summary.json",
+          "sha256": "8cda34204753797d271f652c34e9788f5d6429ee9e1753dc627c0d215f44838b"
+        },
+        "evidence": {
+          "path": "../codex-cli-proof-v2/model-runs/psf__requests-2931-recent-codex-cli-proof-v2/evidence.json",
+          "sha256": "2c25ee4151bb24ff79136a2546b6603106bc8876052ba5e8aefb70da0899be9b"
+        },
+        "patch": {
+          "path": "../codex-cli-proof-v2/model-runs/psf__requests-2931-recent-codex-cli-proof-v2/model.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      {
+        "round": 3,
+        "label": "codex-cli-proof-v3",
+        "source_commit": "060c1b92cbecc6d0bb0432d6009473e2435184dc",
+        "profile": "baseline",
+        "selected_context_byte_budget": 64000,
+        "model_calls": 11,
+        "model_call_unit": "cli_invocations",
+        "usage": {
+          "complete": true,
+          "input_tokens": 158277,
+          "output_tokens": 460,
+          "calls_with_usage": 11,
+          "unknown_requests": 0
+        },
+        "seconds": 211.237069099996,
+        "model_status": "failed",
+        "exit_status": null,
+        "error_type": "PermissionError",
+        "submitted": false,
+        "patch_bytes": 417,
+        "patch_sha256": "e103a13cef39cb5d6de671ca23d6e7f102bb540c86a88bf8043ece3c14c6182c",
+        "official_evaluated_in_this_grading_run": false,
+        "official_resolved": null,
+        "summary": {
+          "path": "../codex-cli-proof-v3/summary.json",
+          "sha256": "bad27ca58303591e46b42c007f37a512a0d4f70eb43662b0efe9af707af0bf90"
+        },
+        "evidence": {
+          "path": "../codex-cli-proof-v3/model-runs/psf__requests-2931-baseline-codex-cli-proof-v3/evidence.json",
+          "sha256": "c6440ad5b9cdb5295eb7b5b1f39aaa0ebb8dbae8c402b0c0fa0ed2676a7cf651"
+        },
+        "patch": {
+          "path": "../codex-cli-proof-v3/model-runs/psf__requests-2931-baseline-codex-cli-proof-v3/model.patch",
+          "sha256": "e103a13cef39cb5d6de671ca23d6e7f102bb540c86a88bf8043ece3c14c6182c"
+        }
+      },
+      {
+        "round": 4,
+        "label": "codex-cli-proof-v4",
+        "source_commit": "758d1e536b7961f838ac607abb047c041bb0b142",
+        "profile": "baseline",
+        "selected_context_byte_budget": 64000,
+        "model_calls": 20,
+        "model_call_unit": "cli_invocations",
+        "usage": {
+          "complete": true,
+          "input_tokens": 350416,
+          "output_tokens": 1312,
+          "calls_with_usage": 20,
+          "unknown_requests": 0
+        },
+        "seconds": 254.04139209999994,
+        "model_status": "submitted",
+        "exit_status": "Submitted",
+        "error_type": null,
+        "submitted": true,
+        "patch_bytes": 2583,
+        "patch_sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+        "official_evaluated_in_this_grading_run": true,
+        "official_resolved": true,
+        "summary": {
+          "path": "summary.json",
+          "sha256": "cf8fafaae23aa90814be1f52e8ed4b68d8af6c55d2b7b87ef49c93ae43db218b"
+        },
+        "evidence": {
+          "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/evidence.json",
+          "sha256": "04d98a4f7da68a89d62dcce004876df40db9a4ddf14cbf98db9e92e6e8ebe5e6"
+        },
+        "patch": {
+          "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/model.patch",
+          "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28"
+        }
+      }
+    ],
+    "total_recorded_model_calls": 56,
+    "total_recorded_input_tokens": 820698,
+    "total_recorded_output_tokens": 2332,
+    "official_grader_denominator_for_bound_v4_run": 1,
+    "boundary": "Four sequential engineering rounds on the same known issue, with retained failures and configuration/code changes. The official 1/1 result grades only the v4 submission and is not a first-attempt or general benchmark success rate."
+  },
+  "original_v4_outputs": [
+    {
+      "path": "summary.json",
+      "sha256": "cf8fafaae23aa90814be1f52e8ed4b68d8af6c55d2b7b87ef49c93ae43db218b"
+    },
+    {
+      "path": "repository-ablation.json",
+      "sha256": "e6e8dd53462ba280d0bad1fbacd03b11a4e9848c9ca25146f7f04b809f904fb5"
+    },
+    {
+      "path": "official-export.json",
+      "sha256": "0c2148c8691102170ee3c1dcc3ae4fc362e20e46629979cc4ef9a8ba2fed64b2"
+    },
+    {
+      "path": "official-predictions.jsonl",
+      "sha256": "5cb8f1b9256e51ac3a17d8dbba0fab9919d843f0c982645711bafe9b72bfd93b"
+    },
+    {
+      "path": "official-predictions.jsonl.attempts.json",
+      "sha256": "63ff119ae34fdc55e95ffb4ec4f75236c3a64a4bf7d346f18bbf487f7a82d9e4"
+    },
+    {
+      "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/task.json",
+      "sha256": "5a3716d8125bfc7e449a227eb23fcd58e5c3ab22b2db4e5a4f51bb93faeb18b0"
+    },
+    {
+      "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/evidence.json",
+      "sha256": "04d98a4f7da68a89d62dcce004876df40db9a4ddf14cbf98db9e92e6e8ebe5e6"
+    },
+    {
+      "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/model.patch",
+      "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28"
+    },
+    {
+      "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/action-audit.jsonl",
+      "sha256": "2b842a41ae0bfe68a3cc6a1f7321d1af2196c7644c3f4f3fc5cae1ed737a3eb5"
+    }
+  ],
+  "grading_artifact_files": [
+    {
+      "path": "../codex-cli-proof-v4-official/artifact-provenance.json",
+      "sha256": "e0ef85385caaffccd8fdd3fcf613d7c1e6c05a84cc5bf3a34fec53e93d0d9839"
+    },
+    {
+      "path": "../codex-cli-proof-v4-official/events.jsonl",
+      "sha256": "e8f945478d1c600793556b97700aa184288713e30891f0ef7a46b7893c99efff"
+    },
+    {
+      "path": "../codex-cli-proof-v4-official/summary.json",
+      "sha256": "edb5d3a88680885b06e54ebc4f2e48b0a97b7ce62544df2b6369be359858dece"
+    },
+    {
+      "path": "../codex-cli-proof-v4-official/reports/report-provenance.json",
+      "sha256": "234e6545cc1a103a1a039f1e96db49f5f745d92d979c7b41b4f76a820b0f7410"
+    },
+    {
+      "path": "../codex-cli-proof-v4-official/reports/results.json",
+      "sha256": "4b9fad49262a631377bfaefe8815153c7f308c17adb5712faa862aff31755430"
+    },
+    {
+      "path": "../codex-cli-proof-v4-official/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/patch.diff",
+      "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28"
+    },
+    {
+      "path": "../codex-cli-proof-v4-official/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/report.json",
+      "sha256": "8a14505109641d92c9ffaace4d1adbc3f9c7240520f41e07dbd912321fa0c7a6"
+    },
+    {
+      "path": "../codex-cli-proof-v4-verification/artifact-provenance.json",
+      "sha256": "0fb15ec8751f0f979429f72e3e60db46b4085512f1e08f0c5b7e56e3adcb31a1"
+    },
+    {
+      "path": "../codex-cli-proof-v4-verification/codex-cli-proof-v4-verification.json",
+      "sha256": "34784ab901e7c9442fa9aacd34276549e6115dbd4ba8290e4072505ba63f22f0"
+    }
+  ],
+  "scope_limits": [
+    "One selected issue; not the full 500-instance SWE-bench Verified benchmark.",
+    "v2 to v4 changes recent/32000 to baseline/64000 and checkpoint retry code; the result does not isolate a causal context-policy improvement.",
+    "The agent used a source-only backend. Public and official tests ran in separate verifier jobs, after submission.",
+    "The exported official report deliberately omits gold and per-test details; no claim is made that every model-added test function was executed.",
+    "This receipt demonstrates single-case delivery closure, not production readiness, a general success-rate estimate, or cross-task knowledge-reuse effectiveness."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "model": {
+    "name": "qwen3:4b-instruct",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "size": 2497293803,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560,
+      "runner": "ggml"
+    }
+  },
+  "hardware": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "total_memory_bytes": 8323969024,
+    "agent_container_cpus": 2,
+    "agent_container_memory": "1g"
+  },
+  "ollama_version": "0.40.2",
+  "ollama_archive_sha256": "726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04",
+  "image": {
+    "public_base_reference": "python:3.12-slim",
+    "public_base_digest": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+    "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+    "inference_image_id": "sha256:29b4feb666dbefe9dd582a55d245fb3e9884dc918e6918f39e32a3093ea0d3cd",
+    "operator_dockerfile_sha256": "40f6bdea1e3a1c4e3742f2d190e74c09d91bfce9577e03fb18756f4dcc438d11",
+    "image_policy": "tools added outside the agent; inference image differs from portable public verifier base"
+  },
+  "official_resolved": null,
+  "prewarm_runtime": {
+    "schema": 1,
+    "kind": "owned_ollama_runtime_sample",
+    "phase": "after_prewarm",
+    "status": "observed",
+    "observed_at_unix_seconds": 1791601729.3341084,
+    "host_memory": {
+      "status": "observed",
+      "mem_available_bytes": 1137135616,
+      "swap_free_bytes": 3221135360
+    },
+    "configured_context_tokens": 24000,
+    "model_runtime": {
+      "name": "qwen3:4b-instruct",
+      "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+      "context_length": 24000,
+      "size": 6257387764,
+      "size_vram": 0
+    }
+  }
+}

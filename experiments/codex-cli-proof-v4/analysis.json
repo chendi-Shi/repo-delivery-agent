@@ -1,0 +1,210 @@
+{
+  "schema": 1,
+  "kind": "real_codex_trial_analysis",
+  "fixture": false,
+  "label": "codex-cli-proof-v4",
+  "analysis_stage": "single frozen issue: submitted patch passed independent Docker public checks and official SWE-bench grading",
+  "source_commit": "758d1e536b7961f838ac607abb047c041bb0b142",
+  "source_tracked_tree_clean": true,
+  "source_task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+  "source_task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+  "provider": "codex_cli",
+  "model_name": "gpt-6-astra",
+  "model_identity": {
+    "cli_version": "codex-cli 0.154.0",
+    "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+    "weight_digest_available": false,
+    "reasoning_effort": "low"
+  },
+  "outcome": {
+    "status": "submitted",
+    "exit_status": "Submitted",
+    "submitted": true,
+    "patch_valid": true,
+    "patch_valid_scope": "Fresh application of the captured patch; not proof that tests pass.",
+    "complete": true,
+    "delivery_success": true,
+    "independent_public_verification": "passed",
+    "official_resolved": true,
+    "official_verification": "resolved",
+    "source_backend": "files",
+    "tests_executed_by_agent": false
+  },
+  "measured": {
+    "attempted_count": 1,
+    "model_calls": 20,
+    "model_call_unit": "cli_invocations",
+    "underlying_transport_request_count": null,
+    "usage": {
+      "complete": true,
+      "input_tokens": 350416,
+      "output_tokens": 1312,
+      "calls_with_usage": 20,
+      "unknown_requests": 0
+    },
+    "seconds": 254.04139209999994,
+    "usage_scope": "CLI-reported completed turns; internal transport retries may have unreported usage.",
+    "cost_source": "chatgpt_plan_unpriced",
+    "reported_monetary_total": null,
+    "monetary_cost_complete": false
+  },
+  "context": {
+    "profile": "baseline",
+    "selected_context_byte_budget": 64000,
+    "output_and_protocol_reserve": 3048,
+    "selected_input_byte_cap": 60952,
+    "min_observed_selected_input_bytes": 8783,
+    "max_observed_selected_input_bytes": 53370,
+    "excluded_source_id_count_across_requests": 0,
+    "shortened_source_id_count_across_requests": 0,
+    "cli_prompt_overhead_in_selected_context_budget": false,
+    "generation_token_cap_enforced": false,
+    "seed_enforced": false,
+    "max_steps": 24,
+    "wall_seconds": 1800,
+    "request_timeout": 120
+  },
+  "patch": {
+    "path": "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/model.patch",
+    "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+    "bytes": 2583,
+    "changed_files": [
+      "requests/models.py",
+      "test_requests.py"
+    ],
+    "changes": [
+      "Preserve str/bytes values directly in RequestEncodingMixin._encode_params instead of converting binary request bodies to native strings.",
+      "Convert byte-valued URL parameters at prepare_url before encoding, keeping that conversion separate from body encoding.",
+      "Add three regression test functions covering binary request bodies, text request bodies, and byte parameters with an existing query and fragment."
+    ],
+    "added_test_functions": 3,
+    "added_parameterized_cases": 9,
+    "added_tests_executed_in_source_run": false,
+    "matches_private_captured_patch": true,
+    "matches_private_result_patch": true,
+    "matches_official_prediction_patch": true
+  },
+  "observed_actions": {
+    "actions": 20,
+    "kind_counts": {
+      "delivery-file/list": 1,
+      "delivery-file/search": 3,
+      "delivery-file/read": 8,
+      "delivery-skill/read": 2,
+      "delivery-file/replace": 5,
+      "submit": 1
+    },
+    "first_edit_call": 10,
+    "submission_call": 20,
+    "edit_calls": [
+      10,
+      11,
+      12,
+      14,
+      15
+    ],
+    "source_review_calls_after_last_edit": [
+      17,
+      18,
+      19
+    ],
+    "interpretation": "The agent edited existing implementation and tests, read its changed source, corrected added test literals, and used the explicit submission action. These source reviews are not executed test results."
+  },
+  "permission_recovery": {
+    "diagnostics": "permission-diagnostics.json",
+    "observed_permission_exception_events": 1,
+    "location": {
+      "module_file": "checkpoint.py",
+      "function": "_replace_checkpoint",
+      "line": 28,
+      "errno": 13,
+      "winerror": 5
+    },
+    "propagated_permission_exception_events": 0,
+    "terminal_error_type": null,
+    "observed_outcome": "The rename PermissionError was handled inside the checkpoint retry helper; the run continued through all 20 calls and Submitted.",
+    "mechanism": "Only the same fsynced temporary file to checkpoint rename is retried; model requests and tool actions are not replayed by this helper.",
+    "configured_max_replace_attempts": 6,
+    "configured_max_backoff_seconds": 0.77,
+    "actual_backoff_duration_measured": false,
+    "underlying_windows_lock_owner": "unknown"
+  },
+  "evidence_checks": {
+    "original_public_output_count": 9,
+    "private_request_count": 20,
+    "private_response_count": 20,
+    "private_request_error_count": 0,
+    "request_call_sequence": "1..20 without duplicates",
+    "response_usage_matches_summary": true,
+    "public_evidence_matches_summary": true,
+    "official_export_submitted_count": 1,
+    "official_export_empty_patch_count": 0,
+    "official_logged_patch_matches_submission_bytes": true,
+    "independent_manifest_task_evidence_patch_hashes_match": true,
+    "official_predictions_hash_matches_v4_export": true,
+    "original_nine_outputs_match_publication_commit": true,
+    "artifact_archives_and_extracted_bytes_verified": true
+  },
+  "comparison_limits": [
+    "This is one observed attempt on one frozen public Requests issue, not a representative success-rate evaluation.",
+    "Compared with recent/32000-byte v2, v4 changes both the context profile to baseline and the budget to 64000 bytes. The checkpoint retry implementation also changed. The successful submission cannot identify the causal effect of any one change.",
+    "The model is a remote alias; the recorded CLI version and executable hash do not pin server weights. Sampling seed and generation token cap are not enforced by this adapter.",
+    "Independent public checks and official grading both passed for this one submitted patch. The original source-run summary intentionally retains its then-pending verification fields; the separate bound grading reports establish the final result.",
+    "The observed Windows error identifies the failed rename operation and its recovery, but does not establish which process held the file or that OneDrive caused it.",
+    "Original v1/v2/v3 outcomes remain separate evidence and are not replaced by this submission.",
+    "Official report-provenance records a hash of the private original report. That original report is not exported; only the sanitized report bytes and their archive can be rehashed locally."
+  ],
+  "original_public_artifact_sha256": {
+    "summary.json": "cf8fafaae23aa90814be1f52e8ed4b68d8af6c55d2b7b87ef49c93ae43db218b",
+    "repository-ablation.json": "e6e8dd53462ba280d0bad1fbacd03b11a4e9848c9ca25146f7f04b809f904fb5",
+    "official-export.json": "0c2148c8691102170ee3c1dcc3ae4fc362e20e46629979cc4ef9a8ba2fed64b2",
+    "official-predictions.jsonl": "5cb8f1b9256e51ac3a17d8dbba0fab9919d843f0c982645711bafe9b72bfd93b",
+    "official-predictions.jsonl.attempts.json": "63ff119ae34fdc55e95ffb4ec4f75236c3a64a4bf7d346f18bbf487f7a82d9e4",
+    "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/task.json": "5a3716d8125bfc7e449a227eb23fcd58e5c3ab22b2db4e5a4f51bb93faeb18b0",
+    "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/evidence.json": "04d98a4f7da68a89d62dcce004876df40db9a4ddf14cbf98db9e92e6e8ebe5e6",
+    "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/model.patch": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+    "model-runs/psf__requests-2931-baseline-codex-cli-proof-v4/action-audit.jsonl": "2b842a41ae0bfe68a3cc6a1f7321d1af2196c7644c3f4f3fc5cae1ed737a3eb5"
+  },
+  "independent_verification": {
+    "public": {
+      "status": "passed",
+      "delivery_success": true,
+      "checks_passed": 2,
+      "checks_total": 2,
+      "infrastructure_failures": 0,
+      "report": {
+        "path": "../codex-cli-proof-v4-verification/codex-cli-proof-v4-verification.json",
+        "sha256": "34784ab901e7c9442fa9aacd34276549e6115dbd4ba8290e4072505ba63f22f0"
+      },
+      "workflow_run_id": 38023235959,
+      "artifact_id": 11659755110
+    },
+    "official": {
+      "status": "resolved",
+      "resolved": true,
+      "attempted_count": 1,
+      "evaluated_count": 1,
+      "resolved_count": 1,
+      "infrastructure_failures": 0,
+      "summary": {
+        "path": "../codex-cli-proof-v4-official/summary.json",
+        "sha256": "edb5d3a88680885b06e54ebc4f2e48b0a97b7ce62544df2b6369be359858dece"
+      },
+      "report": {
+        "path": "../codex-cli-proof-v4-official/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/report.json",
+        "sha256": "8a14505109641d92c9ffaace4d1adbc3f9c7240520f41e07dbd912321fa0c7a6"
+      },
+      "patch": {
+        "path": "../codex-cli-proof-v4-official/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/patch.diff",
+        "sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28"
+      },
+      "report_provenance": {
+        "path": "../codex-cli-proof-v4-official/reports/report-provenance.json",
+        "sha256": "234e6545cc1a103a1a039f1e96db49f5f745d92d979c7b41b4f76a820b0f7410"
+      },
+      "workflow_run_id": 38023235934,
+      "artifact_id": 11659285364
+    }
+  },
+  "publication_commit": "d055ba804ed5bbaad65c1b13f317566e9a4e85dc"
+}

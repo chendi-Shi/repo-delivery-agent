@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "kind": "real_model_repository_ablation",
+  "runs": [
+    {
+      "id": "source",
+      "task": "model-run/task.json",
+      "patch": "model-run/model.patch",
+      "evidence": "model-run/evidence.json"
+    }
+  ],
+  "limitations": [
+    "Real Docker inference; independent verifier uses the frozen portable public base."
+  ]
+}

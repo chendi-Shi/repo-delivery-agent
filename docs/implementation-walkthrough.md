@@ -4,7 +4,7 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
-源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 已通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。实际收据见 [CI 记录](../experiments/ci-codex-adapter/validation.json)。三次 7B Docker 试验均未完成提交；第三次出现历史检索反复命中自身输出的循环，详见 [第三轮分析](../experiments/closure-proof-v3/analysis.md)。新增 [Codex 模型适配](codex-provider.md) 保留真实调用与失败，用独立 Docker 和正式评分判断交付。原始失败、用量及后续结果见 [验证记录](validation.md)。
+源码提交 [758d1e5 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022684939) 已通过 Linux、Windows 各 321 项，均无 skip；真实 Docker 执行与进程崩溃恢复也通过，见 [CI 收据](../experiments/ci-checkpoint-rename/validation.json)。Codex 第四轮已自主完成 Requests 源码和回归测试修改，独立公开检查通过，官方 SWE-bench 判定 `psf__requests-2931` 为 `resolved=true`。真实调用、三次前置失败、检查点故障定位及最终补丁验收详见 [完整案例](real-delivery-case.md)。三次 7B Docker 失败和未完成的知识复用队列仍保留，单题成功不证明总体成功率或知识迁移收益。
 
 ## 复用了什么，自主实现了什么
 
@@ -136,6 +136,7 @@ files backend 把模型动作限定为来源目录内的读、搜索、写、追
 | 成功返回的空读取与错误搜索交替 | 单一连续失败检测漏掉循环，耗尽步数 | 依据真实返回码和原始输出 hash 检测长度 1–3 的只读循环；EOF 明确停止分页；反馈只改变当前请求视图 |
 | 工具参考说明压过了真实需求 | 模型持续浏览工具而未编辑仓库 | 完整需求与公开检查置于通用参考之后；明确普通仓库命令仍可用；压缩指引并验证完整 8K 观察的预算 |
 | 请求异常被导出错误覆盖 | 多种故障都只显示 ValueError | 保留模型原始错误类型、发起请求数和已确认用量；缺失字段保持未知，并采集有界模型加载及内存遥测 |
+| Windows 原子替换短暂被拒绝 | 真实第三轮在模型响应已返回后因 WinError 5 中断 | 仅对同一个已 fsync 临时文件执行有限 rename 重试；不重放模型或工具。第四轮实际再次遇到一次拒绝，恢复后完成提交和官方验收 |
 | 固定容器休眠与扩大的任务时限相撞 | 有效任务可能失去执行会话 | 容器驻留改为无固定休眠上限，仍由任务退出、超时、取消与异常清理机制终止 |
 | 官方 CLI 保留旧名字但内部已是 v5 | 旧数据字段不足而无法评分 | 固定数据 revision，私有来源保留 image/eval_script/log_parser/eval_type，公开输入去答案 |
 

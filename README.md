@@ -8,6 +8,8 @@
 
 固定源任务、十项目标对照、真实读取审计和结果口径见 [真实交付与知识复用实验](docs/delivery-closure.md)。
 
+**已完成一个真实需求的完整交付：** Codex 第四轮在冻结的 Requests 仓库上自主修改源码和测试，20 次调用、254.041 秒后提交；独立 Docker 公开检查通过，固定官方 SWE-bench harness 判定 `psf__requests-2931` 为 `resolved=true`。原始补丁、公开验收和官方报告的 SHA256 一致。详见 [真实交付案例与失败修复](docs/real-delivery-case.md) 和 [闭环收据](experiments/codex-cli-proof-v4/closure.json)。这是单题 smoke；前三轮 Codex 未提交的失败仍完整保留，不能据此推导总体成功率或知识库收益。
+
 ## 已实现的能力
 
 | 能力 | 具体实现 |
@@ -197,9 +199,9 @@ python scripts/semantic_smoke.py
 
 每次复跑使用新的 output、evidence 目录和 label；脚本拒绝覆盖已有 run ID。CI 固定模型和预算的复现入口见 [真实模型实验](docs/live-experiments.md)。此前源码推理阶段的 19 次真实尝试保存于 [1.5B](experiments/round-1-1_5b)、[3B](experiments/round-2-3b)、[文件工具修复后的 3B](experiments/round-3-file-tools) 和 [16 步单案例回归](experiments/file-tools-v3)：全部未 Submitted，有公开检查的 10 次均未交付成功。这些历史失败完整保留，不与之后的 Docker 实验混成一个策略对照。
 
-新增 [7B Docker 真实交付实验](experiments/closure-proof-v1/analysis.md) 保留了一个确定失败：24 次重复误用 Skill 工具、空补丁、未提交、独立公开验收失败。实际动作审计定位了错误，随后修复 Skill/源码读取指引，并加入依据真实失败记录生成的重复调用反馈；协议测试不能代替后续模型实测。未取得真实模型的官方解题成绩，不能据此宣称成功率提升。
+此前 [7B Docker 真实交付实验](experiments/closure-proof-v1/analysis.md) 保留了一个确定失败：24 次重复误用 Skill 工具、空补丁、未提交、独立公开验收失败。实际动作审计定位了错误，随后修复 Skill/源码读取指引，并加入依据真实失败记录生成的重复调用反馈；这组模型试验没有官方解题成绩，不能据此宣称成功率提升。
 
-源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 已通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。匹配源码的日志收据见 [CI 记录](experiments/ci-codex-adapter/validation.json)。这证明工程契约与验收流程，不代表模型修复成功。真实尝试及失败均保存在 [experiments](experiments)；第三次 7B 试验仍陷入历史查询循环，见 [原因分析](experiments/closure-proof-v3/analysis.md)。新接入的 Codex 使用单独的真实任务记录，不与原本的 Ollama 对照合并统计。当前各阶段结论见 [验证记录](docs/validation.md)。
+源码提交 [758d1e5 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022684939) 已通过 Linux 321 项（35.747 秒）与 Windows 321 项（120.816 秒），均无 skip；真实 Docker 执行和进程崩溃恢复也通过。匹配源码的日志收据见 [CI 记录](experiments/ci-checkpoint-rename/validation.json)。真实尝试及失败均保存在 [experiments](experiments)；第三次 7B 试验仍陷入历史查询循环，见 [原因分析](experiments/closure-proof-v3/analysis.md)。Codex 四轮记录与 Ollama 对照分别统计；第四轮的成功以独立验收和官方报告为依据。当前各阶段结论见 [验证记录](docs/validation.md)。
 
 ## 产物与岗位对应
 

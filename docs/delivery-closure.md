@@ -2,6 +2,8 @@
 
 本实验回答三个不同问题：Agent 能否真正修改并提交代码；固定预算下上下文策略有什么差异；是否发生来源匹配的跨任务经验读取调用，以及有无经验包的目标组有何交付差异。协议测试、真实模型结果和官方评分分别记录。
 
+当前证据：Codex 独立单题路径已完成 Requests 真实提交、公开验收和官方解题，见 [完整案例](real-delivery-case.md)。本页的 Ollama 知识迁移队列尚未完成成功对照；[第二轮源任务](../experiments/closure-cohort-v2/analysis.json) 在 16 次真实请求后 TimeExceeded，公开检查失败，门禁按预声明规则阻止十个目标启动。不存在已验证的知识迁移提效数字。
+
 ## 两条运行路径
 
 `delivery-closure.yml` 运行一个原始 Requests 公开 Issue。实际模型在隔离的 Docker 中读取源码、修改、测试并提交；导出的真实补丁会在第二个干净 checkout 和独立容器中重新验收。只有模型明确 Submitted、补丁可应用、内部和外部公开检查均通过，才记为公开交付成功。成功提交还可以导出给固定 SWE-bench harness；公开检查通过不等于官方 resolved。

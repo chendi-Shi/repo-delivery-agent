@@ -1,0 +1,194 @@
+{
+  "schema": 1,
+  "kind": "retained_cohort_failure_analysis",
+  "fixture": false,
+  "original_artifacts_modified": false,
+  "run_id": 38019441857,
+  "source_commit": "0fcd3a2490279ada546fdd6918b23d743a7b3e45",
+  "conclusion": "The one source attempt read repository files but made no edits and stopped at the time limit. Its independent public delivery failed, so the predeclared gate prevented all ten target trials. The aggregate report was generated successfully but returned exit code 1 because the comparison is incomplete.",
+  "artifact_provenance": {
+    "source": {
+      "directory": "../closure-source-v2",
+      "artifact_id": 11658644584,
+      "archive_sha256": "7c12c623c6168a5a278bf53601aac501e37ccf9f2f0d730106efdcb09d300acf",
+      "original_file_count": 17
+    },
+    "cohort": {
+      "directory": ".",
+      "artifact_id": 11658884573,
+      "archive_sha256": "1a6ad68231d4348092031ed05b8a329bca9e113abbc5ba272173cd6cfd939183",
+      "original_file_count": 19
+    },
+    "separate_provenance_files": 2,
+    "byte_identical_shared_original_files": 17,
+    "recorded_reference_hashes_checked": 11,
+    "plan_sha256": "33f797bb5f73ec9cee7f4cd0149d9ff6d020afcf5b926c68507a0e99142916a3",
+    "source_receipt_sha256": "c15b85d1fb9d2c90ee0fec86add2bba1969ea756ad0f2b214dea5a29a7bb0142",
+    "cohort_summary_sha256": "0b068fd27b36c2c952515a6c25ed50cbbb5faa32f978082953f08bfbdc345766"
+  },
+  "deduplication": {
+    "attempt_id": "a8510dc74842142a0ae21a75a273d99c3",
+    "unique_actual_source_attempts": 1,
+    "source_and_cohort_are_copies_of_the_same_attempt": true,
+    "rule": "Count run_id plus source attempt_id once. The cohort artifact embeds the same seventeen source files byte-for-byte; do not add its calls, tokens, time or failure a second time. The source attempt is excluded from all ten target denominators."
+  },
+  "source_attempt": {
+    "instance_id": "more-itertools__first-factory-v1",
+    "seed": 42,
+    "profile": "recent",
+    "model": "qwen3:4b-instruct",
+    "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "provider": "ollama_native",
+    "backend": "docker",
+    "status": "stopped",
+    "exit_status": "TimeExceeded",
+    "model_error_type": null,
+    "infrastructure_failed": false,
+    "observed_provider_requests": 16,
+    "model_calls": 16,
+    "usage": {
+      "complete": true,
+      "input_tokens": 74183,
+      "output_tokens": 215,
+      "calls_with_usage": 16,
+      "unknown_requests": 0
+    },
+    "seconds": 3629.6418410839997,
+    "time_scope": "Measured repository run, including checkout, Agent execution and internal verification; not pure inference time or total workflow time. The configured wall_seconds=3600 is not the measured elapsed time.",
+    "cost_source": "unpriced_local",
+    "reported_dollar_cost": null,
+    "submitted": false,
+    "patch_bytes": 0,
+    "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "patch_valid": true,
+    "patch_valid_meaning": "The empty patch can be applied; this does not establish a repair.",
+    "delivery_success": false,
+    "official_resolved": null,
+    "evidence_paths": [
+      "source-trial/summary.json",
+      "source-trial/trial-receipt.json",
+      "source-trial/model-run/evidence.json",
+      "source-trial/model-run/model.patch",
+      "source-trial/verification.json"
+    ]
+  },
+  "source_actions": {
+    "audit_path": "source-trial/model-run/action-audit.jsonl",
+    "audit_sha256": "53ba3dc00caeba33548cf87a909fca24314576ad7de3766bafe79ec19620e0f2",
+    "complete": true,
+    "actions": 16,
+    "kind_counts": {
+      "shell": 15,
+      "delivery-history/search": 1
+    },
+    "returncode_zero_count": 16,
+    "commands": [
+      {"command": "cat more_itertools/more.py | sed -n '1,1000p'", "count": 1},
+      {"command": "delivery-history search 'error' 5", "count": 1},
+      {"command": "cat more_itertools/__init__.py", "count": 3},
+      {"command": "cat tests/test_more.py", "count": 4},
+      {"command": "cat more_itertools/more.py", "count": 4},
+      {"command": "cat more_itertools/recipes.py", "count": 1},
+      {"command": "cat tests/test_recipes.py", "count": 2}
+    ],
+    "interpretation": "All model-selected actions were reads or history search. Repository source was inspected, but the model repeatedly requested entire source/test files and never edited, ran a test or submitted. Reading a test file is not executing its tests. The harness performed the public verification after the attempt. Output lengths and hashes bind the full outputs; public previews are bounded."
+  },
+  "source_public_verification": {
+    "independent_attempts": 1,
+    "infrastructure_failures": [],
+    "internal_checks_returncodes": [0, 1],
+    "external_checks_returncodes": [0, 1],
+    "compatibility_check": "The frozen compatibility command passed, including twenty upstream unittest cases and the frozen regression guard.",
+    "new_behavior_check": "The default_factory public contract failed with KeyError: 'default_factory'. The empty patch left the requested API absent.",
+    "internal_checks_passed": false,
+    "external_checks_passed": false,
+    "source_public_delivery_successes": 0,
+    "source_public_delivery_denominator": 1
+  },
+  "source_gate": {
+    "path": "seed-package.json",
+    "eligible": false,
+    "reason": "source_not_independently_delivered",
+    "record": null,
+    "origin": null,
+    "interpretation": "The source failed submission and independent public delivery. No verified experience was supplied, and the workflow's predeclared seed_eligible gate skipped the entire target matrix. This is not a target-model failure."
+  },
+  "targets": {
+    "planned_count": 10,
+    "planned_by_arm": {"baseline": 4, "retrieval": 4, "verified-source": 2},
+    "workflow_target_job_started": false,
+    "workflow_target_job_conclusion": "skipped",
+    "target_receipts_observed": 0,
+    "raw_summary_status": "missing_trial",
+    "not_run_due_to_source_gate_count": 10,
+    "delivery_unknown_count": 10,
+    "observed_delivery_failure_count": 0,
+    "observed_delivery_success_count": 0,
+    "delivery_success_rate": null,
+    "total_actual_input_tokens": null,
+    "total_actual_output_tokens": null,
+    "total_actual_model_calls": null,
+    "total_actual_seconds": null,
+    "knowledge_read_outcome": null,
+    "interpretation": "Workflow evidence establishes that no target job ran. The original summary conservatively keeps each target outcome, call count, time and token total null because no target receipts exist. Do not convert the ten missing rows into failures, measured zero-cost runs or a 0/10 success rate. confirmed_delivery_success_fraction=0.0 only describes confirmed successes among planned rows; it is not the completed-trial success rate."
+  },
+  "workflow_log_interpretation": {
+    "source_job": {
+      "id": 114116928523,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857/job/114116928523",
+      "conclusion": "success",
+      "logged_at_utc": "2026-10-10T04:09:26.3889633Z",
+      "logged_result": {"mode": "transfer", "model_status": null, "exit_status": null, "complete": true, "delivery_success": null},
+      "meaning": "run_cohort_seed completed artifact production and returned complete=true independently of seed eligibility. Its top-level null model fields do not replace the source-trial receipt, which records stopped/TimeExceeded and failed delivery."
+    },
+    "targets_job": {
+      "id": 114128055661,
+      "conclusion": "skipped",
+      "gate_location": ".github/workflows/delivery-suite.yml:103 at source_commit",
+      "gate_expression": "needs.source.outputs.seed_eligible == 'true'"
+    },
+    "aggregate_job": {
+      "id": 114128055058,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857/job/114128055058",
+      "conclusion": "failure",
+      "logged_at_utc": "2026-10-10T04:09:38.7308495Z",
+      "logged_result": {"mode": "aggregate", "model_status": null, "exit_status": null, "complete": false, "delivery_success": null},
+      "exit_code": 1,
+      "python_exception_observed": false,
+      "report_written": true,
+      "meaning": "aggregate_cohort wrote observations.json and cohort-summary.json. summarize.complete is false because ten target delivery outcomes are unknown; main at scripts/ci_delivery_closure.py:1406 returns 1 for incomplete non-proof modes. The step was marked failed without a Python exception. The subsequent artifact upload succeeded."
+    }
+  },
+  "consistency_review": {
+    "source_fields_agree_between_receipt_summary_and_evidence": true,
+    "cohort_source_metrics_match_source_receipt": true,
+    "manifest_task_patch_evidence_verifier_bindings_valid": true,
+    "raw_target_unknowns_and_null_cost_totals_preserved": true,
+    "material_evidence_contradictions_found": [],
+    "followup_recommendations": [
+      {
+        "kind": "reporting_semantics",
+        "files": ["scripts/ci_delivery_closure.py", "scripts/summarize_closure_suite.py", ".github/workflows/delivery-suite.yml"],
+        "recommendation": "Distinguish reporting_complete from comparison_complete, and surface source_seed_eligible plus the gate reason in console output. Preserve the intentional incomplete-result exit policy explicitly instead of describing exit 1 as a summarizer exception."
+      },
+      {
+        "kind": "gate_diagnostic_precision",
+        "files": ["scripts/summarize_closure_suite.py", ".github/workflows/delivery-suite.yml"],
+        "recommendation": "For future runs, retain a hash-bound workflow gate receipt so planned rows skipped by source eligibility can be labelled not_run_source_gate separately from unexpectedly missing artifacts. Keep delivery and measurement values unknown; do not fabricate provider receipts."
+      },
+      {
+        "kind": "observed_model_progress_gap",
+        "files": ["delivery_agent/upstream.py"],
+        "recommendation": "Study repeated unchanged whole-file inspection without edits as a separate progress failure. Existing read-only-cycle feedback intentionally recognizes named delivery tools, not arbitrary shell commands; broadening it requires trusted execution evidence and regression tests rather than assuming every shell read is harmless. No effectiveness claim follows from this proposal."
+      }
+    ],
+    "code_modified_for_this_analysis": false
+  },
+  "claim_boundaries": [
+    "One failed source attempt and ten unrun targets are not eleven executed model trials.",
+    "Do not count the identical source and cohort artifact copies twice.",
+    "No target-arm comparison, knowledge-reuse benefit, success-rate improvement or efficiency gain was measured.",
+    "No official grader result was produced; official_resolved remains null.",
+    "Source model tokens and repository time are measured once, separately from the unknown target metrics."
+  ]
+}

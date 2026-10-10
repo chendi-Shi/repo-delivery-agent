@@ -1,0 +1,54 @@
+{
+  "include": [
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "baseline"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "retrieval"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "verified-source"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "baseline"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "retrieval"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "verified-source"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 42,
+      "arm": "baseline"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 42,
+      "arm": "retrieval"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 43,
+      "arm": "baseline"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 43,
+      "arm": "retrieval"
+    }
+  ]
+}

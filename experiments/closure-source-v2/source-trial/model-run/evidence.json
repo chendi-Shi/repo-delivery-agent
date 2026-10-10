@@ -1,0 +1,76 @@
+{
+  "fixture": false,
+  "provider": "ollama_native",
+  "status": "stopped",
+  "exit_status": "TimeExceeded",
+  "seconds": 3629.6418410839997,
+  "error_type": null,
+  "patch_valid": true,
+  "profile": "recent",
+  "model_name": "ollama_chat/qwen3:4b-instruct",
+  "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+  "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "task_hash": "418aec9df2113d67893587cee05a1ead31e1f156067918dd44da84c9afc60efb",
+  "effective_task_fingerprint": "8447c746b072021a483e8be6e290a695b5671ece03bc98cbbda0fa1d2e12c630",
+  "usage": {
+    "complete": true,
+    "input_tokens": 74183,
+    "output_tokens": 215,
+    "calls_with_usage": 16,
+    "unknown_requests": 0
+  },
+  "context_requests": 16,
+  "model_calls": 16,
+  "verification_status": "deferred",
+  "internal_verification_status": "failed",
+  "internal_public_checks": [
+    {
+      "command": "python -c 'import ast, hashlib, json, unittest\nfrom pathlib import Path\nimport more_itertools as mi\nassert Path(mi.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test checkout source\"\nexpected = [tuple(x) for x in [[\"ChunkedTests\",\"test_even\"],[\"ChunkedTests\",\"test_negative\"],[\"ChunkedTests\",\"test_none\"],[\"ChunkedTests\",\"test_odd\"],[\"ChunkedTests\",\"test_strict_being_true\"],[\"ChunkedTests\",\"test_strict_being_true_with_size_none\"],[\"ChunkedTests\",\"test_strict_false\"],[\"FirstTests\",\"test_default\"],[\"FirstTests\",\"test_empty\"],[\"FirstTests\",\"test_many\"],[\"FirstTests\",\"test_one\"],[\"LastTests\",\"test_basic\"],[\"LastTests\",\"test_default\"],[\"LastTests\",\"test_empty\"],[\"LastTests\",\"test_reversed_is_none\"],[\"SplitAfterTest\",\"test_empty_collection\"],[\"SplitAfterTest\",\"test_ends_with_sep\"],[\"SplitAfterTest\",\"test_max_split\"],[\"SplitAfterTest\",\"test_no_sep\"],[\"SplitAfterTest\",\"test_starts_with_sep\"]]]\ntree = ast.parse(Path(\"tests/test_more.py\").read_text(encoding=\"utf-8\"))\nfor node in ast.walk(tree):\n    if hasattr(node, \"type_params\"):\n        node._fields = tuple(x for x in node._fields if x != \"type_params\")\nclasses = {c.name: c for c in tree.body if isinstance(c, ast.ClassDef)}\nrows = []\nfor cls, name in expected:\n    methods = {m.name: m for m in classes[cls].body if isinstance(m, ast.FunctionDef)}\n    rows.append((cls, name, ast.dump(methods[name], include_attributes=False)))\ndigest = hashlib.sha256(json.dumps(sorted(rows), ensure_ascii=True, separators=(\",\", \":\")).encode(\"utf-8\")).hexdigest()\nassert digest == \"2d3cb89c75b94ad611245c78e35854e6fb7fda9055751153922fd384a4dc5795\", \"original regression methods changed\"\nfrom tests.test_more import FirstTests, LastTests, SplitAfterTest, ChunkedTests\nloader = unittest.TestLoader()\nsuite = unittest.TestSuite(loader.loadTestsFromTestCase(c) for c in (FirstTests, LastTests, SplitAfterTest, ChunkedTests))\nassert suite.countTestCases() >= 20, \"upstream regression methods must remain intact\"\nresult = unittest.TextTestRunner(verbosity=2).run(suite)\nassert result.wasSuccessful()\nassert not any((type(t).__name__, t._testMethodName) in expected for t, reason in result.skipped), \"original regression cannot be skipped\"\nassert mi.first([None, 2]) is None\nassert mi.last(iter([1, 0])) == 0\nassert list(mi.split_after([1, 0, 2, 0], lambda x: x == 0)) == [[1, 0], [2, 0]]\nassert list(mi.chunked(range(5), 2)) == [[0, 1], [2, 3], [4]]\nprint(\"frozen upstream compatibility regressions passed\")\n'",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -c 'import inspect\nfrom more_itertools import first\np = inspect.signature(first).parameters[\"default_factory\"]\nassert p.kind == inspect.Parameter.KEYWORD_ONLY and p.default is None\ndef expect(kind, action):\n    try: action()\n    except kind: return\n    raise AssertionError(\"expected \" + kind.__name__)\ncalls = []\ndef factory():\n    calls.append(\"called\")\n    return {\"fresh\": True}\nassert first(iter([]), default_factory=factory) == {\"fresh\": True}\nassert calls == [\"called\"]\ncalls.clear()\nfor value in (None, False, 0, []):\n    assert first(iter([value, \"tail\"]), default_factory=factory) is value\nassert calls == []\nfor fallback in (None, False, 0):\n    assert first([], default_factory=lambda: fallback) is fallback\nassert first([], \"legacy\") == \"legacy\"\nassert first([], None, default_factory=None) is None\nexpect(ValueError, lambda: first([]))\npulled = []\ndef values():\n    for value in (3, 4, 5):\n        pulled.append(value)\n        yield value\nit = values()\nassert first(it, default_factory=factory) == 3\nassert pulled == [3] and list(it) == [4, 5]\nassert calls == []\nclass Untouched:\n    def __iter__(self): raise AssertionError(\"invalid options consumed input\")\nexpect(TypeError, lambda: first(Untouched(), default_factory=42))\nexpect(ValueError, lambda: first(Untouched(), None, default_factory=factory))\nexpect(TypeError, lambda: first([], None, factory))\ndef broken_factory():\n    calls.append(\"error\")\n    raise RuntimeError(\"factory failure\")\nexpect(RuntimeError, lambda: first([], default_factory=broken_factory))\nassert calls == [\"error\"]\ncalls.clear()\ndef broken_source():\n    raise RuntimeError(\"source failure\")\n    yield None\nexpect(RuntimeError, lambda: first(broken_source(), default_factory=factory))\nassert calls == []\nprint(\"first lazy-fallback contract passed\")\n'",
+      "returncode": 1,
+      "passed": false
+    }
+  ],
+  "inference_backend": "docker",
+  "cost_source": "unpriced_local",
+  "implementation_sha256": "a5e060d59c24abb9de5581e311acf97b8b910233e1606fd6a230e17b577d4f0c",
+  "configuration_sha256": "8fd15a2df41bde2eab3c6be249aaeef51111dda42bba2a6cbf40da3e3f234a86",
+  "budgets": {
+    "max_steps": 24,
+    "context_tokens": 24000,
+    "max_output_tokens": 1500,
+    "wall_seconds": 3600,
+    "request_timeout": 600,
+    "command_timeout": 90,
+    "cost_limit": 3.0,
+    "temperature": 0,
+    "seed": 42
+  },
+  "action_audit": {
+    "available": true,
+    "complete": true,
+    "actions": 16,
+    "kind_counts": {
+      "shell": 15,
+      "delivery-history/search": 1
+    },
+    "private_audit_sha256": "27664ba5dd401b7ab8a912c7884e6ec50f52be2b600701a8a9396346645e21ec",
+    "public_audit_sha256": "53ba3dc00caeba33548cf87a909fca24314576ad7de3766bafe79ec19620e0f2"
+  },
+  "bindings": {
+    "source_task_sha256": "19174109b222e1b9eb1b7b4c281013cd09062f25fa31aebd03829f9d57062be8",
+    "source_task_fingerprint": "6dc11188f1c10a8c29c0ced4d11d8297e377d2c431dcc31faa25ac42b782724b",
+    "effective_task_fingerprint": "8447c746b072021a483e8be6e290a695b5671ece03bc98cbbda0fa1d2e12c630",
+    "public_task_fingerprint": "418aec9df2113d67893587cee05a1ead31e1f156067918dd44da84c9afc60efb",
+    "public_base_reference": "python:3.12-slim",
+    "public_base_digest": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+    "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+    "inference_image_id": "sha256:29b4feb666dbefe9dd582a55d245fb3e9884dc918e6918f39e32a3093ea0d3cd",
+    "operator_dockerfile_sha256": "40f6bdea1e3a1c4e3742f2d190e74c09d91bfce9577e03fb18756f4dcc438d11",
+    "image_policy": "tools added outside the agent; inference image differs from portable public verifier base"
+  }
+}

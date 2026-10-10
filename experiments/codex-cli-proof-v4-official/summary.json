@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "harness_commit": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+  "predictions_sha256": "5cb8f1b9256e51ac3a17d8dbba0fab9919d843f0c982645711bafe9b72bfd93b",
+  "requested_count": 1,
+  "submitted_count": 1,
+  "attempted_count": 1,
+  "attempted_denominator": 1,
+  "evaluation_complete_for_submitted": true,
+  "unresolved_agent_failures": [],
+  "agent_failure_count": 0,
+  "evaluated_count": 1,
+  "complete": true,
+  "resolved_count": 1,
+  "unresolved_count": 0,
+  "missing_count": 0,
+  "invalid_count": 0,
+  "submitted_only_resolved_rate": 1.0,
+  "all_attempt_resolved_rate": 1.0,
+  "patch_valid_count": 1,
+  "patch_invalid_count": 0,
+  "patch_valid_unknown_count": 0,
+  "resolved_ids": [
+    "psf__requests-2931"
+  ],
+  "unresolved_ids": [],
+  "missing_ids": [],
+  "invalid_ids": [],
+  "outcomes": [
+    {
+      "instance_id": "psf__requests-2931",
+      "submitted": true,
+      "patch_valid": true,
+      "official_resolved": true,
+      "report_path": "/home/runner/work/repo-delivery-agent/repo-delivery-agent/runs/official-smoke/reports/repo-delivery-codex-codex-cli-proof-v4/psf__requests-2931/report.json",
+      "submitted_patch_sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+      "logged_patch_sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+      "evaluation_status": "resolved"
+    }
+  ],
+  "dataset": "SWE-bench/SWE-bench_Verified",
+  "revision": "03e151cf5560b1af6a4363c6a9d766deaaea6b56",
+  "parquet_sha256": "bb5b123d29ce70107cc0951cf444894241c570a11d76aec452332c65b01e06d8",
+  "run_id": "official-smoke-38023235934-1",
+  "model": "repo-delivery-codex-codex-cli-proof-v4",
+  "unattempted_ids": [
+    "pallets__flask-5014",
+    "psf__requests-1142"
+  ],
+  "official_resolved_rate": 1.0,
+  "metric_scope": "fixed selected-instance smoke; not the full 500-instance Verified benchmark",
+  "grading_status": "completed",
+  "official_empty_patch_ids": [],
+  "operations": [
+    {
+      "instance_id": "psf__requests-2931",
+      "exit_code": 0,
+      "stop_reason": null,
+      "elapsed_seconds": 72.012535768,
+      "image_id": "sha256:d169b644e994bc20c0d77719b008e34fdd9afab2c211d7f52e27a578e692c75b",
+      "repo_digests": [
+        "swebench/sweb.eval.x86_64.psf_1776_requests-2931@sha256:705258c23c73d25bc78ed6fa4b14836078d848a64ab9c3ea3032d1d523d7cca4"
+      ]
+    }
+  ],
+  "harness_provenance": {
+    "commit": "02e7a74ffd0b707aab73d203fe87bdc7c76afc8e",
+    "distribution_version": "5.0.2",
+    "run_evaluation_sha256": "04b5dab584fbe62ae9d1ff025edf52d714e584102d587c7e647805d1efb37d84",
+    "python_version": "3.12.15",
+    "pyarrow_version": "26.0.0",
+    "run_log_root": "logs/evaluation"
+  },
+  "official_grader_attempt_count": 1,
+  "nonempty_submission_count": 1,
+  "official_infra_failure_count": 0,
+  "official_ambiguous_failure_count": 0,
+  "artifact_policy": "official boolean reports + submitted patches + safe orchestration events; gold/raw eval output excluded"
+}

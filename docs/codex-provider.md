@@ -1,6 +1,6 @@
 # Codex CLI 模型提供方
 
-`codex_cli` 把本机已登录的 Codex CLI 接到现有 mini-swe-agent 执行循环。每次调用只生成一个 `{"command": "..."}` 响应；适配器把它转换成上游 `bash` action，再由项目的执行环境处理。CLI 本身不负责修改目标仓库。本文说明实现和验收条件，不声明真实仓库任务已经成功。
+`codex_cli` 把本机已登录的 Codex CLI 接到现有 mini-swe-agent 执行循环。每次调用只生成一个 `{"command": "..."}` 响应；适配器把它转换成上游 `bash` action，再由项目的执行环境处理。CLI 本身不负责修改目标仓库。第四轮真实 Requests 尝试已完成提交、独立公开检查与官方 `resolved=true`，详见 [案例与证据](real-delivery-case.md)；本文说明接口与边界。
 
 官方文档提供了 `codex exec`、JSONL 事件、`turn.completed.usage` 与 `--output-schema` 的接口说明。本项目在这些接口之上增加临时目录、输出边界、事件校验和测量字段。[非交互模式](https://learn.chatgpt.com/docs/non-interactive-mode)
 
@@ -24,17 +24,17 @@ python scripts/run_codex_trial.py `
   --task examples/delivery-suite-v1/requests-2931-public.json `
   --model gpt-6-astra `
   --codex-binary "$codexBinary" `
-  --output runs/codex-cli-proof-v1 `
-  --evidence experiments/codex-cli-proof-v1 `
-  --label v1 `
-  --profile recent `
+  --output runs/codex-my-run-01 `
+  --evidence experiments/codex-my-run-01 `
+  --label my-run-01 `
+  --profile baseline `
   --max-steps 24 `
-  --context-tokens 32000 `
+  --context-tokens 64000 `
   --wall-seconds 1800 `
   --request-timeout 120
 ```
 
-这只是复现命令，不是已完成结果。每次试验使用全新的输出和证据目录；模型名称必须是该账号实际可用的显式名称。`gpt-6-astra` 是本次配置的远程别名，不是所有账号均可用的承诺。
+此命令使用第四轮的 profile 和预算，输出到新的示例目录；执行后的结果仍须独立验收。每次试验都要更换输出、证据目录和 label，不能覆盖已归档记录。模型名称必须是该账号实际可用的显式名称。`gpt-6-astra` 是本次配置的远程别名，不是所有账号均可用的承诺。
 
 `--profile` 接受 `baseline`、`recent` 和 `retrieval`，默认 `recent`。`baseline` 保留历史，在超预算时明确停止；`recent` 和 `retrieval` 选择历史视图。切换策略或预算属于新的试验配置，必须使用新目录并记录变化，不能覆盖先前失败或直接推断策略收益。
 
@@ -124,7 +124,7 @@ Agent 必须实际执行 `echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT` 提交动�
 
 ```powershell
 python scripts/grade_experiments.py `
-  --manifest experiments/codex-cli-proof-v1/repository-ablation.json `
+  --manifest experiments/codex-my-run-01/repository-ablation.json `
   --output runs/codex-public-verification.json `
   --pull-images
 ```
