@@ -1,0 +1,433 @@
+{
+  "schema": 1,
+  "kind": "github_actions_commit_validation",
+  "repository": "chendi-Shi/repo-delivery-agent",
+  "commit": "8542cf055840e54a00b814b98a978cc623091bbc",
+  "workflow": {
+    "name": "tests",
+    "path": ".github/workflows/ci.yml",
+    "run_id": 38028055543,
+    "run_attempt": 1,
+    "event": "push",
+    "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38028055543",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-10T05:36:05Z",
+    "completed_by": "2026-10-10T05:39:45Z"
+  },
+  "observed_at_utc": "2026-10-10 05:42:59 UTC",
+  "scope": "Engineering regression and integration checks at this exact commit; separate from the concurrently running Codex target experiments.",
+  "all_jobs_checkout_sha_verified": true,
+  "jobs": [
+    {
+      "id": 114143020145,
+      "name": "real-model-patch-verification",
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38028055543/job/114143020145",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_log_excerpt": "2026-10-10T05:36:10.8085457Z 8542cf055840e54a00b814b98a978cc623091bbc",
+      "started_at": "2026-10-10T05:36:08Z",
+      "completed_at": "2026-10-10T05:36:26Z",
+      "job_wall_seconds": 18,
+      "python_setup_log_excerpt": "2026-10-10T05:36:11.0207768Z Successfully set up CPython (3.12.15)",
+      "log_api_url": "https://api.github.com/repos/chendi-Shi/repo-delivery-agent/actions/jobs/114143020145/logs",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run python -m pip install -e .",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run python scripts/grade_experiments.py --manifest experiments/round-2-3b/repository-ablation.json --pull-images --output runs/repository-verification.json",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "reported_results": [
+        {
+          "log_excerpt": "2026-10-10T05:36:24.2607599Z {\"attempts\": 6, \"submitted\": 0, \"public_delivery_denominator\": 3, \"no_public_checks_attempts\": 3, \"delivery_successes\": 0, \"public_delivery_rate\": 0.0, \"delivery_rate_all_attempts\": null}",
+          "result": {
+            "attempts": 6,
+            "submitted": 0,
+            "public_delivery_denominator": 3,
+            "no_public_checks_attempts": 3,
+            "delivery_successes": 0,
+            "public_delivery_rate": 0,
+            "delivery_rate_all_attempts": null
+          }
+        }
+      ],
+      "scope": "Independent regrade of six historical round-2-3b attempts, with zero submitted and zero public delivery successes; successful grading infrastructure, not successful model delivery."
+    },
+    {
+      "id": 114143020184,
+      "name": "unit (ubuntu-latest)",
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38028055543/job/114143020184",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_log_excerpt": "2026-10-10T05:36:10.1246090Z 8542cf055840e54a00b814b98a978cc623091bbc",
+      "started_at": "2026-10-10T05:36:07Z",
+      "completed_at": "2026-10-10T05:37:26Z",
+      "job_wall_seconds": 79,
+      "python_setup_log_excerpt": "2026-10-10T05:36:10.3223142Z Successfully set up CPython (3.12.15)",
+      "log_api_url": "https://api.github.com/repos/chendi-Shi/repo-delivery-agent/actions/jobs/114143020184/logs",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run python -m pip install -e \".[agent]\"",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run python -m unittest discover -s tests -v",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "unit_tests": {
+        "command": "python -m unittest discover -s tests -v",
+        "count": 334,
+        "seconds": 38.423,
+        "skipped": 0,
+        "result": "OK",
+        "individual_test_rows": 334,
+        "summary_log_excerpts": [
+          "2026-10-10T05:37:24.2132385Z Ran 334 tests in 38.423s",
+          "2026-10-10T05:37:24.2133084Z OK"
+        ]
+      }
+    },
+    {
+      "id": 114143020227,
+      "name": "docker-integration",
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38028055543/job/114143020227",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_log_excerpt": "2026-10-10T05:36:11.5135182Z 8542cf055840e54a00b814b98a978cc623091bbc",
+      "started_at": "2026-10-10T05:36:08Z",
+      "completed_at": "2026-10-10T05:37:04Z",
+      "job_wall_seconds": 56,
+      "python_setup_log_excerpt": "2026-10-10T05:36:11.7359511Z Successfully set up CPython (3.12.15)",
+      "log_api_url": "https://api.github.com/repos/chendi-Shi/repo-delivery-agent/actions/jobs/114143020227/logs",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run python -m pip install -e \".[agent]\"",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run docker pull python:3.12-slim",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Run python scripts/docker_smoke.py --output runs/docker-validation.json",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Run python scripts/docker_recovery_smoke.py --output runs/docker-recovery.json",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "reported_results": [
+        {
+          "log_excerpt": "2026-10-10T05:36:58.2242600Z {\"fixture\": true, \"label\": \"TRUSTED INTEGRATION CHECK; NOT MODEL PERFORMANCE\", \"image\": \"sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316\", \"passed\": true, \"checks\": [\"persistent session\", \"read-only Git metadata\", \"disabled container network\", \"new-file patch export\", \"fresh patch application\", \"independent container check\"], \"changed_files\": [\"added.py\", \"module.py\"], \"patch_sha256\": \"d4aa976426350024fb1399e006635d896afdbd6b635eadeb70ca34dbc4ae5f0e\"}",
+          "result": {
+            "fixture": true,
+            "label": "TRUSTED INTEGRATION CHECK; NOT MODEL PERFORMANCE",
+            "image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+            "passed": true,
+            "checks": [
+              "persistent session",
+              "read-only Git metadata",
+              "disabled container network",
+              "new-file patch export",
+              "fresh patch application",
+              "independent container check"
+            ],
+            "changed_files": [
+              "added.py",
+              "module.py"
+            ],
+            "patch_sha256": "d4aa976426350024fb1399e006635d896afdbd6b635eadeb70ca34dbc4ae5f0e"
+          }
+        },
+        {
+          "log_excerpt": "2026-10-10T05:36:59.4971257Z {\"fixture\": true, \"label\": \"TRUSTED CRASH RECOVERY; NOT MODEL PERFORMANCE\", \"passed\": true, \"image_id\": \"sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316\", \"checks\": [\"real process crash\", \"same container reattachment\", \"isolation identity validation\", \"completed action not repeated\", \"budget/history continuation\", \"submission after recovery\", \"resumed container cleanup\"], \"model_calls\": 2, \"usage\": {\"input_tokens\": 24, \"output_tokens\": 6, \"calls_with_usage\": 2, \"unknown_requests\": 0, \"complete\": true}}",
+          "result": {
+            "fixture": true,
+            "label": "TRUSTED CRASH RECOVERY; NOT MODEL PERFORMANCE",
+            "passed": true,
+            "image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+            "checks": [
+              "real process crash",
+              "same container reattachment",
+              "isolation identity validation",
+              "completed action not repeated",
+              "budget/history continuation",
+              "submission after recovery",
+              "resumed container cleanup"
+            ],
+            "model_calls": 2,
+            "usage": {
+              "input_tokens": 24,
+              "output_tokens": 6,
+              "calls_with_usage": 2,
+              "unknown_requests": 0,
+              "complete": true
+            }
+          }
+        }
+      ],
+      "scope": "Trusted Docker isolation and process-crash recovery fixtures; not model performance."
+    },
+    {
+      "id": 114143020234,
+      "name": "unit (windows-latest)",
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38028055543/job/114143020234",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_sha": "8542cf055840e54a00b814b98a978cc623091bbc",
+      "checkout_log_excerpt": "2026-10-10T05:36:17.5883821Z 8542cf055840e54a00b814b98a978cc623091bbc",
+      "started_at": "2026-10-10T05:36:08Z",
+      "completed_at": "2026-10-10T05:39:45Z",
+      "job_wall_seconds": 217,
+      "python_setup_log_excerpt": "2026-10-10T05:36:18.1863796Z Successfully set up CPython (3.12.10)",
+      "log_api_url": "https://api.github.com/repos/chendi-Shi/repo-delivery-agent/actions/jobs/114143020234/logs",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Run python -m pip install -e \".[agent]\"",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run python -m unittest discover -s tests -v",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "unit_tests": {
+        "command": "python -m unittest discover -s tests -v",
+        "count": 334,
+        "seconds": 98.566,
+        "skipped": 0,
+        "result": "OK",
+        "individual_test_rows": 334,
+        "summary_log_excerpts": [
+          "2026-10-10T05:39:39.6467442Z Ran 334 tests in 98.566s",
+          "2026-10-10T05:39:39.6477012Z OK"
+        ]
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11661386170,
+      "name": "real-model-public-check-verification",
+      "size_in_bytes": 2224,
+      "github_reported_archive_digest": "sha256:a72b2217d86999bd07932db9b6ca691283fbb949545fb8191a3246782ae630d7",
+      "created_at": "2026-10-10T05:36:25Z",
+      "expires_at": "2027-01-08T05:36:05Z",
+      "expired": false,
+      "downloaded_for_this_receipt": false
+    },
+    {
+      "id": 11660438610,
+      "name": "docker-integration-evidence",
+      "size_in_bytes": 1022,
+      "github_reported_archive_digest": "sha256:22cfe2f773f7793d3fb6ef401f420370bd2233005f20d4f89113d906c626ac28",
+      "created_at": "2026-10-10T05:37:00Z",
+      "expires_at": "2027-01-08T05:36:05Z",
+      "expired": false,
+      "downloaded_for_this_receipt": false
+    }
+  ],
+  "limitations": [
+    "Unit tests include trusted fixtures; their model counters are not real model-performance observations.",
+    "Docker integration and crash-recovery smoke checks use trusted fixtures and do not establish model delivery effectiveness.",
+    "The real-model-patch-verification job regrades experiments/round-2-3b/repository-ablation.json; it does not grade the ten current Codex transfer targets.",
+    "This receipt records GitHub API status, decoded job-log excerpts and artifact metadata; artifact contents were not downloaded or revalidated here.",
+    "A green engineering CI does not establish transfer benefit, production scale, official benchmark resolution, or target delivery success."
+  ],
+  "unit_test_matrix": {
+    "platforms": 2,
+    "tests_per_platform": 334,
+    "test_executions": 668,
+    "skipped_executions": 0,
+    "same_named_tests_on_both_platforms": true
+  }
+}

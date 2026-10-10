@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "fixture": false,
+  "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "max_parallel_trials": 2,
+  "planned_order": [
+    {
+      "label": "last-baseline-empty-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-last-factory.json",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "arm": "baseline-empty",
+      "repetition": 1,
+      "profile": "baseline"
+    },
+    {
+      "label": "last-retrieval-empty-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-last-factory.json",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "arm": "retrieval-empty",
+      "repetition": 1,
+      "profile": "retrieval"
+    },
+    {
+      "label": "last-retrieval-verified-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-last-factory.json",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "arm": "retrieval-verified",
+      "repetition": 1,
+      "profile": "retrieval"
+    },
+    {
+      "label": "split-baseline-empty-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "baseline-empty",
+      "repetition": 1,
+      "profile": "baseline"
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "retrieval-empty",
+      "repetition": 1,
+      "profile": "retrieval"
+    },
+    {
+      "label": "last-baseline-empty-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-last-factory.json",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "arm": "baseline-empty",
+      "repetition": 2,
+      "profile": "baseline"
+    },
+    {
+      "label": "last-retrieval-empty-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-last-factory.json",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "arm": "retrieval-empty",
+      "repetition": 2,
+      "profile": "retrieval"
+    },
+    {
+      "label": "last-retrieval-verified-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-last-factory.json",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "arm": "retrieval-verified",
+      "repetition": 2,
+      "profile": "retrieval"
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "baseline-empty",
+      "repetition": 2,
+      "profile": "baseline"
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "retrieval-empty",
+      "repetition": 2,
+      "profile": "retrieval"
+    }
+  ],
+  "outcomes": [
+    {
+      "label": "last-retrieval-empty-r1",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 7.1219845000014175,
+      "summary_present": true
+    },
+    {
+      "label": "last-baseline-empty-r1",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 7.365343800003757,
+      "summary_present": true
+    },
+    {
+      "label": "last-retrieval-verified-r1",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 4.807500599999912,
+      "summary_present": true
+    },
+    {
+      "label": "split-baseline-empty-r1",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 4.626191399991512,
+      "summary_present": true
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 4.794879699999001,
+      "summary_present": true
+    },
+    {
+      "label": "last-baseline-empty-r2",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 7.310250800001086,
+      "summary_present": true
+    },
+    {
+      "label": "last-retrieval-verified-r2",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 6.706523400003789,
+      "summary_present": true
+    },
+    {
+      "label": "last-retrieval-empty-r2",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 9.752084899999318,
+      "summary_present": true
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 3.983374499992351,
+      "summary_present": true
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 4.255323999997927,
+      "summary_present": true
+    }
+  ],
+  "time_scope": "Concurrent local repository runs; latency includes shared-host and remote-service contention."
+}

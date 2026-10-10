@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "kind": "predeclared_setup_retry",
+  "original_attempt_source_commit": "8542cf055840e54a00b814b98a978cc623091bbc",
+  "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "preserved_directory": "setup-failures-attempt1",
+  "preserved_launcher_trials": 10,
+  "original_model_calls": 0,
+  "original_model_attempts": 0,
+  "diagnosis": {
+    "stage": "repository.checkout.git_fetch",
+    "reproduced_without_model": true,
+    "error": "unable to open loose object: Filename too long",
+    "platform": "Windows"
+  },
+  "retry": {
+    "target_directory": "targets",
+    "private_output": "runs/ct2",
+    "planned_trials": 10,
+    "task_model_budget_arms_and_source_knowledge_unchanged": true,
+    "runtime_fix": "Enable Git core.longpaths; verify deep init, checkout, capture and fresh application."
+  },
+  "preserved_files": [
+    {
+      "path": "setup-failures-attempt1/execution.json",
+      "sha256": "9283f353265f53c54ead672f0a9bc692cb090be94d3de307f44a277d4b7950ce",
+      "bytes": 5577
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-baseline-empty-r1/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-baseline-empty-r1/summary.json",
+      "sha256": "c5f910d352d4536254a02a6ff0407ded90df338a257fc395ce7a5db5f0c45605",
+      "bytes": 2138
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-baseline-empty-r2/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-baseline-empty-r2/summary.json",
+      "sha256": "65ef790031fe6d809c90aec50adb46ba0f11ba307612584ffa91aa9a3e923944",
+      "bytes": 2139
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-empty-r1/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-empty-r1/summary.json",
+      "sha256": "b627dbc37277c7228959c8102d9c0510718ae486a81517ba4527d181c8632e96",
+      "bytes": 2141
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-empty-r2/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-empty-r2/summary.json",
+      "sha256": "e8ba993a760951a3a02a1d118af021734bf001828b8cab8ac5c54f5e3f710f09",
+      "bytes": 2141
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-verified-r1/knowledge-input.json",
+      "sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+      "bytes": 17561
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-verified-r1/summary.json",
+      "sha256": "b7e48f257f8a1384d924c0f8d1199922b2264b49a5f340ce43b0a7e3b42870a6",
+      "bytes": 2767
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-verified-r2/knowledge-input.json",
+      "sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+      "bytes": 17561
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-verified-r2/summary.json",
+      "sha256": "d496fa0e177c3e60b9b23019a094565d495e3d7f0e1b7e884acf91619ff6da7c",
+      "bytes": 2767
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-baseline-empty-r1/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-baseline-empty-r1/summary.json",
+      "sha256": "340c392d9a532941066d7c2427bb04993a1e7a1b951f4c18f4f6a11c9e6b1dd7",
+      "bytes": 2141
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-baseline-empty-r2/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-baseline-empty-r2/summary.json",
+      "sha256": "36afb861e8777dae1eb59bd3d6a46f1d82aa2ef53198466a9ec0462b3db83edd",
+      "bytes": 2141
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-retrieval-empty-r1/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-retrieval-empty-r1/summary.json",
+      "sha256": "baafffe2962a90fc65b99ac509ec167eba4e5d98b5a636c4bd7cce3fd05cc512",
+      "bytes": 2143
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-retrieval-empty-r2/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-retrieval-empty-r2/summary.json",
+      "sha256": "fcea7b05ad5d65c2294d9d3eabe39cf6d16d2dbb95fb4637946f2f2502b97628",
+      "bytes": 2142
+    }
+  ],
+  "interpretation": "The first ten launchers failed before any model attempt. Their original public bytes are retained here. This receipt is recorded before the fresh ten target trials; no model failure is dropped."
+}

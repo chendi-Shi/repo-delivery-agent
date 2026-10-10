@@ -1,0 +1,175 @@
+{
+  "schema": 1,
+  "kind": "byte_exact_text_parts_manifest",
+  "original_filename": "report.jobs.json",
+  "original_bytes": 1111114,
+  "original_sha256": "4756ab679742d42df7ed939ef8f90a79b19f90bbba70334aea5337746807c57c",
+  "encoding": "UTF-8",
+  "original_line_endings": "CRLF; retained byte-for-byte",
+  "split_at": "Complete line boundaries; no separators inserted and no newline normalization",
+  "part_limit_bytes": 65536,
+  "parts": [
+    {
+      "order": 1,
+      "path": "report.jobs.part-0001.txt",
+      "bytes": 65507,
+      "sha256": "0055e337e8358d3be0ce77693f5800623bba724c1023f5560635d082dcc4b7da"
+    },
+    {
+      "order": 2,
+      "path": "report.jobs.part-0002.txt",
+      "bytes": 65484,
+      "sha256": "9bd32827f1690238985c61bb392263f6aad7244bde366fa10363fdf236e657f1"
+    },
+    {
+      "order": 3,
+      "path": "report.jobs.part-0003.txt",
+      "bytes": 65462,
+      "sha256": "54f8b3ff9a031eb273dc62b13ceca72588b55b28d6d513b7c09fb0ae4eebb9c5"
+    },
+    {
+      "order": 4,
+      "path": "report.jobs.part-0004.txt",
+      "bytes": 65512,
+      "sha256": "5a04dcab4dce40d44d86603f8b93ce149929fba8f38014a698e1fb10672c81b9"
+    },
+    {
+      "order": 5,
+      "path": "report.jobs.part-0005.txt",
+      "bytes": 65519,
+      "sha256": "529c2c2576293cde768fa27fe712c91f87878c154433efb9bf18195437640504"
+    },
+    {
+      "order": 6,
+      "path": "report.jobs.part-0006.txt",
+      "bytes": 65522,
+      "sha256": "7c2561195c45af4ed73dee147212d0b98cd12c8782b6a29ba5cedab927ff2e99"
+    },
+    {
+      "order": 7,
+      "path": "report.jobs.part-0007.txt",
+      "bytes": 65488,
+      "sha256": "11ae8fc0609030b2c9832df78caef448370ac5173adfdc6c58e85a2be02e75c6"
+    },
+    {
+      "order": 8,
+      "path": "report.jobs.part-0008.txt",
+      "bytes": 65466,
+      "sha256": "4f329d5d923d2af2a4a458dbc74c8fd8757ba7851e071359b4f5b9c4ab5c8652"
+    },
+    {
+      "order": 9,
+      "path": "report.jobs.part-0009.txt",
+      "bytes": 65530,
+      "sha256": "c97d4a177102f073b6c39808e95dd8a1ea0ae10ad109c8a923449901fd41c36f"
+    },
+    {
+      "order": 10,
+      "path": "report.jobs.part-0010.txt",
+      "bytes": 65532,
+      "sha256": "841ea3f8d857cb70571324419d920fd95672e7985bfaaa58408287f15d03ccce"
+    },
+    {
+      "order": 11,
+      "path": "report.jobs.part-0011.txt",
+      "bytes": 65514,
+      "sha256": "b7279e7265c030336a05fe7861d437d519920495125011cdb737f3fadc2f85f1"
+    },
+    {
+      "order": 12,
+      "path": "report.jobs.part-0012.txt",
+      "bytes": 65483,
+      "sha256": "95e04f5cbc230572b7aa9870d109d9dd513810c345a546d34736e9839f4d18ed"
+    },
+    {
+      "order": 13,
+      "path": "report.jobs.part-0013.txt",
+      "bytes": 65457,
+      "sha256": "4ed54d65870bd29ef58d9ec9fb6a0e576d0a12c8cbac3f1b64940c642ebc2317"
+    },
+    {
+      "order": 14,
+      "path": "report.jobs.part-0014.txt",
+      "bytes": 65530,
+      "sha256": "ea347581f0f8dd459ef4d26a557795775c020a775185c596af17f674db1d8331"
+    },
+    {
+      "order": 15,
+      "path": "report.jobs.part-0015.txt",
+      "bytes": 65528,
+      "sha256": "9e98365219172f70e07cb44535dd2aa493c14bc732b9a0cff171b67e3ebe6a9f"
+    },
+    {
+      "order": 16,
+      "path": "report.jobs.part-0016.txt",
+      "bytes": 65497,
+      "sha256": "17adaa285f2d61696a09db9638a66677000ef9ae13ef9e27337e818194eff3ae"
+    },
+    {
+      "order": 17,
+      "path": "report.jobs.part-0017.txt",
+      "bytes": 63083,
+      "sha256": "61c4f36aad6cff0416d86cdc75127ba8acbb0df9bb51d2b9442aab392fd69278"
+    }
+  ],
+  "row_count": 1005,
+  "report": {
+    "path": "report.json",
+    "bytes": 5148,
+    "sha256": "dc85641cef8faf3e791124692960dd07178fdbe93295a050e03343840eb10ee3"
+  },
+  "source_originals": [
+    "runs/scheduler-load-local-v2/report.json",
+    "runs/scheduler-load-local-v2/report.jobs.json"
+  ],
+  "source_originals_modified": false,
+  "fixture": true,
+  "llm_calls": 0,
+  "physical_hosts": 1,
+  "source_commit_note": "Original source_commit remains null. Four recorded runtime source hashes still match; repository.py changed after the measurement. This is retained historical evidence, not a validation of all current workspace files.",
+  "runtime_source_comparison_at_publication": [
+    {
+      "path": "delivery_agent/repository.py",
+      "recorded_runtime_sha256": "a25df66ae9033e5402fd8131ad93817dcbaa882e59a9d81cf629c9036f71dc74",
+      "publication_workspace_sha256": "3bee9e57af790d0486c85400726e33dba3856db9e37d53c2e5088c234ce8f14c",
+      "matches": false
+    },
+    {
+      "path": "delivery_agent/scheduler.py",
+      "recorded_runtime_sha256": "64e123a6ca3fea3435cd19266557deca4944a7b82c9b4436c356500ff7b9cdcc",
+      "publication_workspace_sha256": "64e123a6ca3fea3435cd19266557deca4944a7b82c9b4436c356500ff7b9cdcc",
+      "matches": true
+    },
+    {
+      "path": "delivery_agent/scheduler_server.py",
+      "recorded_runtime_sha256": "e4f3dbd59a215fc649e5097caea19c9cf1b3fc0549cf982b0ef372ae8b5e903e",
+      "publication_workspace_sha256": "e4f3dbd59a215fc649e5097caea19c9cf1b3fc0549cf982b0ef372ae8b5e903e",
+      "matches": true
+    },
+    {
+      "path": "delivery_agent/scheduler_worker.py",
+      "recorded_runtime_sha256": "458d5e446d46b7d31a7df6360aa8c81b8220c52a7af735fc67758f0095eae24a",
+      "publication_workspace_sha256": "458d5e446d46b7d31a7df6360aa8c81b8220c52a7af735fc67758f0095eae24a",
+      "matches": true
+    },
+    {
+      "path": "scripts/scheduler_load.py",
+      "recorded_runtime_sha256": "ce0726dfacf63ae8d5c1bc1a378ed3c36161a2a056e1b516cb4fd6118aea7ec8",
+      "publication_workspace_sha256": "ce0726dfacf63ae8d5c1bc1a378ed3c36161a2a056e1b516cb4fd6118aea7ec8",
+      "matches": true
+    }
+  ],
+  "publication_code_files_sha256": {
+    "scripts/scheduler_load.py": "ce0726dfacf63ae8d5c1bc1a378ed3c36161a2a056e1b516cb4fd6118aea7ec8",
+    "tests/test_scheduler_load.py": "736f0668893cbb60bf46c6a108cb5b89e93bdab28c126d082627dfb9f30a1136",
+    ".github/workflows/scheduler-load.yml": "5f5237ed07506fbb7858e9d4ba1b7be412eb01bb2faaec773ceb19ce3375007a"
+  },
+  "privacy_review": "Exact allowlists checked for 1005 records, attempt histories and fixture completions. No bearer/lease token, raw provider trace, host path or nonempty patch is included.",
+  "reconstruction": [
+    "Read parts in explicit order as bytes; check each size and SHA-256.",
+    "Concatenate bytes without separators, decoding/re-encoding or line-ending normalization.",
+    "Check concatenated length and original_sha256, then decode UTF-8 and parse JSON to recover 1005 records.",
+    "Unchanged report.json readback_artifact.path names reconstructed report.jobs.json.",
+    "Only create the reconstructed file if it does not exist; executable Python is in README.md."
+  ]
+}

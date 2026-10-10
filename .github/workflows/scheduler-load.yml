@@ -1,0 +1,50 @@
+name: scheduler load and fault validation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - delivery_agent/scheduler.py
+      - delivery_agent/scheduler_server.py
+      - delivery_agent/scheduler_worker.py
+      - delivery_agent/repository.py
+      - scripts/scheduler_load.py
+      - tests/test_scheduler_load.py
+      - .github/workflows/scheduler-load.yml
+  pull_request:
+    paths:
+      - delivery_agent/scheduler.py
+      - delivery_agent/scheduler_server.py
+      - delivery_agent/scheduler_worker.py
+      - delivery_agent/repository.py
+      - scripts/scheduler_load.py
+      - tests/test_scheduler_load.py
+      - .github/workflows/scheduler-load.yml
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-load:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - name: Validate real HTTP faults and evidence rejection
+        run: python -m unittest discover -s tests -p "test_scheduler_load.py" -v
+      - name: Eight local worker processes and 1000 fixture jobs
+        run: python scripts/scheduler_load.py --jobs 1000 --workers 8 --lease-seconds 5 --timeout-seconds 300 --output runs/scheduler-load/report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scheduler-load-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/scheduler-load/*.json
+          if-no-files-found: error

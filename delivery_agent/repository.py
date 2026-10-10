@@ -26,7 +26,11 @@ def git(path, *args, input=None, timeout=120, check=True):
         if key == "GIT_CONFIG_COUNT" or key.startswith(("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_")):
             env.pop(key)
     command = ["git", "-c", "core.hooksPath=" + os.devnull,
-        "-c", "core.fsmonitor=false", "-c", "core.autocrlf=false", "-c", "core.safecrlf=false", "-C", str(path), *args]
+        # Managed trial roots can exceed Windows MAX_PATH before Git appends
+        # object/pack filenames. Apply this to every invocation, including init,
+        # fetch and clone, without changing the user's global Git configuration.
+        "-c", "core.longpaths=true", "-c", "core.fsmonitor=false",
+        "-c", "core.autocrlf=false", "-c", "core.safecrlf=false", "-C", str(path), *args]
     # Files avoid inherited remote-helper pipes keeping communicate() alive
     # after a Windows timeout. The process wait and subsequent reads are bounded.
     with tempfile.TemporaryFile() as source, tempfile.TemporaryFile() as output, tempfile.TemporaryFile() as error:
@@ -113,7 +117,16 @@ def checkout(task, destination, source=None):
         git(destination, "fetch", "--depth=1", "origin", task.base_commit)
     else:
         source = str(Path(source).resolve())
-        git(destination.parent, "clone", "--no-checkout", "--no-local", "--", source, str(destination))
+        # A local transport starts a separate upload-pack process, which does
+        # not inherit the caller's -c options. Its reads of a deep source .git
+        # object directory need the same Windows path handling as the receiver.
+        # Use the same isolated exact-SHA fetch as a remote checkout. clone can
+        # give index-pack an absolute GIT_DIR exceeding its Windows path bound,
+        # even when both clone and upload-pack have core.longpaths enabled.
+        git(destination.parent, "init", str(destination))
+        git(destination, "remote", "add", "origin", source)
+        git(destination, "fetch", "--upload-pack=git -c core.longpaths=true upload-pack",
+            "--depth=1", "origin", task.base_commit)
     # Git commit arguments are validated before invoking checkout.
     git(destination, "checkout", "--detach", task.base_commit)
     actual = git(destination, "rev-parse", "HEAD").stdout.decode().strip()
