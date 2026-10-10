@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "kind": "independent_public_repository_verification",
+  "manifest_sha256": "73593a9a7e3a9e03324f8ff2d40d905690b95995636325f107733ee6e0359513",
+  "attempts": 1,
+  "verified_attempts": 1,
+  "submitted": 0,
+  "public_check_eligible_attempts": 1,
+  "public_check_eligible_verified_attempts": 1,
+  "no_public_checks_attempts": 0,
+  "public_delivery_denominator": 1,
+  "public_delivery_unknown_attempts": 0,
+  "public_delivery_rate": 0.0,
+  "public_delivery_failures": 1,
+  "delivery_successes": 0,
+  "delivery_rate_all_attempts": 0.0,
+  "by_profile": {
+    "recent": {
+      "attempts": 1,
+      "verified_attempts": 1,
+      "submitted": 0,
+      "public_check_eligible_attempts": 1,
+      "public_check_eligible_verified_attempts": 1,
+      "no_public_checks_attempts": 0,
+      "public_delivery_denominator": 1,
+      "public_delivery_unknown_attempts": 0,
+      "public_delivery_rate": 0.0,
+      "public_delivery_failures": 1,
+      "delivery_successes": 0,
+      "delivery_rate_all_attempts": 0.0
+    }
+  },
+  "official_resolved": null,
+  "runs": [
+    {
+      "id": "psf__requests-2931-recent-codex-cli-proof-v2",
+      "instance_id": "psf__requests-2931",
+      "profile": "recent",
+      "model_name": "gpt-6-astra",
+      "model_digest": null,
+      "model_identity_status": "remote_alias_not_weight_pinned",
+      "provider": "codex_cli",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "model_status": "stopped",
+      "submitted": false,
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "task_sha256": "5a3716d8125bfc7e449a227eb23fcd58e5c3ab22b2db4e5a4f51bb93faeb18b0",
+      "evidence_sha256": "2c25ee4151bb24ff79136a2546b6603106bc8876052ba5e8aefb70da0899be9b",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c 'from pathlib import Path\nfrom urllib.parse import parse_qs\nimport requests\nassert Path(requests.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test frozen checkout\"\nurl = \"http://example.invalid/upload\"\nfor text in (\"normal text\", \"caf\\u00e9\"):\n    prepared = requests.Request(\"PUT\", url, data=text).prepare()\n    assert prepared.body == text and isinstance(prepared.body, str)\nprepared = requests.Request(\"POST\", url, data={\"a\": \"1\", \"b\": \"two words\"}).prepare()\nassert parse_qs(prepared.body) == {\"a\": [\"1\"], \"b\": [\"two words\"]}\nassert prepared.headers[\"Content-Type\"] == \"application/x-www-form-urlencoded\"\nprepared = requests.Request(\"POST\", url, data=[(\"x\", \"1\"), (\"x\", \"2\")]).prepare()\nassert parse_qs(prepared.body) == {\"x\": [\"1\", \"2\"]}\nprepared = requests.Request(\"POST\", url, data=None).prepare()\nassert prepared.body is None and prepared.headers[\"Content-Length\"] == \"0\"\nprepared = requests.Request(\"GET\", url, params={\"q\": \"text\"}).prepare()\nassert prepared.url.endswith(\"?q=text\")\nprint(\"offline text and form compatibility passed\")\n'",
+          "returncode": 0,
+          "passed": true,
+          "output_sha256": "a6bb48fe0309dd6d60312082af039dc141cf0a523969f6a7487f6a41a54a413c",
+          "output_preview": "offline text and form compatibility passed\n"
+        },
+        {
+          "command": "python -c 'from pathlib import Path\nimport requests\nassert Path(requests.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test frozen checkout\"\npayloads = (\n    \"\\u00f6\\u00f6\\u00f6\".encode(\"utf-8\"),\n    b\"\\x00\\xff\\x80\\xfe\",\n    bytes(range(256)),\n    b\"plain ascii bytes\",\n)\nfor method in (\"PUT\", \"POST\"):\n    for payload in payloads:\n        prepared = requests.Request(method, \"http://example.invalid/upload\", data=payload,\n                                    headers={\"Content-Type\": \"application/octet-stream\"}).prepare()\n        assert isinstance(prepared.body, bytes), \"binary body must remain bytes\"\n        assert prepared.body == payload, \"binary payload was changed\"\n        assert prepared.headers[\"Content-Length\"] == str(len(payload))\n        assert prepared.headers[\"Content-Type\"] == \"application/octet-stream\"\n        assert prepared.method == method\nprint(\"offline binary payload contract passed\")\n'",
+          "returncode": 1,
+          "passed": false,
+          "output_sha256": "a444ceb1e683e15de998908620dcf75a5d7358eb1e5eb1384b23dda5ec790c02",
+          "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 12, in <module>\n  File \"/workspace/requests/models.py\", line 239, in prepare\n    p.prepare(\n  File \"/workspace/requests/models.py\", line 296, in prepare\n    self.prepare_body(data, files, json)\n  File \"/workspace/requests/models.py\", line 447, in prepare_body\n    body = self._encode_params(data)\n  File \"/workspace/requests/models.py\", line 84, in _encode_params\n    return to_native_string(data)\n  File \"/workspace/requests/utils.py\", line 700, in to_native_string\n    out = string.decode(encoding)\nUnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 0: ordinal not in range(128)\n"
+        }
+      ],
+      "public_check_eligible": true,
+      "delivery_success": false,
+      "public_delivery_status": "failed",
+      "official_resolved": null,
+      "resolved_image": "sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed17f45ee3",
+      "verification_status": "failed"
+    }
+  ],
+  "infrastructure_failures": []
+}

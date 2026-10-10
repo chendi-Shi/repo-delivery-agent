@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "kind": "github_actions_engineering_validation",
+  "model_performance_evidence": false,
+  "source_commit": "060c1b92cbecc6d0bb0432d6009473e2435184dc",
+  "run_id": 38022112406,
+  "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022112406",
+  "observed_at_utc": "2026-10-10T03:57:30Z",
+  "conclusion": "success",
+  "completed_jobs": 4,
+  "successful_jobs": 4,
+  "provenance": "GitHub connector completed job statuses and decoded job logs; exact source SHA independently confirmed in all four checkout logs",
+  "raw_logs_included": false,
+  "duration_scope": "unittest_seconds comes from the actual unittest footer. observed_log_span_seconds is the timestamp difference between the first and last job-log line, rounded to milliseconds; it excludes queue time.",
+  "jobs": [
+    {
+      "job_id": 114125136708,
+      "name": "unit (ubuntu-latest)",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022112406/job/114125136708",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "tests": 318,
+      "skipped": 0,
+      "unittest_seconds": 35.043,
+      "log_first_timestamp_utc": "2026-10-10T03:53:00.0359876Z",
+      "log_last_timestamp_utc": "2026-10-10T03:54:13.3369935Z",
+      "observed_log_span_seconds": 73.301
+    },
+    {
+      "job_id": 114125136797,
+      "name": "unit (windows-latest)",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022112406/job/114125136797",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "tests": 318,
+      "skipped": 0,
+      "unittest_seconds": 77.396,
+      "log_first_timestamp_utc": "2026-10-10T03:53:02.1332269Z",
+      "log_last_timestamp_utc": "2026-10-10T03:56:12.2766687Z",
+      "observed_log_span_seconds": 190.143
+    },
+    {
+      "job_id": 114125136838,
+      "name": "docker-integration",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022112406/job/114125136838",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "unittest_seconds": null,
+      "log_first_timestamp_utc": "2026-10-10T03:52:59.9601741Z",
+      "log_last_timestamp_utc": "2026-10-10T03:53:52.7513186Z",
+      "observed_log_span_seconds": 52.791,
+      "fixture": true,
+      "docker_smoke_passed": true,
+      "docker_recovery_smoke_passed": true
+    },
+    {
+      "job_id": 114125136861,
+      "name": "real-model-patch-verification",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022112406/job/114125136861",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "unittest_seconds": null,
+      "log_first_timestamp_utc": "2026-10-10T03:53:00.1640232Z",
+      "log_last_timestamp_utc": "2026-10-10T03:53:23.4086014Z",
+      "observed_log_span_seconds": 23.244,
+      "input_manifest": "experiments/round-2-3b/repository-ablation.json",
+      "verification_summary": {
+        "attempts": 6,
+        "submitted": 0,
+        "public_delivery_denominator": 3,
+        "no_public_checks_attempts": 3,
+        "delivery_successes": 0,
+        "public_delivery_rate": 0,
+        "delivery_rate_all_attempts": null
+      }
+    }
+  ],
+  "limitations": [
+    "Each platform ran 318 tests with zero skips; counts should not be added as distinct tests.",
+    "Null tests/skipped/unittest_seconds means that job runs smoke or verification scripts rather than unittest.",
+    "Docker fixture checks and CI completion do not establish genuine Codex task success. The retained-patch verifier here covers older round-2 artifacts; Codex v1/v2 verification and v3 inference are separate."
+  ]
+}

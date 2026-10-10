@@ -1,0 +1,82 @@
+[
+  {
+    "module_file": "checkpoint.py",
+    "function": "write",
+    "line": 97,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "recovery.py",
+    "function": "commit",
+    "line": 124,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "upstream.py",
+    "function": "add_messages",
+    "line": 685,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "default.py",
+    "function": "query",
+    "line": 151,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "upstream.py",
+    "function": "query",
+    "line": 693,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "default.py",
+    "function": "step",
+    "line": 128,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "default.py",
+    "function": "run",
+    "line": 98,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "upstream.py",
+    "function": "run",
+    "line": 727,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "upstream.py",
+    "function": "run_agent",
+    "line": 795,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  },
+  {
+    "module_file": "cli.py",
+    "function": "run_repository",
+    "line": 264,
+    "error_type": "PermissionError",
+    "errno": 13,
+    "winerror": 5
+  }
+]

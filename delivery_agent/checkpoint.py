@@ -11,9 +11,27 @@ import copy
 import hashlib
 import json
 import os
+import time
 import uuid
 from pathlib import Path
 from typing import Any
+
+
+_IS_WINDOWS = os.name == "nt"
+_REPLACE_RETRY_DELAYS = (0.02, 0.05, 0.1, 0.2, 0.4)
+
+
+def _replace_checkpoint(temporary: Path, target: Path) -> None:
+    """Retry only the same durable rename after bounded Windows sharing errors."""
+    for attempt in range(len(_REPLACE_RETRY_DELAYS) + 1):
+        try:
+            os.replace(temporary, target)
+            return
+        except OSError as exc:
+            if (not _IS_WINDOWS or getattr(exc, "winerror", None) not in {5, 32, 33}
+                    or attempt == len(_REPLACE_RETRY_DELAYS)):
+                raise
+            time.sleep(_REPLACE_RETRY_DELAYS[attempt])
 
 
 class CheckpointMismatch(ValueError):
@@ -94,15 +112,21 @@ class CheckpointStore:
                 stream.write(content)
                 stream.flush()
                 os.fsync(stream.fileno())
-            os.replace(temporary, self.path)
+            _replace_checkpoint(temporary, self.path)
             if os.name != "nt":
                 descriptor = os.open(self.path.parent, os.O_RDONLY)
                 try:
                     os.fsync(descriptor)
                 finally:
                     os.close(descriptor)
-        finally:
-            temporary.unlink(missing_ok=True)
+        except BaseException:
+            # Preserve the original write/replace error even if a scanner also
+            # holds the temporary file. A successful rename already consumes it.
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+            raise
         self.data = candidate
 
     def close(self) -> None:

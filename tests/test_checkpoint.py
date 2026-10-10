@@ -12,11 +12,18 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from delivery_agent import checkpoint
 from delivery_agent.checkpoint import (CheckpointMismatch, CheckpointStore, RecoveryBusy,
                                        get_pending, inspect_checkpoint)
 
 
 class CheckpointTests(unittest.TestCase):
+    @staticmethod
+    def windows_error(code):
+        error = PermissionError(13, "controlled checkpoint rename failure")
+        error.winerror = code
+        return error
+
     def test_integrity_binding_and_pending_are_checked_without_execution(self):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "checkpoint.json"
@@ -44,6 +51,102 @@ class CheckpointTests(unittest.TestCase):
             self.assertEqual(path.read_bytes(), previous)
             self.assertEqual(list(path.parent.glob("*.tmp")), [])
             store.close()
+
+    def test_transient_windows_rename_reuses_one_fsynced_candidate_and_commits_once(self):
+        for code in (5, 32, 33):
+            with self.subTest(winerror=code), tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary) / "checkpoint.json"
+                store = CheckpointStore(path, {"task": "fixture"})
+                try:
+                    store.write(state={"value": "old"}, transition=None)
+                    old_bytes, old_data = path.read_bytes(), store.data
+                    attempts, successful = [], []
+                    replace, fsync = os.replace, os.fsync
+
+                    def flaky_replace(source, target):
+                        self.assertEqual(target, path)
+                        self.assertEqual(path.read_bytes(), old_bytes)
+                        self.assertIs(store.data, old_data)
+                        self.assertEqual(synced.call_count, 1)
+                        attempts.append((source, source.read_bytes()))
+                        if len(attempts) < 3:
+                            raise self.windows_error(code)
+                        replace(source, target)
+                        successful.append(target)
+
+                    with (patch.object(checkpoint, "_IS_WINDOWS", True),
+                          patch.object(checkpoint.os, "replace", side_effect=flaky_replace),
+                          patch.object(checkpoint.os, "fsync", wraps=fsync) as synced,
+                          patch.object(checkpoint.time, "sleep") as sleep):
+                        store.write(state={"value": "new"}, transition={"pending": {"kind": "tool"}})
+                    self.assertEqual(len(attempts), 3)
+                    self.assertTrue(all(item == attempts[0] for item in attempts))
+                    self.assertEqual(successful, [path])
+                    self.assertEqual([call.args[0] for call in sleep.call_args_list], [0.02, 0.05])
+                    saved = inspect_checkpoint(path)
+                    self.assertEqual(saved, store.data)
+                    self.assertEqual(saved["revision"], old_data["revision"] + 1)
+                    self.assertEqual(saved["state"], {"value": "new"})
+                    self.assertEqual(get_pending(path), {"kind": "tool"})
+                    self.assertEqual(list(path.parent.glob("*.tmp")), [])
+                finally:
+                    store.close()
+
+    def test_persistent_windows_rename_preserves_state_and_cleanup_cannot_mask_error(self):
+        for cleanup_fails in (False, True):
+            with self.subTest(cleanup_fails=cleanup_fails), tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary) / "checkpoint.json"
+                store = CheckpointStore(path, {})
+                try:
+                    store.write(state={"value": "old"}, transition=None)
+                    old_bytes, old_data = path.read_bytes(), store.data
+                    failure = self.windows_error(5)
+                    unlink = Path.unlink
+
+                    def cleanup(candidate, **kwargs):
+                        if cleanup_fails:
+                            raise PermissionError("controlled cleanup failure")
+                        return unlink(candidate, **kwargs)
+
+                    with (patch.object(checkpoint, "_IS_WINDOWS", True),
+                          patch.object(checkpoint.os, "replace", side_effect=failure) as replace,
+                          patch.object(checkpoint.time, "sleep") as sleep,
+                          patch.object(Path, "unlink", cleanup)):
+                        with self.assertRaises(PermissionError) as caught:
+                            store.write(state={"value": "new"}, transition=None)
+                    self.assertIs(caught.exception, failure)
+                    self.assertEqual(replace.call_count, 6)
+                    self.assertEqual([call.args[0] for call in sleep.call_args_list],
+                                     [0.02, 0.05, 0.1, 0.2, 0.4])
+                    self.assertEqual(len({call.args[0] for call in replace.call_args_list}), 1)
+                    self.assertEqual(path.read_bytes(), old_bytes)
+                    self.assertIs(store.data, old_data)
+                    self.assertEqual(len(list(path.parent.glob("*.tmp"))), int(cleanup_fails))
+                finally:
+                    store.close()
+
+    def test_non_windows_and_unrecognized_errors_are_not_retried(self):
+        for windows, code in ((False, 5), (True, 112), (True, None)):
+            with self.subTest(windows=windows, code=code), tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary) / "checkpoint.json"
+                store = CheckpointStore(path, {})
+                try:
+                    store.write(state={"value": "old"}, transition=None)
+                    old_bytes, old_data = path.read_bytes(), store.data
+                    failure = self.windows_error(code)
+                    with (patch.object(checkpoint, "_IS_WINDOWS", windows),
+                          patch.object(checkpoint.os, "replace", side_effect=failure) as replace,
+                          patch.object(checkpoint.time, "sleep") as sleep):
+                        with self.assertRaises(PermissionError) as caught:
+                            store.write(state={"value": "new"}, transition=None)
+                    self.assertIs(caught.exception, failure)
+                    replace.assert_called_once()
+                    sleep.assert_not_called()
+                    self.assertEqual(path.read_bytes(), old_bytes)
+                    self.assertIs(store.data, old_data)
+                    self.assertEqual(list(path.parent.glob("*.tmp")), [])
+                finally:
+                    store.close()
 
     def test_writer_lock_rejects_concurrent_owner_and_releases_on_close(self):
         with tempfile.TemporaryDirectory() as temporary:
