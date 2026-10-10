@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "kind": "github_actions_scheduler_and_engineering_validation",
+  "source_commit": "00dffaece1064df3991422e4a5d03aed046cf38c",
+  "fixture": true,
+  "llm_calls": 0,
+  "lease_seconds": 30,
+  "scheduler_load_status": "success",
+  "regular_ci_status": "success",
+  "runs": [
+    {
+      "id": 38033408272,
+      "name": "scheduler load and fault validation",
+      "head_sha": "00dffaece1064df3991422e4a5d03aed046cf38c",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272"
+    },
+    {
+      "id": 38033408280,
+      "name": "tests",
+      "head_sha": "00dffaece1064df3991422e4a5d03aed046cf38c",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280"
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 38033408272,
+      "job_id": 114158819719,
+      "name": "bounded-load (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272/job/114158819719",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 5.022,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.2652719Z",
+      "last_log_timestamp_utc": "2026-10-10T07:09:45.1330593Z",
+      "observed_log_span_seconds": 51.868,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408272,
+      "job_id": 114158819809,
+      "name": "bounded-load (windows-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272/job/114158819809",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 9.176,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.2778596Z",
+      "last_log_timestamp_utc": "2026-10-10T07:10:51.0759223Z",
+      "observed_log_span_seconds": 117.798,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819786,
+      "name": "docker-integration",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819786",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "errors": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.6114293Z",
+      "last_log_timestamp_utc": "2026-10-10T07:09:41.9586877Z",
+      "observed_log_span_seconds": 48.347,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819894,
+      "name": "unit (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819894",
+      "checkout_sha_confirmed": true,
+      "tests": 409,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 44.488,
+      "first_log_timestamp_utc": "2026-10-10T07:08:54.2528465Z",
+      "last_log_timestamp_utc": "2026-10-10T07:10:22.5804540Z",
+      "observed_log_span_seconds": 88.328,
+      "evidence_recompute_step": {
+        "name": "Recompute and check original and supplemental transfer evidence",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819896,
+      "name": "real-model-patch-verification",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819896",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "errors": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.2408471Z",
+      "last_log_timestamp_utc": "2026-10-10T07:09:15.6140933Z",
+      "observed_log_span_seconds": 22.374,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819908,
+      "name": "unit (windows-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819908",
+      "checkout_sha_confirmed": true,
+      "tests": 409,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 157.034,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.5050290Z",
+      "last_log_timestamp_utc": "2026-10-10T07:14:08.5159775Z",
+      "observed_log_span_seconds": 315.01,
+      "evidence_recompute_step": {
+        "name": "Recompute and check original and supplemental transfer evidence",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    }
+  ],
+  "scheduler_artifacts": [
+    {
+      "platform": "ubuntu-latest",
+      "artifact_id": 11662268159,
+      "zip_bytes": 121324,
+      "zip_sha256": "d047cd0710cb52938a1c4d2959b5d2a768ef5470c8bb383ef4914603115217d4",
+      "report": "ubuntu/report.json",
+      "readback_manifest": "ubuntu/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "elapsed_seconds": 37.396359810999996,
+      "load": {
+        "acknowledged_jobs": 1000,
+        "acknowledgements_match_plan": true,
+        "active_lease_window_seconds": 2.4266326427459717,
+        "claim_to_commit": {
+          "max_seconds": 0.4372851848602295,
+          "p50_seconds": 0.008124351501464844,
+          "p95_seconds": 0.027102947235107422,
+          "samples": 1000
+        },
+        "complete": true,
+        "duplicate_job_acknowledgements": 0,
+        "idempotent_completion_responses": 0,
+        "latency_scope": "Coordinator wall timestamps; submit latency includes queueing and worker startup. Nearest-rank percentiles.",
+        "observed_worker_processes": 8,
+        "planned_jobs": 1000,
+        "requested_worker_processes": 8,
+        "submit_to_commit": {
+          "max_seconds": 3.0963666439056396,
+          "p50_seconds": 2.6818366050720215,
+          "p95_seconds": 2.872748613357544,
+          "samples": 1000
+        },
+        "successful_jobs": 1000,
+        "throughput_jobs_per_second": 412.09368999025844,
+        "throughput_scope": "First load lease start to last load commit; includes first-action barrier, excludes enqueue/startup/readback/idle shutdown."
+      },
+      "faults_passed": {
+        "cancellation": true,
+        "coordinator_restart": true,
+        "killed_worker": true
+      }
+    },
+    {
+      "platform": "windows-latest",
+      "artifact_id": 11662527972,
+      "zip_bytes": 122563,
+      "zip_sha256": "1d6aafefd7e61ddd4946f17f339ad92c60e0bb522a8e4d4c1da6c682ff21472b",
+      "report": "windows/report.json",
+      "readback_manifest": "windows/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "elapsed_seconds": 85.39099999999996,
+      "load": {
+        "acknowledged_jobs": 1000,
+        "acknowledgements_match_plan": true,
+        "active_lease_window_seconds": 23.442169904708862,
+        "claim_to_commit": {
+          "max_seconds": 3.1988909244537354,
+          "p50_seconds": 0.030241012573242188,
+          "p95_seconds": 0.5207545757293701,
+          "samples": 1000
+        },
+        "complete": true,
+        "duplicate_job_acknowledgements": 0,
+        "idempotent_completion_responses": 0,
+        "latency_scope": "Coordinator wall timestamps; submit latency includes queueing and worker startup. Nearest-rank percentiles.",
+        "observed_worker_processes": 8,
+        "planned_jobs": 1000,
+        "requested_worker_processes": 8,
+        "submit_to_commit": {
+          "max_seconds": 28.888680934906006,
+          "p50_seconds": 25.47970461845398,
+          "p95_seconds": 26.070022583007812,
+          "samples": 1000
+        },
+        "successful_jobs": 1000,
+        "throughput_jobs_per_second": 42.65816705812411,
+        "throughput_scope": "First load lease start to last load commit; includes first-action barrier, excludes enqueue/startup/readback/idle shutdown."
+      },
+      "faults_passed": {
+        "cancellation": true,
+        "coordinator_restart": true,
+        "killed_worker": true
+      }
+    }
+  ],
+  "other_regular_jobs": {
+    "docker_fixture_smoke_passed": true,
+    "docker_fixture_recovery_passed": true,
+    "retained_patch_verification": {
+      "attempts": 6,
+      "submitted": 0,
+      "public_delivery_denominator": 3,
+      "no_public_checks_attempts": 3,
+      "delivery_successes": 0,
+      "public_delivery_rate": 0,
+      "delivery_rate_all_attempts": null
+    }
+  },
+  "notes": [
+    "Both standard unit jobs passed 409 tests with zero skips; Linux 44.488s, Windows 157.034s.",
+    "Both unit jobs separately passed the Recompute and check original and supplemental transfer evidence step. This is a read-only integrity/summary check, not fresh model calls.",
+    "Both original ZIPs matched GitHub artifact size and SHA256. Original report bytes are preserved and full readbacks can be reconstructed from byte-exact parts.",
+    "Strict verification of all 1005 rows per platform was rerun, including unrelaxed single-attempt load checks; latency and throughput were independently recomputed from those records.",
+    "Acknowledgement fields were checked against each original report; they cannot be independently derived from final job records.",
+    "All 1000 ordinary jobs per platform succeeded in generation1, with 1000 acknowledgements; total 1005 rows, zero missing or duplicate accepted jobs, all three fault groups passed.",
+    "A single physical host per platform, eight OS processes, fixture workload, zero model calls; no unlimited production capacity, cross-host network, or general exactly-once-execution claim.",
+    "Before failures remain in prior archives, including d39 Windows load. A successful new execution does not rewrite them or establish the precise historical transport cause.",
+    "Original ZIPs remain under ignored runs/ci-claim-recovery-downloads; no authentication material, temporary download URLs, or raw CI logs are published."
+  ]
+}

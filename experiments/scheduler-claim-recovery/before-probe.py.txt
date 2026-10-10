@@ -1,0 +1,76 @@
+"""Drop one real HTTP claim reply after its SQLite transaction committed."""
+from __future__ import annotations
+
+import hashlib
+import json
+import socket
+import sys
+import tempfile
+import threading
+from pathlib import Path
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parent.parent / "repo-delivery-agent"
+sys.path.insert(0, str(ROOT))
+from delivery_agent.scheduler import JobStore
+from delivery_agent.scheduler_server import Coordinator, CoordinatorHandler
+from delivery_agent.scheduler_worker import Client, Worker
+
+
+def main():
+    with tempfile.TemporaryDirectory() as temporary:
+        root = Path(temporary)
+        now = [1000.0]
+        store = JobStore(root / "jobs.sqlite", lease_seconds=30, clock=lambda: now[0])
+        token = "lost-claim-fixture-" + "x" * 40
+        server = Coordinator(("127.0.0.1", 0), store, token, request_timeout=2)
+        client = Client(f"http://127.0.0.1:{server.server_port}", token, timeout=1)
+        thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .01}, daemon=True)
+        dropped = []
+        executed = []
+        reply = CoordinatorHandler._reply
+
+        def drop_once(handler, status, value):
+            if status == 200 and isinstance(value, dict) and value.get("job") and not dropped:
+                dropped.append(value["job"]["job_id"])
+                handler.connection.shutdown(socket.SHUT_RDWR)
+                raise BrokenPipeError("controlled fixture: claim reply lost after transaction")
+            return reply(handler, status, value)
+
+        def executor(claim, directory, cancelled, options):
+            executed.append(claim["generation"])
+            return {"outcome": "succeeded", "result": {"fixture": True}, "patch": "", "evidence": {}}
+
+        with patch.object(CoordinatorHandler, "_reply", drop_once):
+            thread.start()
+            try:
+                client.submit("job", {"task": {"instance_id": "fixture", "repo": "example/project",
+                    "base_commit": "a" * 40, "problem_statement": "Trusted transport fixture",
+                    "image": "python:3.12-slim", "public_checks": []},
+                    "config": {"model": "fixture", "profile": "baseline"}}, max_attempts=2)
+                commits = Worker(client, "worker", root / "attempts", executor=executor, poll_seconds=.02).run(idle_seconds=.3)
+                before = client.request("/v1/jobs/job")
+                same_worker_retry = client.claim("worker")
+                now[0] = 1031.0
+                client.register("replacement")
+                recovered = client.claim("replacement")
+                after = client.request("/v1/jobs/job")
+                report = {"fixture": True, "llm_calls": 0, "lease_seconds": 30,
+                    "real_http_reply_dropped_after_commit": len(dropped) == 1,
+                    "executor_invocations_before_expiry": len(executed), "worker_completion_responses": len(commits),
+                    "before_expiry": {k: before[k] for k in ("state", "attempts", "generation")},
+                    "same_worker_claim_retry_returned_none": same_worker_retry is None,
+                    "after_expiry": {k: after[k] for k in ("state", "attempts", "generation", "attempt_history")},
+                    "replacement_generation": recovered["generation"],
+                    "source_files_sha256": {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+                        for name in ("delivery_agent/scheduler.py", "delivery_agent/scheduler_server.py", "delivery_agent/scheduler_worker.py")},
+                    "interpretation": "Demonstrates a lost-claim-response recovery gap with real HTTP and SQLite, using a controlled clock to avoid waiting 30 seconds. The historical CI lacks request-level telemetry, so this does not prove which transport event occurred there."}
+                print(json.dumps(report, indent=2))
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(3)
+
+
+if __name__ == "__main__":
+    main()

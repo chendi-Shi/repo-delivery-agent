@@ -1,0 +1,163 @@
+{
+  "fixture": true,
+  "llm_calls": 0,
+  "tests_run": 3,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 1.6614370000024792,
+  "source_files_sha256": {
+    "delivery_agent/scheduler.py": "eea1b660d115283023751a01afa7ddba11b315c2bc3a34df0f87b23ddb529a84",
+    "delivery_agent/scheduler_server.py": "dbd5309d0b66adb6329ec6768601a784f9d93c0a94a5d79a87908b4ec62794a9",
+    "delivery_agent/scheduler_worker.py": "41e81544fd5025d6f8f94131456282b77e109a5288e674e04c9eec1165364ca9",
+    "tests/test_scheduler_claim_recovery.py": "a074ce073e76908e461a90273cab5f55e29a0784e92077c2202921780f362248"
+  },
+  "source_unchanged_during_run": true,
+  "observations": [
+    {
+      "mode": "claim",
+      "fixture": true,
+      "llm_calls": 0,
+      "dropped_replies_or_requests": [
+        "claim_after_commit"
+      ],
+      "claim_request_count": 2,
+      "claim_request_ids_present": true,
+      "first_two_claim_requests_same_id": true,
+      "same_claim_token_and_generation_recovered": true,
+      "executor_invocations": [
+        {
+          "job_id": "one",
+          "generation": 1
+        }
+      ],
+      "worker_result_states": [
+        "succeeded"
+      ],
+      "fresh_request_after_unknown_returned_none": true,
+      "rows": [
+        {
+          "job_id": "one",
+          "state": "succeeded",
+          "attempts": 1,
+          "generation": 1,
+          "attempt_history": [
+            {
+              "ended": 1791616089.3870738,
+              "generation": 1,
+              "outcome": "succeeded",
+              "result_digest": "b2d50c81c43aa5937848380781716e4b914c981ac81ab40354fd6988d1d02bb4",
+              "started": 1791616089.3456159,
+              "worker_id": "worker"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "committed_completion",
+      "fixture": true,
+      "llm_calls": 0,
+      "dropped_replies_or_requests": [
+        "completion_after_commit",
+        "completion_after_commit",
+        "completion_after_commit"
+      ],
+      "claim_request_count": 2,
+      "claim_request_ids_present": true,
+      "first_two_claim_requests_same_id": false,
+      "same_claim_token_and_generation_recovered": false,
+      "executor_invocations": [
+        {
+          "job_id": "one",
+          "generation": 1
+        },
+        {
+          "job_id": "two",
+          "generation": 1
+        }
+      ],
+      "worker_result_states": [
+        "commit_unknown",
+        "succeeded"
+      ],
+      "fresh_request_after_unknown_returned_none": true,
+      "rows": [
+        {
+          "job_id": "one",
+          "state": "succeeded",
+          "attempts": 1,
+          "generation": 1,
+          "attempt_history": [
+            {
+              "ended": 1791616089.4903271,
+              "generation": 1,
+              "outcome": "succeeded",
+              "result_digest": "b2d50c81c43aa5937848380781716e4b914c981ac81ab40354fd6988d1d02bb4",
+              "started": 1791616089.4795911,
+              "worker_id": "worker"
+            }
+          ]
+        },
+        {
+          "job_id": "two",
+          "state": "succeeded",
+          "attempts": 1,
+          "generation": 1,
+          "attempt_history": [
+            {
+              "ended": 1791616090.1574845,
+              "generation": 1,
+              "outcome": "succeeded",
+              "result_digest": "b2d50c81c43aa5937848380781716e4b914c981ac81ab40354fd6988d1d02bb4",
+              "started": 1791616090.1356316,
+              "worker_id": "worker"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "uncommitted_completion",
+      "fixture": true,
+      "llm_calls": 0,
+      "dropped_replies_or_requests": [
+        "completion_before_commit",
+        "completion_before_commit",
+        "completion_before_commit"
+      ],
+      "claim_request_count": 2,
+      "claim_request_ids_present": true,
+      "first_two_claim_requests_same_id": false,
+      "same_claim_token_and_generation_recovered": false,
+      "executor_invocations": [
+        {
+          "job_id": "one",
+          "generation": 1
+        }
+      ],
+      "worker_result_states": [
+        "commit_unknown"
+      ],
+      "fresh_request_after_unknown_returned_none": true,
+      "rows": [
+        {
+          "job_id": "one",
+          "state": "leased",
+          "attempts": 1,
+          "generation": 1,
+          "attempt_history": [
+            {
+              "ended": null,
+              "generation": 1,
+              "outcome": null,
+              "result_digest": null,
+              "started": 1791616090.2481303,
+              "worker_id": "worker"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

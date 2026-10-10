@@ -1,0 +1,157 @@
+{
+  "source_commit": "00dffaece1064df3991422e4a5d03aed046cf38c",
+  "runs": [
+    {
+      "id": 38033408272,
+      "name": "scheduler load and fault validation",
+      "head_sha": "00dffaece1064df3991422e4a5d03aed046cf38c",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272"
+    },
+    {
+      "id": 38033408280,
+      "name": "tests",
+      "head_sha": "00dffaece1064df3991422e4a5d03aed046cf38c",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280"
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 38033408272,
+      "job_id": 114158819719,
+      "name": "bounded-load (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272/job/114158819719",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 5.022,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.2652719Z",
+      "last_log_timestamp_utc": "2026-10-10T07:09:45.1330593Z",
+      "observed_log_span_seconds": 51.868,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408272,
+      "job_id": 114158819809,
+      "name": "bounded-load (windows-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272/job/114158819809",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 9.176,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.2778596Z",
+      "last_log_timestamp_utc": "2026-10-10T07:10:51.0759223Z",
+      "observed_log_span_seconds": 117.798,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819786,
+      "name": "docker-integration",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819786",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "errors": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.6114293Z",
+      "last_log_timestamp_utc": "2026-10-10T07:09:41.9586877Z",
+      "observed_log_span_seconds": 48.347,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819894,
+      "name": "unit (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819894",
+      "checkout_sha_confirmed": true,
+      "tests": 409,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 44.488,
+      "first_log_timestamp_utc": "2026-10-10T07:08:54.2528465Z",
+      "last_log_timestamp_utc": "2026-10-10T07:10:22.5804540Z",
+      "observed_log_span_seconds": 88.328,
+      "evidence_recompute_step": {
+        "name": "Recompute and check original and supplemental transfer evidence",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819896,
+      "name": "real-model-patch-verification",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819896",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "errors": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.2408471Z",
+      "last_log_timestamp_utc": "2026-10-10T07:09:15.6140933Z",
+      "observed_log_span_seconds": 22.374,
+      "evidence_recompute_step": null
+    },
+    {
+      "run_id": 38033408280,
+      "job_id": 114158819908,
+      "name": "unit (windows-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280/job/114158819908",
+      "checkout_sha_confirmed": true,
+      "tests": 409,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 157.034,
+      "first_log_timestamp_utc": "2026-10-10T07:08:53.5050290Z",
+      "last_log_timestamp_utc": "2026-10-10T07:14:08.5159775Z",
+      "observed_log_span_seconds": 315.01,
+      "evidence_recompute_step": {
+        "name": "Recompute and check original and supplemental transfer evidence",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 11662527972,
+      "name": "scheduler-load-windows-latest-38033408272-1",
+      "size_in_bytes": 122563,
+      "digest": "sha256:1d6aafefd7e61ddd4946f17f339ad92c60e0bb522a8e4d4c1da6c682ff21472b",
+      "head_sha": "00dffaece1064df3991422e4a5d03aed046cf38c",
+      "run_id": 38033408272,
+      "expired": false,
+      "created_at": "2026-10-10T07:10:48Z"
+    },
+    {
+      "id": 11662268159,
+      "name": "scheduler-load-ubuntu-latest-38033408272-1",
+      "size_in_bytes": 121324,
+      "digest": "sha256:d047cd0710cb52938a1c4d2959b5d2a768ef5470c8bb383ef4914603115217d4",
+      "head_sha": "00dffaece1064df3991422e4a5d03aed046cf38c",
+      "run_id": 38033408272,
+      "expired": false,
+      "created_at": "2026-10-10T07:09:44Z"
+    }
+  ]
+}

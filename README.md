@@ -6,6 +6,8 @@
 
 详细说明见 [做了什么、怎么做、问题与修复](docs/implementation-walkthrough.md)。真实模型、语义检索和评分证据见 [experiments](experiments)，各阶段验证见 [验证记录](docs/validation.md)。实现功能、协议测试、真实模型提交、独立检查和官方 resolved 分别记录。
 
+**最新工程验收：** 源码 `00dffae` 在 Linux / Windows 各通过 **409 项测试、0 skip**，两平台均完成真实产物的只读重算；Docker 执行与崩溃恢复通过。[CI 和双平台负载收据](experiments/ci-claim-recovery/validation.json)保留实际源码、日志计数与原始产物身份。安装依赖后可运行 `python scripts/finalize_codex_transfer.py --root experiments/codex-transfer-v1 --check` 复核原十轮与补充两轮的证据和汇总。
+
 已完成来源验收、真实知识入库、目标读取与独立交付对照：[Codex 知识复用完整案例](docs/verified-transfer-case.md)。冻结的 10 次目标尝试为 **4 次正式交付成功、6 次失败、0 项未知**；另行预登记的 split 补充尝试为 **2/2 成功**，单列统计。last 三组的补丁检查全部通过，但空知识 retrieval 两轮均未正式提交；因此本轮支持知识复用链路已打通，不能证明提高了代码正确率或节省 tokens。原有 Ollama 队列及失败见 [历史交付实验](docs/delivery-closure.md)。
 
 调度已完成真实 HTTP、SQLite、**8 个独立 worker 进程 / 1000 个普通任务 + 5 个故障任务**的双平台验收。30 秒租约配置下，普通任务均只领取一代，1000 次确认完整，worker 崩溃重领、旧代提交拒绝、取消和 coordinator 重启均通过。这是单机多进程、零 LLM 调用的调度验证；5 秒租约在 Windows 负载下的失败也保留，见 [调度验证](docs/distributed.md)。

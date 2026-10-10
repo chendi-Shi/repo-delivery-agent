@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "kind": "byte_exact_text_parts_manifest",
+  "original_filename": "report.jobs.json",
+  "original_bytes": 1110608,
+  "original_sha256": "a38c2ed72453e104358c1239ede2eaa77490d045d8706eb22e343f1e2d07f1f6",
+  "encoding": "UTF-8",
+  "line_endings": "CRLF",
+  "part_limit_bytes": 65536,
+  "parts": [
+    {
+      "order": 1,
+      "path": "report.jobs.part-0001.txt",
+      "bytes": 65508,
+      "sha256": "efa4db4dd936f7c7df01fa359b567c37b9dc75783563bd413309c9d0d4b4a581"
+    },
+    {
+      "order": 2,
+      "path": "report.jobs.part-0002.txt",
+      "bytes": 65534,
+      "sha256": "1f0a63109ab59716ec85c6ce13ddccb75c75e02ef894227677dcc3a6599902a9"
+    },
+    {
+      "order": 3,
+      "path": "report.jobs.part-0003.txt",
+      "bytes": 65521,
+      "sha256": "4412fb4f301298a925a6439399d7c13b1cc287f11620f0dd09c9461bd9cc8a8a"
+    },
+    {
+      "order": 4,
+      "path": "report.jobs.part-0004.txt",
+      "bytes": 65534,
+      "sha256": "05a9ad7dd804b1a7bf1cca7f784cabfad431ed21d744f63d6b95f55be21dbf70"
+    },
+    {
+      "order": 5,
+      "path": "report.jobs.part-0005.txt",
+      "bytes": 65521,
+      "sha256": "d6c6b1e811e14bfb2b71523327c37dc7bfd06204c23f3d82f9e75468f4112d91"
+    },
+    {
+      "order": 6,
+      "path": "report.jobs.part-0006.txt",
+      "bytes": 65527,
+      "sha256": "b5276c6d89195c5eae29bfe61c37e93cd4a7e4cd5a0eaf085f1366cdef7f123a"
+    },
+    {
+      "order": 7,
+      "path": "report.jobs.part-0007.txt",
+      "bytes": 65521,
+      "sha256": "95eae33a6db1bdca4706206d086303675361ca2fbfc11623455c76b3cada32d0"
+    },
+    {
+      "order": 8,
+      "path": "report.jobs.part-0008.txt",
+      "bytes": 65510,
+      "sha256": "edff56ff5e2d42ec641f31a8639086b2a3012838330c55aa1b3df8afd4ad4f15"
+    },
+    {
+      "order": 9,
+      "path": "report.jobs.part-0009.txt",
+      "bytes": 65446,
+      "sha256": "99d1a521db8c52021fc9edc06071c4c2410f0432f032ce6f8b0244645805f277"
+    },
+    {
+      "order": 10,
+      "path": "report.jobs.part-0010.txt",
+      "bytes": 65511,
+      "sha256": "62e264ae62ff205c2753f34e6d0d922afdab1191f8653cf2e1a53c66a0bf646d"
+    },
+    {
+      "order": 11,
+      "path": "report.jobs.part-0011.txt",
+      "bytes": 65456,
+      "sha256": "66afdd11d029ea6241bc4cb27f700a27a2b11fb2b11a20fcbcaeacc1749f22a1"
+    },
+    {
+      "order": 12,
+      "path": "report.jobs.part-0012.txt",
+      "bytes": 65532,
+      "sha256": "96a2e274eff5f9be815ab46000082afd25f82716e94bb085a04b229a8f5b8073"
+    },
+    {
+      "order": 13,
+      "path": "report.jobs.part-0013.txt",
+      "bytes": 65520,
+      "sha256": "5c74c1dd80797248519ea3f84bee8adccde956b95b1820ed0e7c72ba5397c768"
+    },
+    {
+      "order": 14,
+      "path": "report.jobs.part-0014.txt",
+      "bytes": 65514,
+      "sha256": "937b25ece1d3ff344a5f2021c7e11ac0b4ff3af42063d2e4317a5f1538c941bd"
+    },
+    {
+      "order": 15,
+      "path": "report.jobs.part-0015.txt",
+      "bytes": 65521,
+      "sha256": "c8a03f0204eae9027457783e59ca031ddade9fe9478d81e24c81b4e7cf873a61"
+    },
+    {
+      "order": 16,
+      "path": "report.jobs.part-0016.txt",
+      "bytes": 65514,
+      "sha256": "08b8c952b5f1677c2e0eff29afe2080c32f509e8d3d152f92fb07442f90c5530"
+    },
+    {
+      "order": 17,
+      "path": "report.jobs.part-0017.txt",
+      "bytes": 62418,
+      "sha256": "0e6b46eb7758a738b1fd610cc2f7e38bc449e2e30945766f34e9e9e879c05fca"
+    }
+  ],
+  "reconstruction": "Concatenate part file bytes in ascending order; do not normalize newlines. Verify original_bytes and original_sha256."
+}

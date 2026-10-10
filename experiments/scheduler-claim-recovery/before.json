@@ -1,0 +1,44 @@
+{
+  "fixture": true,
+  "llm_calls": 0,
+  "lease_seconds": 30,
+  "real_http_reply_dropped_after_commit": true,
+  "executor_invocations_before_expiry": 0,
+  "worker_completion_responses": 0,
+  "before_expiry": {
+    "state": "leased",
+    "attempts": 1,
+    "generation": 1
+  },
+  "same_worker_claim_retry_returned_none": true,
+  "after_expiry": {
+    "state": "leased",
+    "attempts": 2,
+    "generation": 2,
+    "attempt_history": [
+      {
+        "ended": 1031.0,
+        "generation": 1,
+        "outcome": "lease_expired",
+        "result_digest": null,
+        "started": 1000.0,
+        "worker_id": "worker"
+      },
+      {
+        "ended": null,
+        "generation": 2,
+        "outcome": null,
+        "result_digest": null,
+        "started": 1031.0,
+        "worker_id": "replacement"
+      }
+    ]
+  },
+  "replacement_generation": 2,
+  "source_files_sha256": {
+    "delivery_agent/scheduler.py": "77982ec6daa24eb7ad355085b9b08b3de631b94bc0752f4f7c28cbf147e81852",
+    "delivery_agent/scheduler_server.py": "29e43cceefba25829c43a0013e5fa391497bd0779c3c40f891dc693360a994f9",
+    "delivery_agent/scheduler_worker.py": "458d5e446d46b7d31a7df6360aa8c81b8220c52a7af735fc67758f0095eae24a"
+  },
+  "interpretation": "Demonstrates a lost-claim-response recovery gap with real HTTP and SQLite, using a controlled clock to avoid waiting 30 seconds. The historical CI lacks request-level telemetry, so this does not prove which transport event occurred there."
+}

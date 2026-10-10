@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "fixture": true,
+  "llm_calls": 0,
+  "before_source_hashes_recorded_in": "before.json",
+  "after_source_hashes_recorded_in": "after.json",
+  "after_test_file": "tests/test_scheduler_claim_recovery.py",
+  "tests": {
+    "run": 3,
+    "passed": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.66
+  },
+  "files": {
+    "before.json": {
+      "sha256": "b7df76ceeb3873b0b5e93c8c35240943c68cd298da2e9bb296bca16cc111ad6b",
+      "bytes": 1510
+    },
+    "after.json": {
+      "sha256": "5531afbfc628e95448d116144ee15373d4f59a95319c911d2d8cbf74acda011b",
+      "bytes": 4794
+    },
+    "before-probe.py.txt": {
+      "sha256": "875358b3b3ad617c9326d7849fef8eab8a30762dfce61394141e95c2746681e7",
+      "bytes": 4067
+    }
+  },
+  "scope": "Deterministic real HTTP and SQLite transport fault; one local coordinator and Worker; no model requests. Not proof of the historical CI transport cause, nor a replacement for the new 1000-job/8-process CI workload.",
+  "recorded_checkout_commit": "d39b270c57dc35316ba28dd52c0ac1b9b556294e",
+  "before_provenance_note": "Parent independently read the d39 Git blob: scheduler.py LF SHA256 75e4437ee79fa047a35735c49f71291c6d7fdf0a1835b526fa09aca46cb7c022 becomes exactly the recorded before SHA256 77982ec6daa24eb7ad355085b9b08b3de631b94bc0752f4f7c28cbf147e81852 when LF is converted to checkout CRLF. The other two files match Git blob bytes directly. This verifies the three production source files match d39 after line-ending normalization; it does not assert unrelated worktree files were clean.",
+  "before_source_checkout_crlf_confirmed": true,
+  "before_source_commit": "d39b270c57dc35316ba28dd52c0ac1b9b556294e"
+}

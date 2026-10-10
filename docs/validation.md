@@ -2,6 +2,22 @@
 
 验证日期：2026-10-10。这里分别记录实现契约、真实容器、真实模型、公开检查和官方评分。CI job 成功表示流程执行成功，不能替代模型交付成功。
 
+## 最终代码与双平台验收
+
+源码提交 [`00dffaece1064df3991422e4a5d03aed046cf38c`](https://github.com/chendi-Shi/repo-delivery-agent/commit/00dffaece1064df3991422e4a5d03aed046cf38c) 的[工程 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408280)与[调度负载](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38033408272)全部成功。计数从实际日志读取，产物下载后按 GitHub ZIP 大小与 SHA 核验；完整来源见[最终验证收据](../experiments/ci-claim-recovery/validation.json)。
+
+| 验收 | Linux | Windows |
+| --- | --- | --- |
+| 全量测试 | 409 项通过，0 skip，44.488 秒 | 409 项通过，0 skip，157.034 秒 |
+| 原十轮与补充两轮证据只读重算 | 通过 | 通过 |
+| 8 worker / 1000 普通任务 + 5 故障任务 | 通过，37.396 秒 | 通过，85.391 秒 |
+| 普通任务执行代数 / worker 确认 | 全部单代 / 1000 次 | 全部单代 / 1000 次 |
+| 完整任务回读 | 1005 条，缺失 0、重复接受 0 | 1005 条，缺失 0、重复接受 0 |
+
+同提交的真实 Docker 执行和进程崩溃恢复也通过。负载验收使用 30 秒租约，每个平台只有一台宿主、8 个独立进程，执行器为零 LLM 调用的 fixture；1003 个成功与 2 个取消均符合预期。它证明这些有界调度与故障场景，不能作为模型吞吐或物理多机容量数字。
+
+这次之前的 `d39b270` 虽在双平台各通过 387 项测试，Windows 负载仍因一个任务领取第二代而失败，[原始失败](../experiments/ci-final-closure/validation.json)完整保留。随后真实 HTTP 故障注入复现了“领取已提交但回复丢失”的协议缺口；持久化领取请求编号、同请求恢复原代和有界重试修复后，3 项真实断连回归通过，再完成上述双平台全量及负载验收。[复现与修复证据](../experiments/scheduler-claim-recovery/README.md)明确区分受控复现与缺少请求级日志的历史 CI，不把推测写成已证实的网络原因。
+
 ## 知识复用与调度扩展的实测结果
 
 Codex 知识复用队列已全部取得独立验收结论。源任务由真实模型完成并通过独立检查，才被导入 verified namespace；原定十次目标尝试为 4 成功、6 失败、0 未知。last 三组各两次的补丁均通过公开检查，但空知识 retrieval 两次耗尽 24 步且没有 Submitted，故正式交付只有 4/6。四次原 split 均实际调用后发生模型协议错误；用量未知保留，空补丁新功能检查失败。另行预登记的两次 split 为 2/2 成功，单列且不更换原分母。原始补丁、模型用量、实际知识读取、两批 Docker 验收报告及汇总方法见 [完整案例](verified-transfer-case.md)。

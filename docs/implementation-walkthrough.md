@@ -4,6 +4,8 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
+最终工程代码 `00dffae` 已在 Linux / Windows 各通过 409 项测试、0 skip，并通过两平台真实证据重算及 8 进程、1000 普通任务加 5 故障任务的调度验收；Docker 执行与崩溃恢复也通过。实际参数、测试日志计数、失败前件和原始回读见[最终验证记录](validation.md)。
+
 此前源码提交 [758d1e5 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022684939) 通过 Linux、Windows 各 321 项，均无 skip；真实 Docker 执行与进程崩溃恢复也通过，见 [CI 收据](../experiments/ci-checkpoint-rename/validation.json)。Codex 第四轮已自主完成 Requests 源码和回归测试修改，独立公开检查通过，官方 SWE-bench 判定 `psf__requests-2931` 为 `resolved=true`。真实调用、三次前置失败、检查点故障定位及最终补丁验收详见 [完整案例](real-delivery-case.md)。后续已完成 [Codex 知识复用对照](verified-transfer-case.md)：源任务真实验收并入库，原定 10 次目标尝试全部取得独立结论（4 成功、6 失败），额外两次预登记尝试均成功。源成本、用量未知的失败、正式提交与补丁功能通过分别统计。单题成功不证明总体成功率，小样本对照也不能证明知识迁移收益。
 
 ## 复用了什么，自主实现了什么

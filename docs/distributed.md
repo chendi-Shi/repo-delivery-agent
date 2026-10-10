@@ -68,7 +68,7 @@ worker 可通过本地 `--skills paths...`、`--knowledge-db path`、`--knowledg
 状态为 `queued → leased → succeeded/failed`，失败且尚未用尽预算时返回 `queued`；取消变为 `cancelled`。`succeeded` 表示 executor 按提交协议完成，不能替代 `patch_valid`、公开测试或 `official_resolved`。这三个质量指标仍来自交付和评分系统。
 
 - SQLite `BEGIN IMMEDIATE` 在一个事务中完成 claim 和 attempt 创建，防止两个 worker 同时领取同一代任务。
-- 每次领取增加 generation，并生成新的随机 lease token。心跳、结果提交同时校验 job、worker、generation 和 token。
+- 每次新的任务分配增加 generation，并生成新的随机 lease token。心跳、结果提交同时校验 job、worker、generation 和 token。
 - HTTP client 为一次逻辑领取生成 `request_id`，遇到传输结果未知时沿用它。coordinator 在分配事务中持久化该编号；同一次领取仍有效时返回原任务、原 generation/token 并续租，不新增 attempt。编号绑定 worker，已完成、已取消或已过期的旧编号只能返回空结果，不能领取下一个任务。拿到明确响应后，下次领取使用新编号；因此完成响应未知也不会触发同一代任务重新执行。新表随已有数据库启动时创建，旧版省略 request_id 的调用仍可用。
 - 租约过期后，下次 claim/read/list 会回收任务；未超出上限时重新排队，否则标记失败。coordinator 重启不会丢失任务、attempt 记录或已接受结果。
 - 旧 worker 的结果即使在新 worker 完成之前返回，也会被拒绝。已接受的相同 generation、相同结果 hash 提交可安全重试；相同租约提交不同结果会冲突。
@@ -85,6 +85,8 @@ coordinator 的数据库应位于本机持久磁盘，不能让多个 coordinato
 结果中记录 worker hostname、本地运行配置 digest，以及交付层记录的实际镜像 ID、本地模型 digest（若 provider 支持）。查询任务可以取回补丁及 manifest，而不用访问 worker 的磁盘；完整证据保留在 worker 输出目录，可按 digest 独立核对。Artifact digest 证明内容身份，不代替 provider 行为或评分事实。
 
 ## 实际验证
+
+最终源码 `00dffae` 已通过[双平台负载验收](../experiments/ci-claim-recovery/README.md)：Linux 37.396 秒、Windows 85.391 秒完成整套负载及故障实验，两端全部普通任务单代成功且确认完整；同提交全量测试各 409 项、0 skip。先前失败按原结论保留，下面说明完整验收口径及迭代过程。
 
 新增的 `scripts/scheduler_load.py` 在每个平台启动一个真实 HTTP coordinator、SQLite 数据库和 8 个独立 worker 进程，提交 1000 个普通任务及 5 个故障任务。executor 是可信测试替身，LLM 调用数为 0；每个 CI job 只有一台宿主，不能把数字描述为物理多机规模或模型交付吞吐量。
 
@@ -103,6 +105,8 @@ python scripts/scheduler_load.py --jobs 1000 --workers 8 \
 2. 5 秒租约在 Windows 1000 任务负载下仍不足。两次失败分别出现重新领取/缺少确认和一个最终失败任务；完整失败未删。负载配置改为 30 秒后，Linux/Windows 均通过原有严格单代与确认断言。这里是配置调整，不能声称 5 秒负载已经可靠；小规模心跳测试仍验证任务超过初始租约时续租。[负载及历史失败](../experiments/scheduler-load-ci-clock-fixed)包含各次参数与原始报告。
 3. Windows 全量测试暴露错误令牌 POST 偶发连接中断，预期的 401 未送达。分段发送真实请求体可复现：修复前 5/5 为 WinError 10053，修复后 5/5 收到完整 401，均未创建任务。现在先返回并 flush 401，再只对无歧义、最多 64 KiB 的请求体做最多 250 毫秒的传输清理；不解析、不分派，TLS 使用已解密的流。超限、重复 Content-Length 或 Transfer-Encoding 不走清理。[复现证据与方法](../experiments/scheduler-load-ci-clock-fixed/http-rejection-recovery)和真实 HTTP/TLS、慢请求、歧义长度回归一起保留。
 4. 随后 30 秒租约再次负载测试，Windows 一个任务仍发生了重新领取，尽管 1000 个任务最终成功且确认完整，严格单代验收仍失败。受控 HTTP 故障复现证明：领取事务提交后丢失响应，旧 client 重试无法取回已分配的任务，只能等租约过期。现在用上文的持久化领取编号恢复同一次分配；继续延长租约无法解决这个协议缺口。原始失败与修复后的验收分别保留，不用后一次成功覆盖前一次失败。
+
+领取恢复最多连续尝试三次；仍无法确定响应时明确报错并保留待恢复编号，不执行未知任务。真实断连测试还覆盖 completion 已提交/未提交但结果未知两种情况，确认新领取编号不会重放仍活动的同一代执行。完整[受控故障记录](../experiments/scheduler-claim-recovery/README.md)与[修复后 CI](../experiments/ci-claim-recovery/validation.json)可独立核对。
 
 以下两 worker 集成是额外的长任务续租检查。
 
