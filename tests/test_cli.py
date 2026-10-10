@@ -189,6 +189,43 @@ class CliTests(unittest.TestCase):
                 self.assertEqual(raised.exception.code, 2)
                 run.assert_not_called()
 
+    def test_explicit_cost_tracking_is_bound_and_native_rejects_it_before_task_read(self):
+        self.args.cost_tracking = "ignore_errors"
+        result = self.run_with(self.submitted)
+        self.assertEqual(result["provenance"]["config"]["cost_tracking"], "ignore_errors")
+        with patch.object(cli, "run_repository") as run, contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit) as stopped:
+                cli.main(["run", "--task", "absent.json", "--output", "unused", "--model", "ollama_chat/local",
+                          "--provider", "ollama_native", "--cost-tracking", "ignore_errors"])
+        self.assertEqual(stopped.exception.code, 2)
+        run.assert_not_called()
+
+    def test_codex_provider_binds_cli_identity_without_sending_unsupported_sampling_options(self):
+        self.args.provider = "codex_cli"
+        self.args.model = "gpt-6-astra"
+        self.args.codex_binary = "fixture-codex-executable"
+        self.args.reasoning_effort = "low"
+        identity = {"kind": "codex_cli", "model": self.args.model, "cli_version": "codex-cli fixture",
+                    "binary_sha256": "c" * 64, "weight_digest_available": False, "reasoning_effort": "low"}
+        options = []
+        class CodexFixture:
+            def __init__(self, *, model_name, model_kwargs):
+                options.append((model_name, model_kwargs))
+            def resolve_identity(self):
+                return identity
+        module = types.ModuleType("delivery_agent.codex_model")
+        module.CodexModel = CodexFixture
+        with patch.dict("sys.modules", {"delivery_agent.codex_model": module}):
+            result = self.run_with(self.submitted)
+        self.assertEqual(options, [(self.args.model, {"binary": self.args.codex_binary,
+            "timeout": self.args.request_timeout, "reasoning_effort": "low"})])
+        self.assertIsNone(result["provenance"]["model_digest"])
+        self.assertEqual(result["provenance"]["model_identity"], identity)
+        self.assertEqual(result["provenance"]["config"]["cost_tracking"], "chatgpt_plan_unpriced")
+        runtime = json.loads((self.root / "run" / "runtime.json").read_text(encoding="utf-8"))
+        self.assertEqual(runtime["model_identity"], identity)
+        self.assertIsNone(runtime["model_digest"])
+
 
 if __name__ == "__main__":
     unittest.main()

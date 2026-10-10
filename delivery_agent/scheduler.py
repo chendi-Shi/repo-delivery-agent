@@ -28,6 +28,7 @@ CONFIG_DEFAULTS = {
     "context_tokens": 16384, "max_output_tokens": 2048,
     "request_timeout": 180, "command_timeout": 60, "seed": 42, "cost_limit": 3.0,
     "provider": "litellm", "backend": "docker", "ollama_mode": "json",
+    "cost_tracking": None, "reasoning_effort": "low",
 }
 
 
@@ -67,13 +68,18 @@ def validate_payload(value):
     model = config.get("model")
     if (not isinstance(model, str) or not model or len(model) > 200
             or any(ord(c) < 33 or ord(c) > 126 for c in model)):
-        raise SchedulerError("A bounded provider-prefixed model identifier is required")
+        raise SchedulerError("A bounded model identifier is required")
     if not isinstance(config["profile"], str) or config["profile"] not in {"baseline", "recent", "retrieval"}:
         raise SchedulerError("Invalid context profile")
-    for key, choices in (("provider", {"litellm", "ollama_native"}), ("backend", {"docker", "files"}),
-                         ("ollama_mode", {"json", "tools"})):
+    for key, choices in (("provider", {"litellm", "ollama_native", "codex_cli"}), ("backend", {"docker", "files"}),
+                         ("ollama_mode", {"json", "tools"}),
+                         ("reasoning_effort", {"low", "medium", "high", "xhigh"})):
         if not isinstance(config[key], str) or config[key] not in choices:
             raise SchedulerError(f"Invalid {key}")
+    if config["cost_tracking"] not in (None, "default", "ignore_errors"):
+        raise SchedulerError("cost_tracking must be default, ignore_errors, or null")
+    if config["provider"] != "litellm" and config["cost_tracking"] is not None:
+        raise SchedulerError("cost_tracking applies only to the litellm provider")
     limits = {"max_steps": (1, 1000), "wall_seconds": (1, 86400),
               "context_tokens": (1024, 1000000), "max_output_tokens": (1, 32000),
               "request_timeout": (1, 1800), "command_timeout": (1, 1800),

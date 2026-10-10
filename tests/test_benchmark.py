@@ -164,6 +164,18 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(output.read_text(), "")
         self.assertEqual(len(summary["excluded"]), len(cases))
 
+    def test_codex_cli_keeps_submission_protocol_and_failed_attempt_denominator(self):
+        output, summary = self.export(
+            self.result("cli-submitted", provider="codex_cli", model_name_or_path="gpt-6-astra"),
+            self.result("cli-failed", provider="codex_cli", model_name_or_path="gpt-6-astra",
+                        status="failed", exit_status=None),
+            self.result("cli-fixture", provider="codex_cli", fixture=True))
+        self.assertEqual(summary["submitted_count"], 1)
+        self.assertEqual(summary["attempted_count"], 2)
+        self.assertEqual(summary["agent_failure_count"], 1)
+        self.assertEqual(json.loads(output.read_text())["instance_id"], "cli-submitted")
+        self.assertIsNone(summary["official_resolved"])
+
     def test_export_rejects_malformed_and_duplicate_submissions(self):
         for overrides in ({"model_patch": None}, {"patch_valid": "true"}, {"instance_id": "../x"},
                           {"model_name_or_path": "../model\\name"}):

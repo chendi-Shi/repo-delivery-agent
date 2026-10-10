@@ -179,6 +179,105 @@ class DeliveryClosureTests(unittest.TestCase):
             self.assertIsNone(receipt["delivery_success"])
             self.assertNotIn("private diagnostic fixture", json.dumps(summary))
 
+    def test_actual_agent_exception_preserves_edited_patch_audit_and_unsubmitted_verification(self):
+        """Real Git/runtime/checkpoint path; HTTP/execution are trusted fixtures."""
+        try:
+            importlib.metadata.version("mini-swe-agent")
+        except importlib.metadata.PackageNotFoundError:
+            self.skipTest("requires the actual pinned runtime, not a simulated agent")
+        from delivery_agent import cli
+        from delivery_agent.ollama_model import OllamaModel
+        from delivery_agent.repository import checkout, git
+        from scripts import grade_experiments as grading
+        for fault, verifier_unavailable in (("TimeoutError", False), ("ContextBudgetExceeded", False), ("TimeoutError", True)):
+            with self.subTest(fault=fault, verifier_unavailable=verifier_unavailable), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary).resolve()
+                source, private, public = root / "source", root / "private", root / "public"
+                for directory in (source, private, public):
+                    directory.mkdir()
+                git(source, "init", "-b", "main")
+                (source / "module.py").write_text("value = 1\n", encoding="utf-8")
+                git(source, "add", "module.py")
+                git(source, "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-m", "fixture")
+                commit = git(source, "rev-parse", "HEAD").stdout.decode().strip()
+                args, plan, _, image = self.cohort_contract()
+                task = RepoTask("partial-export-contract", "fixture/repository", commit,
+                    "Change module value to two.", "python:3.12-slim", ("fixture-check-module",))
+                arm = next(row for row in plan["arms"] if row["id"] == "baseline")
+                chat_calls, closed = [], []
+                def http(model, path, value=None, timeout=None):
+                    if path == "/api/tags":
+                        return {"models": [{"name": args.model, "digest": "a" * 64}]}
+                    self.assertEqual(path, "/api/chat")
+                    chat_calls.append(value)
+                    if len(chat_calls) > 1:
+                        raise TimeoutError("private fixture diagnostic")
+                    return {"done": True, "message": {"content": '{"command":"fixture-edit-module"}'},
+                            "prompt_eval_count": 100, "eval_count": 20}
+                outer = self
+                class Session:
+                    def __init__(self, workspace, image, timeout):
+                        self.workspace, self.image_id = Path(workspace), image
+                        self.closed = False
+                    def get_template_vars(self, **kwargs):
+                        return {"cwd": "/workspace", "system": "Linux", "image": self.image_id, **kwargs}
+                    def serialize(self):
+                        return {"info": {"config": {"environment": {"image": self.image_id}}}}
+                    def execute(self, action, *values, **kwargs):
+                        outer.assertEqual(action["command"], "fixture-edit-module")
+                        (self.workspace / "module.py").write_text("value = 2\n", encoding="utf-8")
+                        return {"output": "x" * 30000 if fault == "ContextBudgetExceeded" else "fixture edit completed",
+                                "returncode": 0, "exception_info": ""}
+                    def __enter__(self):
+                        return self
+                    def __exit__(self, *values):
+                        self.closed = True
+                        closed.append(self)
+                class Verifier(Session):
+                    image_id = image["public_base_image_id"]
+                    def __init__(self, workspace, image, timeout):
+                        self.workspace = Path(workspace)
+                        self.closed = False
+                        outer.assertEqual((self.workspace / "module.py").read_text(), "value = 2\n")
+                    def execute(self, action, *values, **kwargs):
+                        outer.assertEqual(action["command"], "fixture-check-module")
+                        return {"output": "fixture check observed value = 2", "returncode": 0}
+                def independent(manifest, output, **kwargs):
+                    if verifier_unavailable:
+                        raise RuntimeError("private verifier fixture failure")
+                    return grading.grade(manifest, output, verifier=lambda run, **options: grading.verify_one(run,
+                        checkout_factory=lambda task, destination: checkout(task, destination, source=source),
+                        session_factory=Verifier, **options))
+                daemon = SimpleNamespace(identity={"digest": "a" * 64}, assert_identity=lambda: None)
+                with patch.object(runner, "run_baseline_checks", return_value={"resolved_image_id": image["public_base_image_id"],
+                        "feature_gap_confirmed": True}), \
+                        patch.object(runner, "preflight_context", return_value={"initial_fits": True, "synthetic_ascii_tool_view_fits": True}), \
+                        patch.object(cli, "checkout", side_effect=lambda task, destination: checkout(task, destination, source=source)), \
+                        patch.object(cli, "DockerSession", Session), patch.object(OllamaModel, "_http", new=http), \
+                        patch.object(runner, "grade", side_effect=independent), patch("sys.stderr", new_callable=io.StringIO):
+                    receipt, result, trial = runner.execute_cohort_trial(args, plan, task,
+                        json.dumps(asdict(task)).encode(), image, daemon, private, public, "target", arm=arm, role="near_transfer")
+                self.assertEqual(result["status"], "failed")
+                self.assertEqual(result["error_type"], fault)
+                self.assertIsNone(result["exit_status"])
+                self.assertIsNone(result["patch_valid"])
+                self.assertEqual(result["delivery_metadata_source"]["kind"], "validated_runtime_checkpoint")
+                self.assertEqual(result["delivery"]["model_calls"], len(chat_calls))
+                self.assertEqual((public / "target" / "model-run" / "model.patch").read_bytes(), (trial / "model.patch").read_bytes())
+                self.assertIn("+value = 2", result["model_patch"])
+                evidence = json.loads((public / "target" / "model-run" / "evidence.json").read_text(encoding="utf-8"))
+                self.assertEqual(evidence["action_audit"]["actions"], 1)
+                self.assertEqual(evidence["usage"]["input_tokens"], 100)
+                self.assertEqual(evidence["usage"]["unknown_requests"], int(fault == "TimeoutError"))
+                self.assertEqual(receipt["model_calls"], 2 if fault == "TimeoutError" else 1)
+                self.assertFalse(receipt["submitted"])
+                self.assertIs(receipt["delivery_success"], None if verifier_unavailable else False)
+                self.assertIs(receipt["external_checks_passed"], None if verifier_unavailable else True)
+                self.assertIsNone(receipt["internal_checks_passed"])
+                self.assertIs(receipt["infrastructure_failed"], verifier_unavailable)
+                self.assertTrue(all(session.closed for session in closed))
+                self.assertNotIn("private fixture diagnostic", json.dumps(evidence))
+
     def test_cohort_submitted_and_failed_checks_bind_through_real_summary_consumer(self):
         from scripts.summarize_closure_suite import _receipt
         args, plan, tasks, image = self.cohort_contract()
@@ -645,7 +744,11 @@ class DeliveryClosureTests(unittest.TestCase):
                 self.assertEqual(runs[0]["task"].image, exported.image)
                 self.assertEqual(runs[0]["evidence"]["verification_status"], "deferred")
                 self.assertTrue(kwargs["pull_images"])
-                result = {"infrastructure_failures": [], "runs": [{"delivery_success": False}]}
+                result = {"infrastructure_failures": [], "runs": [{"delivery_success": False,
+                    "submitted": True, "patch_valid": True, "verification_status": "failed",
+                    "public_checks": [{"command": command, "returncode": 0 if index == 0 else 1,
+                                       "passed": index == 0}
+                                      for index, command in enumerate(task.public_checks)]}]}
                 atomic_json(output, result)
                 return result
 

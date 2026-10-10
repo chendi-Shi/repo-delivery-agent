@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "kind": "github_actions_engineering_validation",
+  "model_performance_evidence": false,
+  "source_commit": "0fcd3a2490279ada546fdd6918b23d743a7b3e45",
+  "run_id": 38019441913,
+  "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913",
+  "observed_at_utc": "2026-10-10T03:11:55Z",
+  "conclusion": "success",
+  "provenance": "GitHub connector completed job statuses and decoded job logs; the checkout source SHA was confirmed in all four job logs",
+  "raw_logs_included": false,
+  "jobs": [
+    {
+      "job_id": 114116928476,
+      "name": "unit (ubuntu-latest)",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913/job/114116928476",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "tests": 290,
+      "seconds": 32.537,
+      "duration_scope": "unittest suite runtime, not the full CI job duration",
+      "skipped": 0,
+      "log_result": "Ran 290 tests in 32.537s; OK"
+    },
+    {
+      "job_id": 114116928539,
+      "name": "unit (windows-latest)",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913/job/114116928539",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "tests": 290,
+      "seconds": 99.273,
+      "duration_scope": "unittest suite runtime, not the full CI job duration",
+      "skipped": 0,
+      "log_result": "Ran 290 tests in 99.273s; OK"
+    },
+    {
+      "job_id": 114116928683,
+      "name": "docker-integration",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913/job/114116928683",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "fixture": true,
+      "docker_smoke_passed": true,
+      "docker_recovery_smoke_passed": true,
+      "scope": "Actual Docker execution and process crash recovery with controlled fixture responses; not model delivery performance"
+    },
+    {
+      "job_id": 114116928629,
+      "name": "real-model-patch-verification",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913/job/114116928629",
+      "conclusion": "success",
+      "checkout_source_sha_confirmed": true,
+      "input_manifest": "experiments/round-2-3b/repository-ablation.json",
+      "scope": "Independent verification pipeline for retained earlier model patches; successful CI execution does not mean those tasks were solved"
+    }
+  ],
+  "separate_model_runs_at_observation": [
+    {
+      "run_id": 38019441864,
+      "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864",
+      "job_id": 114116928471,
+      "job_name": "delivery-proof",
+      "status": "in_progress",
+      "active_step": "Real Docker inference followed by independent verification",
+      "delivery_result_reported_here": null
+    },
+    {
+      "run_id": 38019441857,
+      "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857",
+      "job_id": 114116928523,
+      "job_name": "source",
+      "status": "in_progress",
+      "active_step": "Freeze cohort and attempt the distinct source task once",
+      "delivery_result_reported_here": null
+    }
+  ]
+}

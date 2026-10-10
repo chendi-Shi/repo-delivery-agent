@@ -14,7 +14,7 @@ python -m delivery_agent.scheduler_server \
 
 在 Windows PowerShell 中对应的环境设置是 `$env:DELIVERY_SCHEDULER_TOKEN = '<随机令牌>'`。默认仅监听 loopback。跨机器部署时显式指定 LAN 地址，例如 `--host 0.0.0.0`，通过私有网络和防火墙限制访问；HTTP bearer token 本身不能保护网络传输。支持直接提供 `--tls-cert certificate.pem --tls-key key.pem`，worker 可用 `--ca-file ca.pem` 验证自签发证书，也可以在认证反向代理后部署。此实现不宣称适合直接暴露到公网：目前为可信部署环境使用单个共享令牌，尚无多租户权限隔离。
 
-任务文件只包含 `task` 和 `config`。`task` 使用与 `delivery-agent run` 相同的公开 RepoTask 格式；`config` 接受模型标识、profile、provider、backend、Ollama 协议和有界预算，禁止远程提供 host 命令、输出路径、模型 endpoint 或本地技能/知识库路径。`provider` 可为 `litellm` 或 `ollama_native`；`backend` 可为 `docker` 或 `files`，后者仅允许受限源码编辑，测试仍由独立 Docker verifier 完成。
+任务文件只包含 `task` 和 `config`。`task` 使用与 `delivery-agent run` 相同的公开 RepoTask 格式；`config` 接受模型标识、profile、provider、backend、Ollama 协议和有界预算，禁止远程提供 host 命令、输出路径、模型 endpoint 或本地技能/知识库路径。`provider` 可为 `litellm`、`ollama_native` 或 `codex_cli`；`backend` 可为 `docker` 或 `files`，后者仅允许受限源码编辑，测试仍由独立 Docker verifier 完成。Codex 可通过 `config.reasoning_effort` 选择 `low`（默认）、`medium`、`high` 或 `xhigh`；可执行文件只由 worker 本地 `--codex-binary` 配置，认证复用该 worker 的已有登录状态。
 
 ```json
 {
@@ -62,6 +62,8 @@ worker 默认调用实际 `cli.run_repository`，需安装 `.[agent]`、可访�
 worker 可通过本地 `--skills paths...`、`--knowledge-db path`、`--knowledge-namespace name`、`--embedding-model model` 使用技能和持久知识库。embedding endpoint 独立使用 `--embedding-api-base`（默认 `http://127.0.0.1:11434`），可以与编程模型 endpoint 不同。不同机器可维护各自的知识库；调度 coordinator 不共享或传送知识库数据库。这些本地配置参与 worker configuration digest，远程任务不能选择宿主资源路径。
 
 ## 状态、恢复与提交语义
+
+`config.cost_tracking` 可省略，或在 LiteLLM provider 下显式设为 `default` / `ignore_errors`。前者计价失败即停止，后者继续执行并将未知费用保留为 null；美元 cost_limit 仅约束已知费用，无法限制未知账单。直接 Ollama 和 Codex provider 保持未定价，不接受显式模式。Codex CLI 不提供本适配器可设置的 sampling seed 或输出 token 上限，这两个输入预算字段不应解读为该 provider 的实测控制；所选消息仍受上下文预算约束。服务 endpoint、模型认证和可选的上游价格表均在 worker 本地配置，任务 JSON 不携带凭据。详细的自定义模型命令见 README。
 
 状态为 `queued → leased → succeeded/failed`，失败且尚未用尽预算时返回 `queued`；取消变为 `cancelled`。`succeeded` 表示 executor 按提交协议完成，不能替代 `patch_valid`、公开测试或 `official_resolved`。这三个质量指标仍来自交付和评分系统。
 

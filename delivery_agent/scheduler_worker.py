@@ -317,6 +317,7 @@ def main(argv=None):
     parser.add_argument("--work-root", default="runs/distributed")
     parser.add_argument("--worker-id", default="worker-" + uuid.uuid4().hex[:12])
     parser.add_argument("--api-base", help="Worker-local model endpoint; never supplied by coordinator")
+    parser.add_argument("--codex-binary", help="Worker-local Codex CLI executable; never supplied by coordinator")
     parser.add_argument("--skills", nargs="*", default=[], help="Worker-local skill roots")
     parser.add_argument("--knowledge-db", help="Worker-local persistent knowledge database")
     parser.add_argument("--knowledge-namespace", default="repository-delivery")
@@ -357,6 +358,7 @@ def main(argv=None):
             value = client.request("/v1/jobs")
         else:
             worker = Worker(client, args.worker_id, args.work_root, local_options={"api_base": args.api_base,
+                "codex_binary": args.codex_binary,
                 "skills": args.skills, "knowledge_db": args.knowledge_db,
                 "knowledge_namespace": args.knowledge_namespace, "embedding_model": args.embedding_model,
                 "embedding_api_base": args.embedding_api_base})

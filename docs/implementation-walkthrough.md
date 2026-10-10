@@ -4,7 +4,7 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
-源码提交 5ee0e9a 的实际 CI 已通过 Windows/Linux 各 271 项、0 skip，真实 Docker 和独立 verifier 也通过。此前源码推理阶段保留的 19 次真实尝试全部未提交，有公开检查的任务交付为 0/10。两次新增 7B Docker 试验也完整保留：第一次重复误用 Skill 工具；修复后第二次能正确读取 Skill，但又陷入空读取与非法历史搜索交替的循环。两次均为 24 次调用、空补丁、公开验收失败，没有模型官方 resolved 分数。后续修复及效果分别记录，不能把工具调用成功当成交付成功。逐题 usage、补丁和 CI 来源见 [验证记录](validation.md)、[第一轮分析](../experiments/closure-proof-v1/analysis.md) 与 [第二轮分析](../experiments/closure-proof-v2/analysis.md)。
+源码提交 [0fcd3a2 的实际 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 已通过 Windows/Linux 各 290 项、0 skip，测试耗时分别为 99.273/32.537 秒，真实 Docker 执行、崩溃恢复和独立 verifier 也通过；证据见 [CI 收据](../experiments/ci-closure-recovery/validation.json)。此前源码推理阶段保留的 19 次真实尝试全部未提交，有公开检查的任务交付为 0/10。两次新增 7B Docker 试验也完整保留：第一次重复误用 Skill 工具；修复后第二次能正确读取 Skill，但又陷入空读取与非法历史搜索交替的循环。两次均为 24 次调用、空补丁、公开验收失败，没有模型官方 resolved 分数。后续修复及效果分别记录，不能把工具调用成功当成交付成功。截至 2026-10-10 11:11（北京时间），[新单任务试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 与 [新固定队列来源试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行，尚无本轮交付结果。逐题 usage、补丁和 CI 来源见 [验证记录](validation.md)、[第一轮分析](../experiments/closure-proof-v1/analysis.md) 与 [第二轮分析](../experiments/closure-proof-v2/analysis.md)。
 
 ## 复用了什么，自主实现了什么
 
@@ -132,6 +132,11 @@ files backend 把模型动作限定为来源目录内的读、搜索、写、追
 | 用读取片段覆盖整个文件 | 第二轮将数千行模块和测试缩成十几行 | write 只创建新文件，已有文件使用精确 replace/append；拒绝操作不改变原文件 |
 | 无公开检查被当成公开失败 | 官方任务混入开发验收分母 | 保留全部 attempts，公开指标只用 eligible 分母；无检查状态为 null/unknown |
 | 异常退出缺少顶层 usage | 误写零 tokens 或精确总成本 | 回查实际 response usage，报告已知用量；FormatError 缺失用量与 complete=false 保留 |
+| 模型照抄帮助中的参数占位符 | 历史搜索连续返回参数错误 | 使用可执行示例，数值范围放在说明里；错误响应也返回可用示例 |
+| 成功返回的空读取与错误搜索交替 | 单一连续失败检测漏掉循环，耗尽步数 | 依据真实返回码和原始输出 hash 检测长度 1–3 的只读循环；EOF 明确停止分页；反馈只改变当前请求视图 |
+| 工具参考说明压过了真实需求 | 模型持续浏览工具而未编辑仓库 | 完整需求与公开检查置于通用参考之后；明确普通仓库命令仍可用；压缩指引并验证完整 8K 观察的预算 |
+| 请求异常被导出错误覆盖 | 多种故障都只显示 ValueError | 保留模型原始错误类型、发起请求数和已确认用量；缺失字段保持未知，并采集有界模型加载及内存遥测 |
+| 固定容器休眠与扩大的任务时限相撞 | 有效任务可能失去执行会话 | 容器驻留改为无固定休眠上限，仍由任务退出、超时、取消与异常清理机制终止 |
 | 官方 CLI 保留旧名字但内部已是 v5 | 旧数据字段不足而无法评分 | 固定数据 revision，私有来源保留 image/eval_script/log_parser/eval_type，公开输入去答案 |
 
 真实测试结果、后续 CI 修复和模型逐题记录见实验报告；这里不将“实现了处理分支”当成“所有运行环境都已验证”。

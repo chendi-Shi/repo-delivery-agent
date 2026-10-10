@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from .history import HistoryEnvironment, HistoryStore
+from .costs import monetary_cost, summarize_cost
 
 UPSTREAM_VERSION = "2.4.6"
 UPSTREAM_COMMIT = "04d809ceab9df28f9adaed044884180159172930"
@@ -555,7 +556,8 @@ class ContextModel:
         if self.recovery is not None:
             self.recovery.complete_model({"response": response})
         self._log({"event": "response", "call": self.n_calls, "usage": usage,
-                   "cost": extra.get("cost"), "elapsed_seconds": time.monotonic() - started})
+                   "cost": monetary_cost(extra), "cost_unknown": monetary_cost(extra) is None,
+                   "accounting_cost": extra.get("cost"), "elapsed_seconds": time.monotonic() - started})
         return response
 
     def format_message(self, **kwargs: Any) -> dict[str, Any]:
@@ -579,6 +581,9 @@ class ContextModel:
             "artifacts": {"history": "history.sqlite", "requests": "request-views.jsonl",
                           "trajectory": "trajectory.json"},
         }
+        result["info"]["delivery"]["monetary_cost"] = summarize_cost(
+            (json.loads(row[0]) for row in self.history.db.execute("SELECT message FROM events ORDER BY id")),
+            request_count=self.n_calls, unknown_requests=self.unknown_requests)
         if getattr(self, "action_audit", None) is not None:
             result["info"]["delivery"]["action_audit"] = self.action_audit.status()
             result["info"]["delivery"]["artifacts"]["actions"] = "action-audit.jsonl"

@@ -12,7 +12,7 @@
 
 | 能力 | 具体实现 |
 |---|---|
-| Agent 与模型 | 固定真实 DefaultAgent；上游 LiteLLM；直接 Ollama HTTP adapter，JSON command/native tools 模式，模型 digest 与实际 usage |
+| Agent 与模型 | 固定真实 DefaultAgent；LiteLLM、Ollama HTTP、Codex CLI adapters；结构化动作、实际 usage、未知计价与模型身份记录 |
 | 上下文工程 | baseline/recent/retrieval；完整工具轮次不可拆；必要消息保护；请求前硬预算；实际 request view 留痕 |
 | 任务内历史 | SQLite 保存原始消息与 raw output；delivery-history search/read/note；笔记明确未验证 |
 | Skills | SKILL.md 元数据校验、资源 hash、概要→正文→资源渐进披露；两个内置 Python 研发 Skills |
@@ -45,15 +45,15 @@ python -m unittest discover -s tests -v
 
 ```bash
 ollama pull qwen3:4b-instruct
-docker pull python:3.12-slim
+docker build -t repo-delivery-tools:py312 docker/agent-tools
 python -m delivery_agent run \
-  --task examples/more-itertools-count-runs.json \
+  --task examples/more-itertools-count-runs-tools.json \
   --provider ollama_native --ollama-mode json --backend docker \
   --model ollama_chat/qwen3:4b-instruct --api-base http://127.0.0.1:11434 \
   --profile retrieval --output runs/more-itertools-01
 ```
 
-PowerShell 可写成一行，或使用反引号续行。每个新 trial 使用新输出目录。容器内无网络，运行依赖必须已经存在于镜像。
+PowerShell 可写成一行，或使用反引号续行。每个新 trial 使用新输出目录。该工具镜像在推理前安装 Git 和 ripgrep，不包含任务源码或答案；运行时记录实际 image ID。容器内无网络，其他运行依赖也须提前装入镜像。历史任务和实验使用的原始 task 文件保留不变。
 
 本机 Docker 不可用时，可先进行受限源码推理：
 
@@ -67,7 +67,26 @@ python -m delivery_agent run \
 
 files backend 只允许 delivery-file list/read/search/write/append/replace，由 Python 解析受限文件操作，不运行模型生成的 shell/Python。read 返回原始源码；write 只创建新文件，已有文件通过精确 replace 或 append 修改，防止用读取片段覆盖整个模块。测试由之后独立的 Docker verifier 或官方 grader 执行。
 
-云模型选择 --provider litellm 和 provider-prefixed model ID。--ollama-mode tools 使用原生函数调用；json 使用严格 command schema，适合缺少原生工具训练的本地模型。
+也可使用已经登录的本机 Codex CLI：选择 `--provider codex_cli --backend files`，模型名使用该账户实际可用的模型，必要时通过 `--codex-binary` 指定原生可执行文件。适配器仅获取结构化动作，由外层 Agent 执行和审计；CLI 自带工具被禁用，发现工具事件即停止。完整命令、独立验收流程、模型身份和预算边界见 [Codex 模型接入](docs/codex-provider.md)。
+
+云模型选择 --provider litellm 和 provider-prefixed model ID。该接口要求服务返回原生 `tool_calls`，仅兼容普通文本聊天的 endpoint 不足以执行 Agent。--ollama-mode tools 使用 Ollama 原生函数调用；json 使用严格 command schema，适合缺少原生工具训练的本地模型。
+
+接入自己的兼容服务时，在本机将 `DELIVERY_MODEL` 设置为实际的 provider-prefixed 模型 ID，将 `DELIVERY_MODEL_BASE` 设置为该服务 API base（按服务要求包含 `/v1`）。认证使用对应 provider 的环境变量，凭据不放入命令参数或任务 JSON。以下 Bash 示例采用显式的未知计价模式：
+
+```bash
+python -m delivery_agent run \
+  --task examples/more-itertools-count-runs-tools.json \
+  --provider litellm --backend docker \
+  --model "$DELIVERY_MODEL" --api-base "$DELIVERY_MODEL_BASE" \
+  --cost-tracking ignore_errors --profile retrieval \
+  --max-steps 24 --wall-seconds 1800 --request-timeout 300 \
+  --context-tokens 24000 --max-output-tokens 1500 \
+  --output runs/custom-model-01
+```
+
+`--cost-tracking default` 遇到无法计算的价格会停止；`ignore_errors` 允许继续，但费用记为未知。省略时维持原行为：LiteLLM 的 Ollama 模型忽略计价错误，其他 LiteLLM 模型使用严格计价。可通过上游 `LITELLM_MODEL_REGISTRY_PATH` 提供模型价格。直接 Ollama provider 始终标记本地模型未定价，不接受此参数。
+
+未知价格时，上游用于预算计算的数字占位值可能为 0，它不表示免费。`request-views.jsonl` 的 `cost` 和 `result.json` 的 `delivery.monetary_cost.reported_total` 保留为 null，另列已知费用小计。`--cost-limit` 只能约束已知累计费用，无法限制未知的实际账单；step、请求时限和总运行时限仍有效。自定义服务的真实修复效果需由用户实际运行验证，协议测试不代表某个云模型已经完成交付。
 
 任务格式：
 
@@ -90,7 +109,7 @@ run/batch 支持 --max-steps、--wall-seconds、--context-tokens、--max-output-
 
 ```bash
 python -m delivery_agent run \
-  --task examples/more-itertools-count-runs.json \
+  --task examples/more-itertools-count-runs-tools.json \
   --provider ollama_native --model ollama_chat/qwen3:4b-instruct \
   --api-base http://127.0.0.1:11434 --profile retrieval \
   --skills ./my-skills --knowledge-db data/knowledge.sqlite \
@@ -180,7 +199,7 @@ python scripts/semantic_smoke.py
 
 新增 [7B Docker 真实交付实验](experiments/closure-proof-v1/analysis.md) 保留了一个确定失败：24 次重复误用 Skill 工具、空补丁、未提交、独立公开验收失败。实际动作审计定位了错误，随后修复 Skill/源码读取指引，并加入依据真实失败记录生成的重复调用反馈；协议测试不能代替后续模型实测。未取得真实模型的官方解题成绩，不能据此宣称成功率提升。
 
-工程验证已在 [5ee0e9a 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017726472) 中通过 Windows 和 Linux 各 271 项测试，并完成真实 Docker 运行与崩溃恢复。[官方容器合同检查](experiments/official-harness-contract/summary.json) 使用零 LLM 调用的控制补丁，实际评分器报告补丁应用成功、问题未解决、无基础设施错误；它验证评分链路，不进入模型成绩。此前真实模型的 [官方门禁](experiments/official-gate-v02/summary.json) 为 `no_submissions`。各阶段完整证据见 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions)。
+工程验证已在 [0fcd3a2 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 中通过 Windows 和 Linux 各 290 项测试，均无 skip，耗时分别为 99.273 秒和 32.537 秒；真实 Docker 运行、崩溃恢复及既有补丁的独立 verifier job 也通过，匹配源码的收据见 [CI 记录](experiments/ci-closure-recovery/validation.json)。[官方容器合同检查](experiments/official-harness-contract/summary.json) 使用零 LLM 调用的控制补丁，实际评分器报告补丁应用成功、问题未解决、无基础设施错误；它验证评分链路，不进入模型成绩。此前真实模型的 [官方门禁](experiments/official-gate-v02/summary.json) 为 `no_submissions`。截至 2026-10-10 11:11（北京时间），新的 [单任务模型试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 和 [固定队列来源试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行，尚未取得本轮交付结果。各阶段完整证据见 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions)。
 
 ## 产物与岗位对应
 

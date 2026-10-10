@@ -257,7 +257,7 @@ def export_predictions(
         if not isinstance(result, dict):
             raise BenchmarkError(f"{path.name}: result must be an object")
         reason = None
-        if result.get("fixture") is not False or result.get("provider") not in {"litellm", "ollama_native"}:
+        if result.get("fixture") is not False or result.get("provider") not in {"litellm", "ollama_native", "codex_cli"}:
             reason = "fixture_or_unverified_provider"
         else:
             instance_id = _identifier(result.get("instance_id"))

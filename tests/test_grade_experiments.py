@@ -140,6 +140,34 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(report["model_identity_status"], "unresolved")
         self.assertFalse(report["delivery_success"])
 
+    def test_remote_cli_identity_is_verified_separately_from_frozen_weight_digest(self):
+        self.plan([self.create_run("remote", model_digest=None)])
+        path = self.manifest.parent / "model-runs/remote/evidence.json"
+        evidence = json.loads(path.read_text())
+        evidence.update(provider="codex_cli", model_name="remote-test-model", model_identity={
+            "kind": "codex_cli", "model": "remote-test-model", "cli_version": "codex-cli 0.154.0",
+            "binary_sha256": "a" * 64, "weight_digest_available": False, "reasoning_effort": "low"})
+        path.write_text(json.dumps(evidence))
+        report = grading.grade(self.manifest, self.root / "remote.json", verifier=self.verifier)
+        self.assertEqual(report["delivery_successes"], 1)
+        actual = report["runs"][0]
+        self.assertIsNone(actual["model_digest"])
+        self.assertEqual(actual["model_identity_status"], "remote_alias_not_weight_pinned")
+        self.assertEqual(actual["model_identity"], evidence["model_identity"])
+        self.assertIsNone(actual["official_resolved"])
+        for changes in ({"model": "different"}, {"binary_sha256": "invalid"},
+                        {"weight_digest_available": True}, {"cli_version": "unknown"}):
+            with self.subTest(changes=changes):
+                modified = copy.deepcopy(evidence)
+                modified["model_identity"].update(changes)
+                path.write_text(json.dumps(modified))
+                with self.assertRaises(ValueError):
+                    grading.load_plan(self.manifest)
+        evidence["model_digest"] = "b" * 64
+        path.write_text(json.dumps(evidence))
+        with self.assertRaises(ValueError):
+            grading.load_plan(self.manifest)
+
     def test_fresh_checkout_applies_model_patch_before_public_verifier(self):
         self.plan([self.create_run("one")])
         report = grading.grade(self.manifest, self.root / "output" / "report.json", verifier=self.verifier)

@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import subprocess
 import sys
 import tempfile
@@ -25,6 +26,24 @@ from delivery_agent.runtime import DockerSession
 from delivery_agent.scheduler import IDENTIFIER, DIGEST
 
 MAX_PATCH_BYTES = 8 * 1024 * 1024
+
+
+def valid_remote_identity(evidence):
+    """A recorded remote model alias identifies a service, never frozen weights."""
+    identity = evidence.get("model_identity")
+    return (isinstance(identity, dict)
+        and set(identity) <= {"kind", "model", "cli_version", "binary_sha256", "weight_digest_available", "reasoning_effort"}
+        and identity.get("kind") == "codex_cli"
+        and identity.get("model") == evidence.get("model_name")
+        and isinstance(identity.get("model"), str)
+        and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:/-]{0,159}", identity["model"]) is not None
+        and isinstance(identity.get("cli_version"), str)
+        and re.fullmatch(r"codex-cli [A-Za-z0-9_.+-]{1,60}", identity["cli_version"]) is not None
+        and isinstance(identity.get("binary_sha256"), str)
+        and DIGEST.fullmatch(identity["binary_sha256"]) is not None
+        and identity.get("weight_digest_available") is False
+        and identity.get("reasoning_effort", "low") in {"low", "medium", "high", "xhigh"}
+        and evidence.get("model_digest") is None)
 
 
 def artifact(root, value, *, max_bytes):
@@ -81,9 +100,11 @@ def load_plan(manifest):
                           or (isinstance(requests, list) and len(requests) <= 1000
                               and len(json.dumps(requests, allow_nan=False).encode()) <= 256 * 1024))
         digest = evidence["model_digest"]
-        valid_identity = (isinstance(digest, str) and bool(digest)) or (
-            digest is None and evidence["status"] in {"failed", "stopped"})
-        if (evidence["fixture"] is not False or evidence["provider"] != "ollama_native"
+        provider = evidence["provider"]
+        valid_identity = ((isinstance(digest, str) and bool(digest)) or (
+            digest is None and evidence["status"] in {"failed", "stopped"})) if provider == "ollama_native" else (
+            valid_remote_identity(evidence) if provider == "codex_cli" else False)
+        if (evidence["fixture"] is not False or provider not in {"ollama_native", "codex_cli"}
                 or evidence["profile"] not in {"baseline", "recent", "retrieval"}
                 or evidence["status"] not in {"submitted", "stopped", "failed"}
                 or not isinstance(evidence["model_name"], str) or not evidence["model_name"]
@@ -109,7 +130,9 @@ def verify_one(run, *, directory, command_timeout=90, session_factory=DockerSess
     eligible = bool(task.public_checks)
     record = {"id": run["id"], "instance_id": task.instance_id, "profile": evidence["profile"],
         "model_name": evidence["model_name"], "model_digest": evidence["model_digest"],
-        "model_identity_status": "resolved" if evidence["model_digest"] else "unresolved",
+        "model_identity_status": ("remote_alias_not_weight_pinned" if evidence["provider"] == "codex_cli"
+                                  else "resolved" if evidence["model_digest"] else "unresolved"),
+        "provider": evidence["provider"], "model_identity": evidence.get("model_identity"),
         "model_status": evidence["status"], "submitted": evidence["status"] == "submitted",
         "patch_sha256": evidence["patch_sha256"], "task_sha256": run["task_sha256"],
         "evidence_sha256": run["evidence_sha256"], "patch_valid": False,

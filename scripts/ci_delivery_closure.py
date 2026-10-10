@@ -475,7 +475,8 @@ def export_trial(result, public_task, target, *, profile, budgets, bindings, pri
     internal_summary = [{key: row.get(key) for key in ("command", "returncode", "passed")}
                         for row in internal if isinstance(row, dict)]
     measured_usage, measured_calls = normalized_usage(result, private_run)
-    evidence = {key: result.get(key) for key in ("fixture", "provider", "status", "exit_status", "seconds", "error_type", "patch_valid")}
+    evidence = {key: result.get(key) for key in ("fixture", "provider", "status", "exit_status", "seconds", "error_type", "patch_valid",
+                                              "delivery_metadata_source", "delivery_metadata_error_type")}
     evidence.update(profile=profile, model_name=provenance.get("config", {}).get("model"),
         model_digest=provenance.get("model_digest"), patch_sha256=sha256(patch), task_hash=public_task.fingerprint(),
         effective_task_fingerprint=provenance.get("task_hash"), usage=measured_usage,
@@ -488,6 +489,24 @@ def export_trial(result, public_task, target, *, profile, budgets, bindings, pri
         budgets=budgets, action_audit=audit, bindings=bindings)
     atomic_json(target / "evidence.json", evidence)
     return evidence
+
+
+def validate_failed_export(result, private_run):
+    """Admit real captured diagnostics without treating failure as submission."""
+    if result.get("status") != "failed":
+        return False
+    if (result.get("fixture") is not False or result.get("provider") != "ollama_native"
+            or safe_error_type(result.get("error_type")) is None):
+        raise ValueError("failed diagnostic export lacks a real provider error identity")
+    patch = result.get("model_patch")
+    path = Path(private_run) / "model.patch"
+    if (not isinstance(patch, str) or len(patch.encode()) > 8 * 1024 * 1024 or path.is_symlink()
+            or not path.is_file() or path.stat().st_size > 8 * 1024 * 1024
+            or path.read_bytes() != patch.encode() or result.get("patch_sha256") != sha256(patch)):
+        raise ValueError("failed diagnostic patch differs from the captured private artifact")
+    if public_preview(patch)[1]:
+        raise ValueError("failed diagnostic patch contains a private or credential pattern")
+    return True
 
 
 def export_official_prediction(source_task, private_run, public_root, model, *, model_digest, public_patch):
@@ -591,8 +610,11 @@ def run_proof(args):
                            attempt_started=requested > 0, attempted_count=int(requested > 0),
                            observed_provider_requests=requested, model_error_type=safe_error_type(result.get("error_type")))
             atomic_json(public / "summary.json", summary)
-            if requested == 0 or not isinstance(result.get("delivery"), dict):
+            if requested == 0:
                 raise ValueError("no complete actual agent outcome; setup failures remain infrastructure unknown")
+            failed_export = validate_failed_export(result, trial)
+            if not failed_export and not isinstance(result.get("delivery"), dict):
+                raise ValueError("actual agent outcome lacks delivery metadata")
             daemon.assert_identity()
             if result.get("provenance", {}).get("model_digest") != daemon.identity["digest"]:
                 raise ValueError("trial did not bind the frozen model weights")
@@ -609,13 +631,16 @@ def run_proof(args):
                                 "Inference tools image and independently pulled public verifier base differ."]})
             verified = grade(public / "repository-ablation.json", public / "verification.json", pull_images=True,
                              command_timeout=args.command_timeout)
+            core_checks = checks_passed(result.get("public_checks"), task.public_checks)
             core_passed = (result.get("status") == "submitted" and result.get("exit_status") == "Submitted"
-                and result.get("patch_valid") is True and len(result.get("public_checks", [])) == len(task.public_checks)
-                and all(row.get("passed") is True and row.get("returncode") == 0 for row in result.get("public_checks", [])))
+                and result.get("patch_valid") is True and core_checks is True)
             external_known = not verified["infrastructure_failures"] and len(verified["runs"]) == 1
-            external_passed = external_known and verified["runs"][0]["delivery_success"] is True
+            external_passed = checks_passed(verified["runs"][0].get("public_checks"), task.public_checks) if external_known else None
+            if external_known and verified["runs"][0].get("verification_status") == "patch_invalid":
+                external_passed = False
+            external_known = external_known and external_passed is not None
             summary.update(model_digest=daemon.identity["digest"], bindings=bindings, model_status=result.get("status"),
-                exit_status=result.get("exit_status"), internal_independent_checks_passed=core_passed,
+                exit_status=result.get("exit_status"), internal_independent_checks_passed=core_checks,
                 external_independent_checks_passed=external_passed if external_known else None,
                 delivery_success=(core_passed and external_passed) if external_known else None,
                 complete=external_known, action_audit=evidence["action_audit"],
@@ -949,8 +974,11 @@ def execute_cohort_trial(args, plan, task, raw, image, daemon, private, public, 
         summary.update(model_status=result.get("status"), exit_status=result.get("exit_status"), seconds=result.get("seconds"),
                        model_error_type=safe_error_type(result.get("error_type")))
         atomic_json(summary_path, summary)
-        if requested == 0 or not isinstance(result.get("delivery"), dict):
+        if requested == 0:
             raise ValueError("no complete actual agent outcome; setup failures remain infrastructure unknown")
+        failed_export = validate_failed_export(result, private / "trial")
+        if not failed_export and not isinstance(result.get("delivery"), dict):
+            raise ValueError("actual agent outcome lacks delivery metadata")
         if (result.get("provenance", {}).get("model_digest") != plan["model"]["digest"]
                 or result.get("provenance", {}).get("implementation_sha256") != plan["common"]["implementation_sha256"]):
             raise ValueError("trial identity differs from the frozen cohort")

@@ -4,7 +4,9 @@
 
 ## 新增 Docker 交付验证
 
-最新 [5ee0e9a 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017726472) 通过 Linux 271 项（32.067 秒）、Windows 271 项（84.719 秒），均无 skip；真实 Docker 与独立 verifier job 也通过。此前 a662b2b 的 Windows 267 项中有一项临时目录短路径别名错误，Linux 同批 267 项通过；该原始失败保留在 [CI 记录](../experiments/ci-closure-cohort-initial/validation.json)。修复统一了根目录与子路径的规范化，并加入真实 Windows 短路径回归。
+最新 [0fcd3a2 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 已通过 Linux 290 项（32.537 秒）、Windows 290 项（99.273 秒），均无 skip；真实 Docker 执行与进程崩溃恢复、既有模型补丁的独立 verifier job 同时通过。四个 job 的 checkout SHA 均匹配 `0fcd3a2490279ada546fdd6918b23d743a7b3e45`，实际日志计数和来源见 [恢复与证据校验 CI 收据](../experiments/ci-closure-recovery/validation.json)。截至 2026-10-10 11:11（北京时间），[单任务模型试验 38019441864](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 仍在推理，[固定队列 38019441857](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行来源任务，尚无本轮交付结论。
+
+此前 [5ee0e9a 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017726472) 通过 Linux 271 项（32.067 秒）、Windows 271 项（84.719 秒），均无 skip；真实 Docker 与独立 verifier job 也通过。此前 a662b2b 的 Windows 267 项中有一项临时目录短路径别名错误，Linux 同批 267 项通过；该原始失败保留在 [CI 记录](../experiments/ci-closure-cohort-initial/validation.json)。修复统一了根目录与子路径的规范化，并加入真实 Windows 短路径回归。
 
 [21f1f5f 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38016237676) 实际通过 Linux 230 项（29.331 秒）、Windows 230 项（59.356 秒），均无 skip；Docker 运行与崩溃恢复、既有真实补丁的独立 verifier 同时通过。此前 276c6ce 的 CI 已通过两端各 223 项，Linux 32.632 秒、Windows 68.430 秒。下面的 196 项与 19 次模型尝试属于此前阶段，保留作为历史记录。
 
