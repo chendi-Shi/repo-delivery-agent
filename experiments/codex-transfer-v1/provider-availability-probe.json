@@ -1,0 +1,43 @@
+{
+  "kind": "response_only_provider_diagnostic",
+  "model_calls": 1,
+  "excluded_from_task_results": true,
+  "model_identity": {
+    "kind": "codex_cli",
+    "model": "gpt-6-astra",
+    "cli_version": "codex-cli 0.154.0",
+    "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+    "weight_digest_available": false,
+    "reasoning_effort": "low"
+  },
+  "events": [
+    {
+      "type": "thread.started"
+    },
+    {
+      "type": "item.completed",
+      "http_statuses": [],
+      "categories": [
+        "configuration"
+      ]
+    },
+    {
+      "type": "turn.started"
+    },
+    {
+      "type": "item.completed"
+    },
+    {
+      "type": "turn.completed"
+    }
+  ],
+  "status": "completed",
+  "usage": {
+    "input_tokens": 8837,
+    "cached_input_tokens": 6912,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 16,
+    "reasoning_output_tokens": 0
+  },
+  "seconds": 10.620837700000266
+}

@@ -8,12 +8,15 @@ import re
 import subprocess
 import tempfile
 import signal
+import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 SHA = re.compile(r"[0-9a-f]{40}")
 REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
 INSTANCE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,159}")
+_IS_WINDOWS = os.name == "nt"
+_REPLACE_RETRY_DELAYS = (0.02, 0.05, 0.1, 0.2, 0.4)
 
 
 def git(path, *args, input=None, timeout=120, check=True):
@@ -163,7 +166,20 @@ def apply_fresh(task, patch, destination, source=None):
 
 
 def atomic_json(path, value):
+    """Serialize once, retrying only a bounded Windows temporary-file rename.
+
+    On exhaustion the original target and the already-written .tmp retain the
+    previous failure behavior. No caller operation or serialization is replayed.
+    """
     path = Path(path)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    os.replace(temporary, path)
+    for attempt in range(len(_REPLACE_RETRY_DELAYS) + 1):
+        try:
+            os.replace(temporary, path)
+            return
+        except OSError as exc:
+            if (not _IS_WINDOWS or getattr(exc, "winerror", None) not in {5, 32, 33}
+                    or attempt == len(_REPLACE_RETRY_DELAYS)):
+                raise
+            time.sleep(_REPLACE_RETRY_DELAYS[attempt])

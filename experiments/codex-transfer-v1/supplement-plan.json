@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "kind": "predeclared_additional_provider_recovery_trials",
+  "fixture": false,
+  "reason": "All four original split targets made one actual CLI invocation then failed with CodexProtocolError and unknown usage. A separate response-only availability probe subsequently completed. These two additional trials verify post-recovery operation without replacing any original target or its failure.",
+  "original_target_denominator": 10,
+  "additional_trials": 2,
+  "included_in_original_comparison": false,
+  "model": "gpt-6-astra",
+  "provider": "codex_cli",
+  "common": {"selected_context_bytes": 64000, "max_steps": 24, "wall_seconds": 1800, "request_timeout": 120, "reasoning_effort": "low"},
+  "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+  "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+  "knowledge_namespace": "codex-transfer-v1",
+  "knowledge_mode": "empty",
+  "max_parallel_trials": 2,
+  "trials": [
+    {"label": "split-baseline-empty-r3", "profile": "baseline", "private_output": "runs/ct4/t1"},
+    {"label": "split-retrieval-empty-r3", "profile": "retrieval", "private_output": "runs/ct4/t2"}
+  ],
+  "policy": "Run each additional trial exactly once, preserve every outcome and unknown usage, independently verify every exported patch. Do not retry until success or pool these selected follow-ups into the original success rate.",
+  "scope": "Engineering recovery validation of the same frozen requirement; not a randomized replication or evidence of knowledge benefit. Provider error root cause remains unconfirmed.",
+  "availability_probe": "provider-availability-probe.json"
+}
