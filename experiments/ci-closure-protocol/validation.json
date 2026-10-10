@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "kind": "github_actions_engineering_validation",
+  "model_performance_evidence": false,
+  "source_commit": "21f1f5f00b3294a79af3cfb6fcc19b7a4a5e8065",
+  "run_id": 38016237676,
+  "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38016237676",
+  "observed_date_utc": "2026-10-10",
+  "provenance": "GitHub connector job statuses and decoded completed job logs",
+  "jobs": [
+    {
+      "job_id": 114107012129,
+      "name": "unit (ubuntu-latest)",
+      "conclusion": "success",
+      "tests": 230,
+      "seconds": 29.331,
+      "skipped": 0,
+      "log_result": "Ran 230 tests in 29.331s; OK"
+    },
+    {
+      "job_id": 114107012365,
+      "name": "unit (windows-latest)",
+      "conclusion": "success",
+      "tests": 230,
+      "seconds": 59.356,
+      "skipped": 0,
+      "log_result": "Ran 230 tests in 59.356s; OK"
+    },
+    {
+      "job_id": 114107012268,
+      "name": "docker-integration",
+      "conclusion": "success",
+      "scope": "Actual Docker execution and crash recovery; scripted fixture, not model delivery"
+    },
+    {
+      "job_id": 114107012251,
+      "name": "real-model-patch-verification",
+      "conclusion": "success",
+      "scope": "Independent verification pipeline for retained earlier model patches; job success does not mean patches solved tasks"
+    }
+  ]
+}

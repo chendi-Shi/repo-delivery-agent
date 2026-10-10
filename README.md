@@ -6,6 +6,8 @@
 
 详细说明见 [做了什么、怎么做、问题与修复](docs/implementation-walkthrough.md)。真实模型、语义检索和评分证据见 [experiments](experiments)，各阶段验证见 [验证记录](docs/validation.md)。实现功能、协议测试、真实模型提交、独立检查和官方 resolved 分别记录。
 
+固定源任务、十项目标对照、真实读取审计和结果口径见 [真实交付与知识复用实验](docs/delivery-closure.md)。
+
 ## 已实现的能力
 
 | 能力 | 具体实现 |
@@ -174,9 +176,11 @@ python scripts/grade_experiments.py --manifest experiments/local-ablation-01/rep
 python scripts/semantic_smoke.py
 ```
 
-每次复跑使用新的 output、evidence 目录和 label；脚本拒绝覆盖已有 run ID。CI 固定模型和预算的复现入口见 [真实模型实验](docs/live-experiments.md)。三轮真实结果分别保存为 [1.5B](experiments/round-1-1_5b)、[3B](experiments/round-2-3b) 和 [文件工具修复后的 3B](experiments/round-3-file-tools)，另有 [16 步单案例回归](experiments/file-tools-v3)。全部 19 次真实尝试均未 Submitted；有公开检查的 10 次尝试均未交付成功，失败补丁完整保留。未取得真实模型的官方解题成绩，不能据此宣称成功率提升。
+每次复跑使用新的 output、evidence 目录和 label；脚本拒绝覆盖已有 run ID。CI 固定模型和预算的复现入口见 [真实模型实验](docs/live-experiments.md)。此前源码推理阶段的 19 次真实尝试保存于 [1.5B](experiments/round-1-1_5b)、[3B](experiments/round-2-3b)、[文件工具修复后的 3B](experiments/round-3-file-tools) 和 [16 步单案例回归](experiments/file-tools-v3)：全部未 Submitted，有公开检查的 10 次均未交付成功。这些历史失败完整保留，不与之后的 Docker 实验混成一个策略对照。
 
-工程验证已在 Windows 和 Linux 各通过 196 项测试，并完成真实 Docker 运行与崩溃恢复。[官方容器合同检查](experiments/official-harness-contract/summary.json) 使用零 LLM 调用的控制补丁，实际评分器报告补丁应用成功、问题未解决、无基础设施错误；它验证评分链路，不进入模型成绩。真实模型的 [官方门禁](experiments/official-gate-v02/summary.json) 为 `no_submissions`。各阶段完整证据见 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions)。
+新增 [7B Docker 真实交付实验](experiments/closure-proof-v1/analysis.md) 保留了一个确定失败：24 次重复误用 Skill 工具、空补丁、未提交、独立公开验收失败。实际动作审计定位了错误，随后修复 Skill/源码读取指引，并加入依据真实失败记录生成的重复调用反馈；协议测试不能代替后续模型实测。未取得真实模型的官方解题成绩，不能据此宣称成功率提升。
+
+工程验证已在 [21f1f5f 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38016237676) 中通过 Windows 和 Linux 各 230 项测试，并完成真实 Docker 运行与崩溃恢复。[官方容器合同检查](experiments/official-harness-contract/summary.json) 使用零 LLM 调用的控制补丁，实际评分器报告补丁应用成功、问题未解决、无基础设施错误；它验证评分链路，不进入模型成绩。此前真实模型的 [官方门禁](experiments/official-gate-v02/summary.json) 为 `no_submissions`。各阶段完整证据见 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions)。
 
 ## 产物与岗位对应
 

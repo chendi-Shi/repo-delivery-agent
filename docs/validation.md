@@ -1,6 +1,14 @@
 # 验证记录
 
-验证日期：2026-10-09。这里分别记录实现契约、真实容器、真实模型、公开检查和官方评分。CI job 成功表示流程执行成功，不能替代模型交付成功。
+验证日期：2026-10-10。这里分别记录实现契约、真实容器、真实模型、公开检查和官方评分。CI job 成功表示流程执行成功，不能替代模型交付成功。
+
+## 新增 Docker 交付验证
+
+[21f1f5f 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38016237676) 实际通过 Linux 230 项（29.331 秒）、Windows 230 项（59.356 秒），均无 skip；Docker 运行与崩溃恢复、既有真实补丁的独立 verifier 同时通过。此前 276c6ce 的 CI 已通过两端各 223 项，Linux 32.632 秒、Windows 68.430 秒。下面的 196 项与 19 次模型尝试属于此前阶段，保留作为历史记录。
+
+第一个 [7B Docker 真实试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37916573901) 使用固定 Requests commit、原始公开问题和两条公开检查。模型实际请求 24 次，实测输入 46,374、输出 1,107 tokens，usage 完整；仓库运行 636.38 秒。24 条动作均为同一非法 Skill 资源读取，未修改源码，最终 LimitsExceeded。干净 checkout 验收：旧文本/表单兼容检查通过，二进制请求体检查仍报原始 UnicodeDecodeError。未提交，公开交付 0/1，official_resolved 为 null。
+
+完整产物保存在 [closure-proof-v1](../experiments/closure-proof-v1)，GitHub archive SHA256 已核验。原始顶层 summary 漏取 model_calls/usage，保留 null；实际数值来自同目录 hash 绑定的 evidence。新增动作审计让失败能被定位到具体调用；工具指引和真实执行元数据驱动的重复失败反馈已修复并通过协议测试，尚需后续模型结果验证其交付效果。该协议回归是 fixture，不加进模型尝试数。
 
 ## 已完成的实现与运行时验证
 

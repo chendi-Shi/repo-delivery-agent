@@ -1,0 +1,181 @@
+name: fixed real delivery and knowledge transfer cohort
+on:
+  push:
+    branches: [main]
+    paths: ['.github/delivery-suite-request.json']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: delivery-suite-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the pinned actual agent runtime
+        run: python -m pip install -e ".[agent]"
+      - name: Install the verified fixed Ollama release
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$RUNNER_TEMP/ollama-v0.40.2.tar.zst"
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 600 \
+            https://github.com/ollama/ollama/releases/download/v0.40.2/ollama-linux-amd64.tar.zst --output "$package"
+          printf '%s  %s\n' 726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04 "$package" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/ollama-pin"
+          tar --zstd -xf "$package" -C "$RUNNER_TEMP/ollama-pin"
+      - name: Freeze cohort and attempt the distinct source task once
+        shell: bash
+        run: >-
+          python scripts/ci_delivery_closure.py --mode transfer
+          --ollama "$RUNNER_TEMP/ollama-pin/bin/ollama" --model qwen3:4b-instruct
+          --ollama-mode json --profile recent --label source
+          --max-steps 24 --context-tokens 24000 --max-output-tokens 1500
+          --wall-seconds 1800 --request-timeout 300 --command-timeout 90 --seed 42
+          --output runs/closure-source-private --evidence runs/closure-source-public
+      - name: Export the predeclared target matrix
+        id: plan
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          matrix = json.loads(Path('runs/closure-source-public/matrix.json').read_text())
+          if len(matrix['include']) != 10:
+              raise ValueError('the fixed cohort must contain ten target rows')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write('matrix=' + json.dumps(matrix, separators=(',', ':')) + '\n')
+          PY
+      - name: Publish only frozen source evidence and the verified experience package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: closure-source-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runs/closure-source-public/suite-plan.json
+            runs/closure-source-public/matrix.json
+            runs/closure-source-public/environment.json
+            runs/closure-source-public/seed-package.json
+            runs/closure-source-public/seed-provenance.json
+            runs/closure-source-public/source-leakage-guard.json
+            runs/closure-source-public/observations-source.json
+            runs/closure-source-public/image-transfer.json
+            runs/closure-source-public/source-trial/summary.json
+            runs/closure-source-public/source-trial/baseline-receipt.json
+            runs/closure-source-public/source-trial/context-preflight.json
+            runs/closure-source-public/source-trial/trial-receipt.json
+            runs/closure-source-public/source-trial/repository-ablation.json
+            runs/closure-source-public/source-trial/verification.json
+            runs/closure-source-public/source-trial/model-run/task.json
+            runs/closure-source-public/source-trial/model-run/model.patch
+            runs/closure-source-public/source-trial/model-run/evidence.json
+            runs/closure-source-public/source-trial/model-run/action-audit.jsonl
+          if-no-files-found: error
+          retention-days: 30
+      - name: Transfer only the public Python tools image built before inference
+        uses: actions/upload-artifact@v4
+        with:
+          name: closure-tools-image-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/closure-source-public/tools-image.tar
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 3
+  targets:
+    needs: source
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix: ${{ fromJSON(needs.source.outputs.matrix) }}
+    env:
+      TRIAL_INSTANCE: ${{ matrix.instance_id }}
+      TRIAL_SEED: ${{ matrix.seed }}
+      TRIAL_ARM: ${{ matrix.arm }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the pinned actual agent runtime
+        run: python -m pip install -e ".[agent]"
+      - uses: actions/download-artifact@v4
+        with:
+          name: closure-source-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/closure-inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: closure-tools-image-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/closure-inputs
+      - name: Install the verified fixed Ollama release
+        shell: bash
+        run: |
+          set -euo pipefail
+          package="$RUNNER_TEMP/ollama-v0.40.2.tar.zst"
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 600 \
+            https://github.com/ollama/ollama/releases/download/v0.40.2/ollama-linux-amd64.tar.zst --output "$package"
+          printf '%s  %s\n' 726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04 "$package" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/ollama-pin"
+          tar --zstd -xf "$package" -C "$RUNNER_TEMP/ollama-pin"
+      - name: Attempt exactly one frozen target arm in a fresh workspace and knowledge database
+        shell: bash
+        run: >-
+          python scripts/ci_delivery_closure.py --mode target
+          --ollama "$RUNNER_TEMP/ollama-pin/bin/ollama"
+          --inputs runs/closure-inputs --instance-id "$TRIAL_INSTANCE" --seed "$TRIAL_SEED" --arm "$TRIAL_ARM"
+          --label target --output runs/closure-target-private --evidence runs/closure-target-public
+      - name: Publish only typed target evidence including failures and blocked trials
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: closure-target-${{ matrix.instance_id }}-${{ matrix.seed }}-${{ matrix.arm }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            runs/closure-target-public/observations-*.json
+            runs/closure-target-public/target-*/summary.json
+            runs/closure-target-public/target-*/trial-receipt.json
+            runs/closure-target-public/target-*/baseline-receipt.json
+            runs/closure-target-public/target-*/context-preflight.json
+            runs/closure-target-public/target-*/repository-ablation.json
+            runs/closure-target-public/target-*/verification.json
+            runs/closure-target-public/target-*/model-run/task.json
+            runs/closure-target-public/target-*/model-run/model.patch
+            runs/closure-target-public/target-*/model-run/evidence.json
+            runs/closure-target-public/target-*/model-run/action-audit.jsonl
+          if-no-files-found: warn
+          retention-days: 30
+  aggregate:
+    needs: [source, targets]
+    if: always() && needs.source.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: closure-source-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/closure-combined
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: closure-target-*-${{ github.run_id }}-${{ github.run_attempt }}
+          merge-multiple: true
+          path: runs/closure-combined
+      - name: Summarize every planned row with fixed denominators and separate source outcomes
+        run: python scripts/ci_delivery_closure.py --mode aggregate --evidence runs/closure-combined
+      - name: Publish the full safe cohort evidence and summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: closure-cohort-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/closure-combined
+          if-no-files-found: error
+          retention-days: 30

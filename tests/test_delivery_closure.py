@@ -22,6 +22,178 @@ def public_task(image="python:3.8-slim"):
 
 
 class DeliveryClosureTests(unittest.TestCase):
+    def cohort_contract(self):
+        args = argparse.Namespace(model="qwen3:4b-instruct", mode="transfer", seed=42, max_output_tokens=1500,
+            request_timeout=300, context_tokens=24000, ollama_mode="json", max_steps=24,
+            cost_limit=3., wall_seconds=1800, command_timeout=90, profile="retrieval", label="contract")
+        image = {"public_base_reference": "python:3.12-slim", "public_base_digest": "python@sha256:" + "b" * 64,
+                 "public_base_image_id": "sha256:" + "c" * 64, "inference_image_id": "sha256:" + "d" * 64,
+                 "operator_dockerfile_sha256": "e" * 64, "operator_image_tag": "contract-only:tools"}
+        tasks = runner.suite_tasks()
+        with patch.object(runner, "git", return_value=SimpleNamespace(stdout=b"1" * 40)):
+            plan = runner.freeze_cohort(args, tasks, image, {"digest": "a" * 64})
+        return args, plan, tasks, image
+
+    def test_cohort_plan_and_blocked_seed_rows_are_accepted_by_real_summary_consumer(self):
+        from scripts.summarize_closure_suite import _plan, summarize
+        args, plan, tasks, image = self.cohort_contract()
+        arms, targets, expected, reference, source = _plan(plan)
+        self.assertEqual(len(expected), 10)
+        self.assertEqual(sum(row["role"] == "holdout" for row in expected.values()), 4)
+        self.assertEqual(len(source), 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            public = Path(temporary)
+            atomic_json(public / "suite-plan.json", plan)
+            target = next(row for row in plan["targets"] if row["role"] == "near_transfer")
+            arm = arms["verified-source"]
+            receipt = runner.blocked_trial(plan, target, arm, 42, public, "blocked-target", "verified_source_unavailable")
+            atomic_json(public / "observations.json", {"schema": 1, "kind": "closure_cohort_observations",
+                "plan_sha256": runner.file_sha256(public / "suite-plan.json"), "source_attempts": [],
+                "runs": [{"instance_id": target["instance_id"], "seed": 42, "arm": arm["id"],
+                          "receipt": runner.artifact_ref(public / "blocked-target" / "trial-receipt.json", public)}]})
+            report = summarize(public / "suite-plan.json", public / "observations.json")
+            self.assertEqual(report["expected_target_attempts"], 10)
+            self.assertFalse(report["complete"])
+            self.assertIsNone(report["by_arm"]["verified-source"]["delivery_success_rate"])
+            self.assertEqual(receipt["attempted_count"], 0)
+
+    def test_cohort_pipeline_setup_failure_is_not_an_actual_model_attempt(self):
+        from scripts.summarize_closure_suite import _receipt
+        args, plan, tasks, image = self.cohort_contract()
+        task, raw = tasks["more-itertools-last-factory.json"]
+        arm = next(row for row in plan["arms"] if row["id"] == "baseline")
+        target = next(row for row in plan["targets"] if row["instance_id"] == task.instance_id)
+        daemon = SimpleNamespace(identity={"digest": "a" * 64}, assert_identity=lambda: None)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            private, public = root / "private", root / "public"
+            private.mkdir(); public.mkdir()
+            with patch.object(runner, "run_baseline_checks", return_value={"resolved_image_id": image["public_base_image_id"],
+                                                                        "feature_gap_confirmed": True}), \
+                    patch.object(runner, "preflight_context", return_value={"initial_fits": True, "synthetic_ascii_tool_view_fits": True}), \
+                    patch.object(runner, "run_repository", return_value={"status": "failed", "seconds": .1,
+                        "error_type": "DockerUnavailable", "provenance": {"model_digest": "a" * 64}}):
+                receipt, _, _ = runner.execute_cohort_trial(args, plan, task, raw, image, daemon,
+                    private, public, "target", arm=arm, role="near_transfer")
+            actual = _receipt(receipt, (task.instance_id, 42, arm["id"]), target, arm, plan, public)
+            self.assertTrue(receipt["infrastructure_failed"])
+            self.assertIsNone(receipt["delivery_success"])
+            self.assertFalse(receipt["attempt_started"])
+            self.assertEqual(receipt["model_calls"], 0)
+            self.assertEqual(actual["attempted_count"], 0)
+
+    def test_cohort_submitted_and_failed_checks_bind_through_real_summary_consumer(self):
+        from scripts.summarize_closure_suite import _receipt
+        args, plan, tasks, image = self.cohort_contract()
+        task, raw = tasks["more-itertools-last-factory.json"]
+        arm = next(row for row in plan["arms"] if row["id"] == "retrieval")
+        target = next(row for row in plan["targets"] if row["instance_id"] == task.instance_id)
+        daemon = SimpleNamespace(identity={"digest": "a" * 64}, assert_identity=lambda: None)
+        for passes in (True, False):
+            with self.subTest(passes=passes), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                private, public = root / "private", root / "public"
+                private.mkdir(); public.mkdir()
+                checks = [{"command": command, "returncode": 0 if passes else 1, "passed": passes}
+                          for command in task.public_checks]
+                def model_boundary(given_task, given_args, directory):
+                    (directory / "agent").mkdir(parents=True)
+                    (directory / "agent" / "request-views.jsonl").write_text('{"event":"request","call":1}\n')
+                    return {"fixture": False, "provider": "ollama_native", "status": "submitted", "exit_status": "Submitted",
+                        "model_patch": "diff --git a/new.py b/new.py\n", "patch_valid": True, "seconds": 1.,
+                        "public_checks": checks, "verification_status": "passed" if passes else "failed",
+                        "delivery": {"model_calls": 1, "usage": {"input_tokens": 100, "output_tokens": 20,
+                            "complete": True, "calls_with_usage": 1, "unknown_requests": 0}},
+                        "provenance": {"config": {"model": given_args.model}, "model_digest": "a" * 64,
+                            "task_hash": given_task.fingerprint(), "implementation_sha256": plan["common"]["implementation_sha256"]}}
+                def independent_boundary(manifest, output, **kwargs):
+                    loaded = load_plan(manifest)
+                    self.assertEqual(loaded[0]["task"].image, image["public_base_digest"])
+                    result = {"infrastructure_failures": [], "runs": [{"instance_id": task.instance_id,
+                        "model_digest": "a" * 64, "resolved_image": image["public_base_image_id"],
+                        "submitted": True, "public_checks": checks, "delivery_success": passes,
+                        "verification_status": "passed" if passes else "failed"}]}
+                    atomic_json(output, result)
+                    return result
+                with patch.object(runner, "run_baseline_checks", return_value={"resolved_image_id": image["public_base_image_id"],
+                                                                            "feature_gap_confirmed": True}), \
+                        patch.object(runner, "preflight_context", return_value={"initial_fits": True, "synthetic_ascii_tool_view_fits": True}), \
+                        patch.object(runner, "run_repository", side_effect=model_boundary), \
+                        patch.object(runner, "grade", side_effect=independent_boundary):
+                    receipt, _, _ = runner.execute_cohort_trial(args, plan, task, raw, image, daemon,
+                        private, public, "target", arm=arm, role="near_transfer")
+                actual = _receipt(receipt, (task.instance_id, 42, arm["id"]), target, arm, plan, public)
+                self.assertFalse(receipt["infrastructure_failed"])
+                self.assertIs(actual["delivery_success"], passes)
+                self.assertTrue(actual["attempt_started"])
+                self.assertEqual(actual["actual_input_tokens"], 100)
+                self.assertEqual(actual["actual_output_tokens"], 20)
+
+    def test_source_guard_collects_added_root_and_test_python_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "more_itertools").mkdir(); (root / "tests").mkdir(); (root / ".git").mkdir()
+            for name in ("more_itertools/more.py", "tests/test_added.py", "conftest.py", ".git/ignored.py"):
+                (root / name).write_text("# bounded contract fixture\n")
+            self.assertEqual(set(runner.collect_python_sources(root)),
+                             {"more_itertools/more.py", "tests/test_added.py", "conftest.py"})
+
+    def test_source_reuse_requires_completed_read_with_every_bound_identity(self):
+        origin = {"source_id": "k" + "a" * 32, "content_sha256": "b" * 64, "task_id": "source-A",
+                  "namespace_sha256": "c" * 64, "verified": True, "source_ref": "run:" + "d" * 64,
+                  "verification_sha256": "e" * 64}
+        with tempfile.TemporaryDirectory() as temporary:
+            audit = Path(temporary) / "audit.jsonl"
+            row = {"event": "action", "outcome": "completed", "returncode": 0,
+                   "action_kind": "delivery-knowledge/search", "knowledge_operation": "search",
+                   "knowledge_namespace_sha256": origin["namespace_sha256"], "knowledge_records": [origin]}
+            audit.write_text(json.dumps(row) + "\n")
+            self.assertFalse(runner.observed_source_reuse(audit, origin))
+            row.update(action_kind="delivery-knowledge/read", knowledge_operation="read")
+            audit.write_text(json.dumps(row) + "\n")
+            self.assertTrue(runner.observed_source_reuse(audit, origin))
+            row["knowledge_records"] = [{**origin, "verification_sha256": "f" * 64}]
+            audit.write_text(json.dumps(row) + "\n")
+            self.assertFalse(runner.observed_source_reuse(audit, origin))
+
+    def test_model_usage_and_request_counts_are_actual_and_missing_usage_is_unknown(self):
+        usage, calls = runner.normalized_usage({"delivery": {"model_calls": 2, "usage": {
+            "input_tokens": 100, "output_tokens": 30, "calls_with_usage": 2, "unknown_requests": 0, "complete": True}}})
+        self.assertEqual((usage["input_tokens"], usage["output_tokens"], calls), (100, 30, 2))
+        self.assertTrue(usage["complete"])
+        self.assertEqual(runner.normalized_usage({})[0]["input_tokens"], None)
+        with tempfile.TemporaryDirectory() as temporary:
+            trial = Path(temporary)
+            self.assertEqual(runner.actual_request_count(trial), 0)
+            (trial / "agent").mkdir()
+            (trial / "agent" / "request-views.jsonl").write_text(
+                '{"event":"request","call":1}\n{"event":"error","call":1}\n')
+            self.assertEqual(runner.actual_request_count(trial), 1)
+
+    def test_every_cohort_task_template_fits_with_bounded_inventory_and_large_latest_observation(self):
+        from delivery_agent.knowledge import KnowledgeStore
+        try:
+            importlib.metadata.version("mini-swe-agent")
+        except importlib.metadata.PackageNotFoundError:
+            self.skipTest("actual pinned wheel helper exercises template rendering")
+        args, _, tasks, _ = self.cohort_contract()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            store = KnowledgeStore(root / "empty.sqlite", "closure-contract")
+            try:
+                with patch("delivery_agent.file_environment.FileEnvironment.inventory", return_value="x" * 1200), \
+                        patch("delivery_agent.ollama_model.OllamaModel._http", side_effect=AssertionError("no provider call")):
+                    for task, _ in tasks.values():
+                        for profile in ("baseline", "recent", "retrieval"):
+                            args.profile = profile
+                            with self.subTest(instance=task.instance_id, profile=profile):
+                                receipt = runner.preflight_context(task, args, root, knowledge=store)
+                                self.assertTrue(receipt["initial_fits"])
+                                self.assertTrue(receipt["synthetic_ascii_tool_view_fits"])
+                                self.assertIsNone(receipt["provider_usage"])
+            finally:
+                store.close()
+
     def test_frozen_suite_only_rejects_mutated_task_and_answer_bearing_image(self):
         suite = runner.ROOT / "examples" / "delivery-suite-v1"
         task_path = suite / "requests-2931-public.json"
@@ -238,7 +410,7 @@ class DeliveryClosureTests(unittest.TestCase):
                 self.assertEqual(given_args.provider, "ollama_native")
                 self.assertIsNone(given_args.knowledge_db)
                 (directory / "agent").mkdir(parents=True)
-                (directory / "agent" / "request-views.jsonl").write_text('{"event":"request"}\n')
+                (directory / "agent" / "request-views.jsonl").write_text('{"event":"request","call":1}\n')
                 return {"fixture": False, "provider": "ollama_native", "status": "submitted", "exit_status": "Submitted",
                     "model_patch": "diff --git a/new.py b/new.py\n", "patch_valid": True, "seconds": 1.,
                     "public_checks": [{"command": command, "returncode": 0, "passed": True} for command in task.public_checks],
@@ -275,8 +447,8 @@ class DeliveryClosureTests(unittest.TestCase):
                     with self.assertRaises(RuntimeError):
                         runner.run_proof(failed_args)
                     failure = json.loads((root / "public-failure" / "summary.json").read_text(encoding="utf-8"))
-                    self.assertEqual(failure["attempted_count"], 1)
-                    self.assertTrue(failure["attempt_started"])
+                    self.assertEqual(failure["attempted_count"], 0)
+                    self.assertFalse(failure["attempt_started"])
                     self.assertEqual(failure["model_status"], "unknown_started")
                     self.assertIsNone(failure["delivery_success"])
                     self.assertIsNone(failure["usage"])

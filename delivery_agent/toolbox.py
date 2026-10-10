@@ -23,6 +23,8 @@ class ToolboxEnvironment:
             text += ("\nCross-task knowledge, isolated by namespace; results include verification and source IDs.\n"
                 "delivery-knowledge search 'query' [limit 1..8]\n"
                 "delivery-knowledge read source-id [character-offset] [limit 1..4000]\n"
+                "Before editing, search using this requirement's keywords. If a hit is relevant, read its content "
+                "and verification before deciding whether to reuse it. Empty results are normal; continue with repository evidence.\n"
                 "Current task solutions are excluded. Check provenance and freshness before applying knowledge.\n")
         if text:
             text += "Use exactly one toolbox command per bash call, without shell operators.\n"

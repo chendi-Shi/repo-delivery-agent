@@ -1,0 +1,43 @@
+# 真实交付与知识复用实验
+
+本实验回答三个不同问题：Agent 能否真正修改并提交代码；固定预算下上下文策略有什么差异；已验收的跨任务经验是否被读取并影响交付。协议测试、真实模型结果和官方评分分别记录。
+
+## 两条运行路径
+
+`delivery-closure.yml` 运行一个原始 Requests 公开 Issue。实际模型在隔离的 Docker 中读取源码、修改、测试并提交；导出的真实补丁会在第二个干净 checkout 和独立容器中重新验收。只有模型明确 Submitted、补丁可应用、内部和外部公开检查均通过，才记为公开交付成功。成功提交还可以导出给固定 SWE-bench harness；公开检查通过不等于官方 resolved。
+
+`delivery-suite.yml` 运行预先固定的任务组。源任务先执行一次，随后十个目标试验分别运行，最后按预声明计划汇总。任务文件及其哈希位于 [delivery-suite-v1](../examples/delivery-suite-v1)，运行时还冻结实际模型权重 digest、容器 image ID、实现与工具指纹、预算和 seeds。
+
+| 任务 | 角色 | 目标组与 seeds |
+|---|---|---|
+| `first(default_factory=...)` | 独立源任务 | recent，seed 42，一次真实尝试 |
+| `last(default_factory=...)` | 相近需求迁移 | baseline、retrieval、retrieval + verified source；各 seeds 42/43，共 6 次 |
+| `split_after(keep_separator=False, ...)` | 独立留出需求 | baseline、retrieval；各 seeds 42/43，共 4 次 |
+
+这三题是固定真实仓库上的自建开发需求，不是官方 SWE-bench 题。源码、公开回归与新增行为检查在运行前冻结。原有测试方法的 AST 也被冻结，不能通过删改断言得到通过结果。
+
+## 知识怎样进入目标任务
+
+源任务必须真实提交并通过两套公开验收，才有资格成为知识。额外检查确认它没有修改目标函数定义、通过别处重绑定目标函数，或提前完成两个目标需求。失败源任务仍保存；带知识的目标组被记录为模型调用前阻塞，不会用人工经验替代它。
+
+合格源任务通过实际 `KnowledgeStore.ingest_run` 入库，导出有来源和验收哈希的只读经验包。每个目标试验创建独立空数据库；只有知识组导入这个冻结经验包。目标任务不能读取当前题答案，也不能把自己的新结果回流到其他试验。普通组仍提供相同工具和指引，以避免“工具是否存在”成为额外变量。
+
+动作审计必须观察到一次真正成功的 `delivery-knowledge read`，且 source ID、正文哈希、任务、namespace、验证记录等全部匹配，才记为实际读取。搜索命中不算读取；读取也不自动证明经验帮助了最终修复。
+
+## 如何比较结果
+
+- 首先报告明确提交、公开交付、失败、未知和模型调用前阻塞的数量，所有预定目标行保留在分母中。
+- baseline 与 retrieval 比较上下文策略；同为 retrieval 的无知识组与有知识组比较经验包的影响。跨两个变量的对照须单独标明。
+- tokens 只采用 provider 实测 usage。缺失用量记为 null，不用上下文估算代替；失败试验的用量也保留。
+- 仅在同题、同 seed 的两组都成功时比较成功交付的耗时和 tokens；另报告包含失败尝试成本的每次成功交付成本，两者不可混称。
+- 两个 seeds、少数自建需求是工程验证样本，不支持显著性或总体成功率提升结论；temperature=0 的复跑也不视为独立随机抽样。
+
+## 产物与运行边界
+
+公开产物包括 `suite-plan.json`、每次 `trial-receipt.json`、实际 patch、裁剪脱敏的动作审计、独立 `verification.json`、源任务门禁、经验来源，以及 `cohort-summary.json`。摘要会核对文件 SHA256 和底层实际结果，拒绝“摘要称成功、验收证据失败”的矛盾输入。
+
+目标 worker 使用源阶段预先构建的公开 Python + Git/ripgrep 镜像，通过 Docker archive 传递并核对 image ID；里面没有任务源码或答案。模型容器关闭网络，原始轨迹、模型回复和私有运行目录不上传。归档摘要和日志裁剪不改变原始补丁与任务字节。
+
+GitHub Actions 可手动运行上述工作流。专用 request marker 的变更也可以触发一次明确试验，普通源码或文档推送不会自动重复整套模型实验。每次运行必须使用新目录；修复后的重跑与原始失败分别保留。
+
+第一轮真实 Docker 失败及其修复原因见 [动作审计分析](../experiments/closure-proof-v1/analysis.md)。当前实际成绩以已保存的验收产物和 [验证记录](validation.md) 为准。
