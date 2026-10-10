@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "fixture": true,
+  "llm_calls": 0,
+  "original_source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+  "original_source_file": "delivery_agent/scheduler.py",
+  "original_source_sha256": "64e123a6ca3fea3435cd19266557deca4944a7b82c9b4436c356500ff7b9cdcc",
+  "candidate_evaluation": {
+    "implementation": "candidate loaded in memory; no production file modification during this evaluation",
+    "tests": 3,
+    "old_failures": 3,
+    "candidate_failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "candidate_test_seconds": 0.662,
+    "test_seconds_source": "observed unittest tool output; original JSON records counts only",
+    "python_version": "3.14.7",
+    "platform": "Windows"
+  },
+  "post_apply_main_code_validation": {
+    "source": "parent/root agent reported direct unittest runs after applying patch; this archive step did not rerun tests",
+    "clock_contract": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.607
+    },
+    "scheduler_suite": {
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 29.528
+    },
+    "scheduler_file_observed_after_report": {
+      "sha256_original_bytes": "77982ec6daa24eb7ad355085b9b08b3de631b94bc0752f4f7c28cbf147e81852",
+      "sha256_utf8_newlines_normalized": "75e4437ee79fa047a35735c49f71291c6d7fdf0a1835b526fa09aca46cb7c022"
+    },
+    "published_commit": null,
+    "ci_validation": "pending subsequent published commit; preserve historical CI separately"
+  },
+  "artifact_manifest": [
+    {
+      "file": "reproduction.json",
+      "original_basename": "scheduler-lease-clock-reproduction.json",
+      "bytes": 2256,
+      "sha256": "2705e2596ab52b56d82298674f606548ee460d28a3946b969800d85c7a5f266c",
+      "copy": "unchanged original bytes"
+    },
+    {
+      "file": "candidate-test-results.json",
+      "original_basename": "scheduler-lease-clock-contract-tests.json",
+      "bytes": 192,
+      "sha256": "b290ca1d47298ce300a0746ea4b31ac5b5ac3749693499ebe6458d8786f645d1",
+      "copy": "unchanged original bytes"
+    },
+    {
+      "file": "candidate.patch",
+      "original_basename": "scheduler-lease-clock.patch",
+      "bytes": 6956,
+      "sha256": "3846f32374a542dcc09e7cb4bcd0979f1cebcae7057f918f3523bd03a01f2626",
+      "copy": "unchanged original bytes"
+    },
+    {
+      "file": "reproduction-script.py.txt",
+      "original_basename": "scheduler_lease_clock_review.py",
+      "bytes": 5612,
+      "sha256": "50b4f9fc791d75a19179cf31f1edd50a96ffb0f04b0af92de1419b6c2de7e8f3",
+      "copy": "unchanged original bytes"
+    },
+    {
+      "file": "regression-test.py.txt",
+      "original_basename": "test_scheduler_clock.py",
+      "bytes": 3722,
+      "sha256": "cf378de6358553878cc94b09a8bb68499107600c6c7e27bcf7d9cdc0c8c9a87a",
+      "copy": "unchanged original bytes"
+    }
+  ],
+  "interpretation": "Reproduces an independent SQLite transaction clock defect. It does not establish the original Windows CI heartbeat failure cause or provide model delivery evidence."
+}

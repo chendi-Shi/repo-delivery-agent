@@ -1,0 +1,231 @@
+diff --git a/docs/api.rst b/docs/api.rst
+index 7b40a8e..bb109b5 100644
+--- a/docs/api.rst
++++ b/docs/api.rst
+@@ -194,7 +194,7 @@ These tools yield certain items from an iterable.
+ .. autoclass:: islice_extended(iterable, start, stop[, step])
+   :noindex:
+ .. autofunction:: first(iterable[, default])
+-.. autofunction:: last(iterable[, default])
++.. autofunction:: last(iterable[, default], *, default_factory=None)
+ .. autofunction:: one(iterable, too_short=ValueError, too_long=ValueError)
+ .. autofunction:: only(iterable, default=None, too_long=ValueError)
+ .. autofunction:: strictly_n(iterable, n, too_short=None, too_long=None)
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..48443d4 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -277,29 +277,54 @@ def first(iterable, default=_marker):
+     return default
+ 
+ 
+-def last(iterable, default=_marker):
+-    """Return the last item of *iterable*, or *default* if *iterable* is
+-    empty.
++def last(iterable, default=_marker, *, default_factory=None):
++    """Return the last item of *iterable*, or a fallback if it is empty.
+ 
+         >>> last([0, 1, 2, 3])
+         3
+         >>> last([], 'some default')
+         'some default'
++        >>> last([], default_factory=list)
++        []
+ 
+-    If *default* is not provided and there are no items in the iterable,
++    Supply *default* to return a fallback value, or the keyword-only
++    *default_factory* to construct one lazily. The factory is called with no
++    arguments exactly once on empty input and never on nonempty input. Its
++    result is returned unchanged, including falsey values. ``None`` means no
++    factory.
++
++    Supplying both an explicit *default* and a non-``None`` factory raises
++    ``ValueError``. A non-``None`` factory must be callable, otherwise
++    ``TypeError`` is raised. These options are validated before consuming
++    *iterable*. Exceptions from the source or factory propagate.
++
++    If neither fallback is provided and there are no items in the iterable,
+     raise ``ValueError``.
+     """
+-    try:
+-        if getattr(iterable, '__reversed__', None):
+-            return next(reversed(iterable))
+-        return deque(iterable, maxlen=1)[-1]
+-    except (IndexError, StopIteration):
+-        if default is _marker:
+-            raise ValueError(
+-                'last() was called on an empty iterable, '
+-                'and no default value was provided.'
+-            )
+-        return default
++    if default_factory is not None:
++        if default is not _marker:
++            raise ValueError('default and default_factory are mutually exclusive')
++        if not callable(default_factory):
++            raise TypeError('default_factory must be callable')
++
++    if getattr(iterable, '__reversed__', None):
++        empty = object()
++        item = next(reversed(iterable), empty)
++        if item is not empty:
++            return item
++    else:
++        tail = deque(iterable, maxlen=1)
++        if tail:
++            return tail[-1]
++
++    if default_factory is not None:
++        return default_factory()
++    if default is _marker:
++        raise ValueError(
++            'last() was called on an empty iterable, '
++            'and no default value was provided.'
++        )
++    return default
+ 
+ 
+ def nth_or_last(iterable, n, default=_marker):
+diff --git a/tests/test_more.py b/tests/test_more.py
+index 9ecdd06..b73dc25 100644
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -202,6 +202,139 @@ class LastTests(TestCase):
+         self.assertEqual(mi.last(ReversedIsNone()), 1)
+ 
+ 
++class LastFactoryTests(TestCase):
++    def test_lazy_factory_and_falsey_results(self):
++        for value in (None, False, 0, [], {}):
++            for make_source in (list, iter):
++                with self.subTest(value=value, source=make_source):
++                    calls = []
++
++                    def factory():
++                        calls.append(True)
++                        return value
++
++                    self.assertIs(
++                        mi.last(make_source([1, value]), default_factory=factory),
++                        value,
++                    )
++                    self.assertEqual(calls, [])
++                    self.assertIs(
++                        mi.last(make_source([]), default_factory=factory), value
++                    )
++                    self.assertEqual(calls, [True])
++
++    def test_validation_before_source_access(self):
++        class Untouched:
++            def __iter__(self):
++                raise AssertionError('input consumed')
++
++            def __reversed__(self):
++                raise AssertionError('input reversed')
++
++        for factory in (0, False, 'invalid', []):
++            with self.subTest(factory=factory):
++                with self.assertRaises(TypeError):
++                    mi.last(Untouched(), default_factory=factory)
++        for default in (None, False, 0, 'legacy'):
++            with self.subTest(default=default):
++                with self.assertRaises(ValueError):
++                    mi.last(Untouched(), default, default_factory=list)
++        with self.assertRaises(TypeError):
++            mi.last([], None, list)
++
++    def test_none_factory_and_legacy_default(self):
++        self.assertIsNone(mi.last([], None, default_factory=None))
++        self.assertEqual(mi.last([], 'legacy'), 'legacy')
++        self.assertEqual(mi.last([1], default_factory=None), 1)
++        with self.assertRaises(ValueError):
++            mi.last(iter([]), default_factory=None)
++
++    def test_one_shot_iterator(self):
++        class Once:
++            def __init__(self, values):
++                self.values = iter(values)
++                self.iterations = 0
++
++            def __iter__(self):
++                self.iterations += 1
++                if self.iterations != 1:
++                    raise AssertionError('input restarted')
++                return self
++
++            def __next__(self):
++                return next(self.values)
++
++        for values, expected in (([1, 2, 3], 3), ([], 'fallback')):
++            source = Once(values)
++            self.assertEqual(
++                mi.last(source, default_factory=lambda: 'fallback'), expected
++            )
++            self.assertEqual(source.iterations, 1)
++
++    def test_reverse_only(self):
++        class ReverseOnly:
++            def __init__(self, values):
++                self.values = values
++
++            def __iter__(self):
++                raise AssertionError('forward iteration forbidden')
++
++            def __reversed__(self):
++                return iter(self.values)
++
++        calls = []
++
++        def factory():
++            calls.append(True)
++            return 'fallback'
++
++        self.assertEqual(
++            mi.last(ReverseOnly([7, 6, 5]), default_factory=factory), 7
++        )
++        self.assertEqual(calls, [])
++        self.assertEqual(
++            mi.last(ReverseOnly([]), default_factory=factory), 'fallback'
++        )
++        self.assertEqual(calls, [True])
++
++    def test_factory_exceptions_propagate_once(self):
++        for kind in (RuntimeError, IndexError, StopIteration):
++            with self.subTest(kind=kind):
++                calls = []
++                error = kind('factory failure')
++
++                def factory():
++                    calls.append(True)
++                    raise error
++
++                with self.assertRaises(kind) as caught:
++                    mi.last([], default_factory=factory)
++                self.assertIs(caught.exception, error)
++                self.assertEqual(calls, [True])
++
++    def test_source_exceptions_propagate(self):
++        for kind in (RuntimeError, IndexError):
++            for reverse in (False, True):
++                with self.subTest(kind=kind, reverse=reverse):
++                    calls = []
++                    error = kind('source failure')
++
++                    def broken_source():
++                        if not reverse:
++                            yield 1
++                        raise error
++
++                    class ReverseOnly:
++                        def __reversed__(self):
++                            return broken_source()
++
++                    source = ReverseOnly() if reverse else broken_source()
++                    with self.assertRaises(kind) as caught:
++                        mi.last(source, default_factory=lambda: calls.append(True))
++                    self.assertIs(caught.exception, error)
++                    self.assertEqual(calls, [])
++
++
+ class NthOrLastTests(TestCase):
+     """Tests for ``nth_or_last()``"""
+ 

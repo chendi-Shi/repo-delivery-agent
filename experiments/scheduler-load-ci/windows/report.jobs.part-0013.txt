@@ -1,0 +1,2074 @@
+    "result_digest": "0e53571a105ddc497498c96d5b7b5ff164f7afd35d60a7c082121a1309a2f89e",
+    "state": "succeeded",
+    "updated": 1791611384.157356,
+    "worker_id": "load-worker-0"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.1727626,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "07cced17a9f5a683eb9110b5de9fe7c38c3007418b0bd93b6fd1f3fcc2051c27",
+        "started": 1791611384.1523297,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.3180711,
+    "generation": 1,
+    "job_id": "load-000711",
+    "payload_digest": "a1e0bfce2588a2704fef5111a918aebfa248d0849aa85869e2b76c84d4182bea",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000711",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "07cced17a9f5a683eb9110b5de9fe7c38c3007418b0bd93b6fd1f3fcc2051c27",
+    "state": "succeeded",
+    "updated": 1791611384.1727626,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.1868615,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "a525f7db545119a07eede4f0c31c0488928f4b05febff60589c6502e2b5b69b0",
+        "started": 1791611384.1654377,
+        "worker_id": "load-worker-0"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.3359869,
+    "generation": 1,
+    "job_id": "load-000712",
+    "payload_digest": "06109c43c8319a3e09ddff23254b01e7a4bfaaa18574cfe32eec032ea33c44a8",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000712",
+        "llm_calls": 0,
+        "pid": 7320,
+        "worker_id": "load-worker-0"
+      }
+    },
+    "result_digest": "a525f7db545119a07eede4f0c31c0488928f4b05febff60589c6502e2b5b69b0",
+    "state": "succeeded",
+    "updated": 1791611384.1868615,
+    "worker_id": "load-worker-0"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2027326,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "2c28733c14884ef2bc520a84c9d2ccce3da1d9433164d8ff3a0b2aff37f52ffe",
+        "started": 1791611384.1808233,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.3536294,
+    "generation": 1,
+    "job_id": "load-000713",
+    "payload_digest": "dcf6a34b40235150a6e6765b0aa58922b2dc0131c6855e11a353e42018348a12",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000713",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "2c28733c14884ef2bc520a84c9d2ccce3da1d9433164d8ff3a0b2aff37f52ffe",
+    "state": "succeeded",
+    "updated": 1791611384.2027326,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2184374,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "a9ef2a20ba37d178e3494ee5060aa42ce8df35cc85106f642905a62f7ca1f140",
+        "started": 1791611384.1969285,
+        "worker_id": "load-worker-1"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.3715184,
+    "generation": 1,
+    "job_id": "load-000714",
+    "payload_digest": "5fa6661dab212aec80a05120ddf2c424455dac9207d35d342f64bad5022a4bf0",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000714",
+        "llm_calls": 0,
+        "pid": 2764,
+        "worker_id": "load-worker-1"
+      }
+    },
+    "result_digest": "a9ef2a20ba37d178e3494ee5060aa42ce8df35cc85106f642905a62f7ca1f140",
+    "state": "succeeded",
+    "updated": 1791611384.2184374,
+    "worker_id": "load-worker-1"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2355266,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "94ceb9c1c157a6a800ec49a5900f442264a5b1cb67228939cd4bbbe531aad0fe",
+        "started": 1791611384.2108152,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.3974462,
+    "generation": 1,
+    "job_id": "load-000715",
+    "payload_digest": "aaf75bde927be60d80e8900debee843d2431d75fd7322f8e38e1a59ae9afa043",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000715",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "94ceb9c1c157a6a800ec49a5900f442264a5b1cb67228939cd4bbbe531aad0fe",
+    "state": "succeeded",
+    "updated": 1791611384.2355266,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2493901,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "68a8cb9d27c52f8b65d12dc51ea63616ba2063ba8105cbf26a4951e07cd223ac",
+        "started": 1791611384.226442,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.4255264,
+    "generation": 1,
+    "job_id": "load-000716",
+    "payload_digest": "1caaf0f15ae8a0616267d1a803eaf753b20ddbe4987b027d9c56410928f994c9",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000716",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "68a8cb9d27c52f8b65d12dc51ea63616ba2063ba8105cbf26a4951e07cd223ac",
+    "state": "succeeded",
+    "updated": 1791611384.2493901,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2659938,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "dd0d5f338aba21236731cfef1a87e41bed3ddc25cab0c3ce0306dd4fd580f19c",
+        "started": 1791611384.2445507,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.4431467,
+    "generation": 1,
+    "job_id": "load-000717",
+    "payload_digest": "c050727bf09179d2809a2819b3053050be28f4c9984b9794b966c37f82b7383f",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000717",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "dd0d5f338aba21236731cfef1a87e41bed3ddc25cab0c3ce0306dd4fd580f19c",
+    "state": "succeeded",
+    "updated": 1791611384.2659938,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2680128,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "4ff2cdcbcdd5cd33b895c21035fec4e2df530bef01f4489a226ff993b262def8",
+        "started": 1791611384.23447,
+        "worker_id": "load-worker-1"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.461042,
+    "generation": 1,
+    "job_id": "load-000718",
+    "payload_digest": "2c10b30664ccb893d78eeb6bd2ddb56aab0c07c8a6d38753214d95017cbff405",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000718",
+        "llm_calls": 0,
+        "pid": 2764,
+        "worker_id": "load-worker-1"
+      }
+    },
+    "result_digest": "4ff2cdcbcdd5cd33b895c21035fec4e2df530bef01f4489a226ff993b262def8",
+    "state": "succeeded",
+    "updated": 1791611384.2680128,
+    "worker_id": "load-worker-1"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2811234,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "21c20b3ddccf239fd3d9584770c1c613d80cf5b53b36852af03b17fba0892640",
+        "started": 1791611384.263707,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.4789233,
+    "generation": 1,
+    "job_id": "load-000719",
+    "payload_digest": "bb45b3506b0f7898970381f7b9d4443f468cb9d180695ae4b5e12634d5565417",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000719",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "21c20b3ddccf239fd3d9584770c1c613d80cf5b53b36852af03b17fba0892640",
+    "state": "succeeded",
+    "updated": 1791611384.2811234,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.2985523,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "4b2197e9769f5c98d598e0ac4decdd8c0e484def0c53681ec6d88625647381e2",
+        "started": 1791611384.2746017,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.4948056,
+    "generation": 1,
+    "job_id": "load-000720",
+    "payload_digest": "659fcb41706eae4404c19aa2f408864ba06591ecca44b798f1da0011f2a346a2",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000720",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "4b2197e9769f5c98d598e0ac4decdd8c0e484def0c53681ec6d88625647381e2",
+    "state": "succeeded",
+    "updated": 1791611384.2985523,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.3169813,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "5ce7b1aaa1601042381452427109c7e5904cbc5a038ac566a10406a625e6c66f",
+        "started": 1791611384.2871625,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.5184968,
+    "generation": 1,
+    "job_id": "load-000721",
+    "payload_digest": "12c7dfc3b2caec4a0d20aaeb4907d3456b41db3b2f0693bff250c222b6ab5904",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000721",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "5ce7b1aaa1601042381452427109c7e5904cbc5a038ac566a10406a625e6c66f",
+    "state": "succeeded",
+    "updated": 1791611384.3169813,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.3321176,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "833f2b3fac802decd1a8f2c858bba541b7e79303cbd566fd7f57290b2d0f8ed6",
+        "started": 1791611384.3086388,
+        "worker_id": "load-worker-1"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.536395,
+    "generation": 1,
+    "job_id": "load-000722",
+    "payload_digest": "2cf7681b25d8c504dc44bc0455c8a1388f56bd80d15828c149e4b27b57132c37",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000722",
+        "llm_calls": 0,
+        "pid": 2764,
+        "worker_id": "load-worker-1"
+      }
+    },
+    "result_digest": "833f2b3fac802decd1a8f2c858bba541b7e79303cbd566fd7f57290b2d0f8ed6",
+    "state": "succeeded",
+    "updated": 1791611384.3321176,
+    "worker_id": "load-worker-1"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.3457377,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "442efdf4df8c1b597d3c34a2c9513c239d5afc01e24fc3382b3f67759a3f8504",
+        "started": 1791611384.3149614,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.5583434,
+    "generation": 1,
+    "job_id": "load-000723",
+    "payload_digest": "2209c59f64b0a173468902499027c18caa59b1b1863c026fe42282dda96c032d",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000723",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "442efdf4df8c1b597d3c34a2c9513c239d5afc01e24fc3382b3f67759a3f8504",
+    "state": "succeeded",
+    "updated": 1791611384.3457377,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.3602722,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "66cdf2fcadf894d5a8771d9f6e5a98f3197b04684c2400204a84c967a04fae3f",
+        "started": 1791611384.0596457,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.5800052,
+    "generation": 1,
+    "job_id": "load-000724",
+    "payload_digest": "064db9e85203135dfc8e9fdbba293775393ace76ee14772c9fc305a64db36eb9",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000724",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "66cdf2fcadf894d5a8771d9f6e5a98f3197b04684c2400204a84c967a04fae3f",
+    "state": "succeeded",
+    "updated": 1791611384.3602722,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.3779562,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "ebaa445cf18c7db23baa6593ddab19881a0d2646df813e9a1c869f64ab3d1b45",
+        "started": 1791611384.341721,
+        "worker_id": "load-worker-1"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.597877,
+    "generation": 1,
+    "job_id": "load-000725",
+    "payload_digest": "bad04926821198efb94637317e44fbe10f1cfe2cffd2400bcb93c750b7df810d",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000725",
+        "llm_calls": 0,
+        "pid": 2764,
+        "worker_id": "load-worker-1"
+      }
+    },
+    "result_digest": "ebaa445cf18c7db23baa6593ddab19881a0d2646df813e9a1c869f64ab3d1b45",
+    "state": "succeeded",
+    "updated": 1791611384.3779562,
+    "worker_id": "load-worker-1"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.3771923,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "8b3ae22ea3c0b888cf61275c69c89607794294172adc1949c09f648b5a30bfb9",
+        "started": 1791611383.47691,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.6197972,
+    "generation": 1,
+    "job_id": "load-000726",
+    "payload_digest": "1786d4d2725a4b726508ae15c5ce2be3f72291727095d6dd61d5eecdc8220399",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000726",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "8b3ae22ea3c0b888cf61275c69c89607794294172adc1949c09f648b5a30bfb9",
+    "state": "succeeded",
+    "updated": 1791611384.3771923,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.393085,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "0eca76a2ce6041ed859c58ffd256edac226d7a798a4b52cdaa6007a976016bf3",
+        "started": 1791611384.3734086,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.639429,
+    "generation": 1,
+    "job_id": "load-000727",
+    "payload_digest": "146842db5a98b9f65d8b2ab33509ff4debef24f72a2bc91bf42965ae6aea5e51",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000727",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "0eca76a2ce6041ed859c58ffd256edac226d7a798a4b52cdaa6007a976016bf3",
+    "state": "succeeded",
+    "updated": 1791611384.393085,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.4222653,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "8492e620dd5e72b65ddc03d45ee9e6a8771d9bd4f7b7664a2e0a6162b6e33ba4",
+        "started": 1791611384.3872793,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.6552932,
+    "generation": 1,
+    "job_id": "load-000728",
+    "payload_digest": "a436f6f925fa33717b0d17245bca18455ca07a414474bb8eecc7abc39d87061b",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000728",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "8492e620dd5e72b65ddc03d45ee9e6a8771d9bd4f7b7664a2e0a6162b6e33ba4",
+    "state": "succeeded",
+    "updated": 1791611384.4222653,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.4242883,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "eed5c6dc3df7ed9ac638c95bc469662a3b01bcbc41bf01dd99307e0b5c0657a2",
+        "started": 1791611384.4005895,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.6731765,
+    "generation": 1,
+    "job_id": "load-000729",
+    "payload_digest": "0e2630a84d7043bf98f98b3b82c511d9c99b7848f750318b25afb66551ab584d",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000729",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "eed5c6dc3df7ed9ac638c95bc469662a3b01bcbc41bf01dd99307e0b5c0657a2",
+    "state": "succeeded",
+    "updated": 1791611384.4242883,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.4550076,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "65217edd902366de71aa8af2305bb4b680658373481c97c21a6aa08a42f8d787",
+        "started": 1791611384.4290888,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.6910636,
+    "generation": 1,
+    "job_id": "load-000730",
+    "payload_digest": "c804eca7cbd405ea0f37dc0c9a6f33533de3e63a8422a278cffed4d2d0b53d14",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000730",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "65217edd902366de71aa8af2305bb4b680658373481c97c21a6aa08a42f8d787",
+    "state": "succeeded",
+    "updated": 1791611384.4550076,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.452985,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "91bc5bd678b414dc4aef319e83256529ce2a5b797a53f746d9f1b07b12d4c5e7",
+        "started": 1791611384.432363,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.7185829,
+    "generation": 1,
+    "job_id": "load-000731",
+    "payload_digest": "ba0ec6bffb7224de84387f18c7d6d0f0585874383696030e72e413f010b63633",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000731",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "91bc5bd678b414dc4aef319e83256529ce2a5b797a53f746d9f1b07b12d4c5e7",
+    "state": "succeeded",
+    "updated": 1791611384.452985,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.4857373,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "379754c4a3a8feb20a0bc9ba94785da8ae9d59650506938cc98637bd1d7d3810",
+        "started": 1791611384.4592712,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.7385,
+    "generation": 1,
+    "job_id": "load-000732",
+    "payload_digest": "cc3a26698470bbd73af7200b2f5ae819de1d81444cf33026f49c97b5ebfbc4aa",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000732",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "379754c4a3a8feb20a0bc9ba94785da8ae9d59650506938cc98637bd1d7d3810",
+    "state": "succeeded",
+    "updated": 1791611384.4857373,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.484215,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "ac7f841aed41fda447086312f7e68ec6ba9229956187b67b77ed6ba48d1ee574",
+        "started": 1791611384.4673316,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.758406,
+    "generation": 1,
+    "job_id": "load-000733",
+    "payload_digest": "093143462b4593fb00a6ae9d6a8cc179ff90f9685ce9fa5785838997ad86f21c",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000733",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "ac7f841aed41fda447086312f7e68ec6ba9229956187b67b77ed6ba48d1ee574",
+    "state": "succeeded",
+    "updated": 1791611384.484215,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.5335574,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "a3cccc03b8cf7790c30f2c1a101e0caccfe2a4e7668821abfa609327651a6404",
+        "started": 1791611384.492292,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.776295,
+    "generation": 1,
+    "job_id": "load-000734",
+    "payload_digest": "dd861fc21f780db7a93be4126c0266610eb05fcb1bf7762ed31cc4570bb9a157",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000734",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "a3cccc03b8cf7790c30f2c1a101e0caccfe2a4e7668821abfa609327651a6404",
+    "state": "succeeded",
+    "updated": 1791611384.5335574,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.5318072,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "067e41d4ce27dbd120d3ed10290df71610318c1ae0b2104b451307f02e16270b",
+        "started": 1791611384.4983292,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.8137915,
+    "generation": 1,
+    "job_id": "load-000735",
+    "payload_digest": "914bda8bd76a8e0f449f9ec9fba048519aa58e88c2ae34be6e87ee68b8cd6bc6",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000735",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "067e41d4ce27dbd120d3ed10290df71610318c1ae0b2104b451307f02e16270b",
+    "state": "succeeded",
+    "updated": 1791611384.5318072,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.5653102,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "96d88ed75582da5a9eb869098cd402cc2b68272b646cd610694ec594961681a7",
+        "started": 1791611384.538355,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.835722,
+    "generation": 1,
+    "job_id": "load-000736",
+    "payload_digest": "210d3b73555aa1d19b79c9e12f67a388776a3aa01e4eda6beb3bd8dadb8d73f6",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000736",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "96d88ed75582da5a9eb869098cd402cc2b68272b646cd610694ec594961681a7",
+    "state": "succeeded",
+    "updated": 1791611384.5653102,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.563286,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "f48625286294b572a6690efeef33e24cf7cba889244e324ded684667e5dd9f20",
+        "started": 1791611384.5451849,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.855647,
+    "generation": 1,
+    "job_id": "load-000737",
+    "payload_digest": "c1a9bccdf5e61ceedd59ddcb348f7683081790362a83395549354aa9200804d8",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000737",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "f48625286294b572a6690efeef33e24cf7cba889244e324ded684667e5dd9f20",
+    "state": "succeeded",
+    "updated": 1791611384.563286,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.5977123,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "dc5b7db6af726070eab236a6c9c68337d4050982ba035a3c6fb914c114de8197",
+        "started": 1791611384.5693493,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.87475,
+    "generation": 1,
+    "job_id": "load-000738",
+    "payload_digest": "4c679cdbc61d4709fe0a7b75eb2cf38baa634ca078c04ca692755fc019642ccd",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000738",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "dc5b7db6af726070eab236a6c9c68337d4050982ba035a3c6fb914c114de8197",
+    "state": "succeeded",
+    "updated": 1791611384.5977123,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.5956972,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "46b26cd034518e53067669652e17e2f3f60f4778932dd870b441e923d86961f3",
+        "started": 1791611384.5753994,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.89498,
+    "generation": 1,
+    "job_id": "load-000739",
+    "payload_digest": "0fa14cc18b3e803e455d1bac80e915926c474ae46a0bc2f55aafe9e6bf56fe13",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000739",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "46b26cd034518e53067669652e17e2f3f60f4778932dd870b441e923d86961f3",
+    "state": "succeeded",
+    "updated": 1791611384.5956972,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.6283014,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "6af129ad22f7bf12e2aedb4d9ae11207b0649f6c0994e9837ffdbb7666b3ce70",
+        "started": 1791611384.6037538,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.918613,
+    "generation": 1,
+    "job_id": "load-000740",
+    "payload_digest": "7bbe8bbb4d63be5ab1eaed7b507db8b108ee244ef76e84a25a931c0a29f79505",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000740",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "6af129ad22f7bf12e2aedb4d9ae11207b0649f6c0994e9837ffdbb7666b3ce70",
+    "state": "succeeded",
+    "updated": 1791611384.6283014,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.6266694,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "e24cd7c349dd5f8590f22d12d7c42d0e9ff839c14b24d5365ff247510a3610ef",
+        "started": 1791611384.6084118,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.943649,
+    "generation": 1,
+    "job_id": "load-000741",
+    "payload_digest": "481b4005996be6af5947c78cd02c758c539e713710201170ff6e2586cb6c8ae8",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000741",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "e24cd7c349dd5f8590f22d12d7c42d0e9ff839c14b24d5365ff247510a3610ef",
+    "state": "succeeded",
+    "updated": 1791611384.6266694,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.658255,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "66f241849b824c986d456089050aad913c50226773b43ea955f565c6513f2159",
+        "started": 1791611384.6363592,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.961788,
+    "generation": 1,
+    "job_id": "load-000742",
+    "payload_digest": "35dc1120313c9115304d4a1e8325e2d4e8ebb1c885e4f0f81a0bd12e74511204",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000742",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "66f241849b824c986d456089050aad913c50226773b43ea955f565c6513f2159",
+    "state": "succeeded",
+    "updated": 1791611384.658255,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.674783,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "c121bcfc9493758faa16c38e0c2049a86ab4b04503704d18f07ded89a12c44d7",
+        "started": 1791611384.6422884,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611363.9874477,
+    "generation": 1,
+    "job_id": "load-000743",
+    "payload_digest": "37e2d15402af577b992e2d17a3bf9b451be29e88ded28bcd49e5c9fa22415875",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000743",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "c121bcfc9493758faa16c38e0c2049a86ab4b04503704d18f07ded89a12c44d7",
+    "state": "succeeded",
+    "updated": 1791611384.674783,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.69041,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "502f65d0ca08d9b95db227387b13d8aee59ab204deb5d1e3a01b54e502cd0704",
+        "started": 1791611384.667317,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.0114062,
+    "generation": 1,
+    "job_id": "load-000744",
+    "payload_digest": "499a4e66c6d561674d83c46181bf2de2ca71e59a8e09dcac31cc5ba5ff22603d",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000744",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "502f65d0ca08d9b95db227387b13d8aee59ab204deb5d1e3a01b54e502cd0704",
+    "state": "succeeded",
+    "updated": 1791611384.69041,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.7053685,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "2f9cc022963a4f5a04334a7ddcc2712896d7457aaea3a1bdbce8189d033489a0",
+        "started": 1791611384.6874866,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.0272698,
+    "generation": 1,
+    "job_id": "load-000745",
+    "payload_digest": "1d57860124c23d35a64f7d90ff08df2d7dc90f12732a9a35f7bd1b1225bcc315",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000745",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "2f9cc022963a4f5a04334a7ddcc2712896d7457aaea3a1bdbce8189d033489a0",
+    "state": "succeeded",
+    "updated": 1791611384.7053685,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.7217665,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "d96456003640dae248826be7c90424d1a1987ae9fe65c14d32e3585232fc05e8",
+        "started": 1791611384.6995797,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.068815,
+    "generation": 1,
+    "job_id": "load-000746",
+    "payload_digest": "7c4e5924f1ad351280176a983f0cf73f1ce70d99c10f0e6cfb353979e6834dfa",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000746",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "d96456003640dae248826be7c90424d1a1987ae9fe65c14d32e3585232fc05e8",
+    "state": "succeeded",
+    "updated": 1791611384.7217665,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611386.2040875,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "5f71e1615bf3ff4cdea0c597e650d969c1790946e965138d098f9b7a1b8ba322",
+        "started": 1791611384.7154431,
+        "worker_id": "load-worker-4"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.0910776,
+    "generation": 1,
+    "job_id": "load-000747",
+    "payload_digest": "7da4869fe85a67f6a2884ca4a8100754d7bd5acc2fb99d381fa9a3e80a1b0c2f",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000747",
+        "llm_calls": 0,
+        "pid": 7700,
+        "worker_id": "load-worker-4"
+      }
+    },
+    "result_digest": "5f71e1615bf3ff4cdea0c597e650d969c1790946e965138d098f9b7a1b8ba322",
+    "state": "succeeded",
+    "updated": 1791611386.2040875,
+    "worker_id": "load-worker-4"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.800197,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "8ab27dc1d26596f272bd3c6aed1c0abb603dff5ab8ceac0642827c21743cd433",
+        "started": 1791611384.674783,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.1087031,
+    "generation": 1,
+    "job_id": "load-000748",
+    "payload_digest": "31d18bf52d7f1bb6da527beea2ccaf71544e70a7edd7f32d340e0769dbb649c2",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000748",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "8ab27dc1d26596f272bd3c6aed1c0abb603dff5ab8ceac0642827c21743cd433",
+    "state": "succeeded",
+    "updated": 1791611384.800197,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.8652675,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "661109f649e5f39ffb046ca51a3a8aa1698ced53ccf0f2b40e5e0a5f6db5c85d",
+        "started": 1791611384.8334281,
+        "worker_id": "load-worker-7"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.1320512,
+    "generation": 1,
+    "job_id": "load-000749",
+    "payload_digest": "fbe6f2eab0cc92a8518026aa2d4a07e16ddd8e94bb2dde439b8252283261d36c",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000749",
+        "llm_calls": 0,
+        "pid": 7612,
+        "worker_id": "load-worker-7"
+      }
+    },
+    "result_digest": "661109f649e5f39ffb046ca51a3a8aa1698ced53ccf0f2b40e5e0a5f6db5c85d",
+    "state": "succeeded",
+    "updated": 1791611384.8652675,
+    "worker_id": "load-worker-7"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.8791447,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "c54f9df1f67bb66433b227fa2f6b5a2e10b03321ab9a1fe77ced6e724be2ce4a",
+        "started": 1791611384.8573616,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.1499314,
+    "generation": 1,
+    "job_id": "load-000750",
+    "payload_digest": "cc33d355b8862f92c99adfb37265bb11a3dce66f843c09d450c652ac7c3b7e59",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000750",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "c54f9df1f67bb66433b227fa2f6b5a2e10b03321ab9a1fe77ced6e724be2ce4a",
+    "state": "succeeded",
+    "updated": 1791611384.8791447,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.8962972,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "4872885d5a0362a03a8289f2233bddaf62dc56498133772e7014f0f23b0b19fd",
+        "started": 1791611384.8722568,
+        "worker_id": "load-worker-7"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.1738605,
+    "generation": 1,
+    "job_id": "load-000751",
+    "payload_digest": "0880db4de4f06cd38e60730cfec9338031ccd7c79767af8154949158587ddb30",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000751",
+        "llm_calls": 0,
+        "pid": 7612,
+        "worker_id": "load-worker-7"
+      }
+    },
+    "result_digest": "4872885d5a0362a03a8289f2233bddaf62dc56498133772e7014f0f23b0b19fd",
+    "state": "succeeded",
+    "updated": 1791611384.8962972,
+    "worker_id": "load-worker-7"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.8942757,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "870409e1ebf74664f66da46c7535d0bd083f32cf590a1be2cd1cc6426f671cca",
+        "started": 1791611384.1066744,
+        "worker_id": "load-worker-2"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.19175,
+    "generation": 1,
+    "job_id": "load-000752",
+    "payload_digest": "3a656e70c6e5a82aff77e2d919e04617faa95739a86dff90c7b8723fd775e75a",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000752",
+        "llm_calls": 0,
+        "pid": 5064,
+        "worker_id": "load-worker-2"
+      }
+    },
+    "result_digest": "870409e1ebf74664f66da46c7535d0bd083f32cf590a1be2cd1cc6426f671cca",
+    "state": "succeeded",
+    "updated": 1791611384.8942757,
+    "worker_id": "load-worker-2"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.91044,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "0bab75a4dc56b993e00c2546855419b16dbd76a0086e147f42e5be11472342bc",
+        "started": 1791611384.8912446,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.207654,
+    "generation": 1,
+    "job_id": "load-000753",
+    "payload_digest": "f0ca9af8c89d645c3cb1e0c6b47e2877731bd68bfb9344dbcd02e5cfbf7bcb6a",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000753",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "0bab75a4dc56b993e00c2546855419b16dbd76a0086e147f42e5be11472342bc",
+    "state": "succeeded",
+    "updated": 1791611384.91044,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.9269762,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "59ade2f6e114f0847f6acf352e817323a7ddc71893333630be7f9d8f90e37eb3",
+        "started": 1791611384.9043655,
+        "worker_id": "load-worker-2"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.2252965,
+    "generation": 1,
+    "job_id": "load-000754",
+    "payload_digest": "f6e7b83503fb0d2708ad04b38e80cba26462d072170a3cca3b133429d098c64b",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000754",
+        "llm_calls": 0,
+        "pid": 5064,
+        "worker_id": "load-worker-2"
+      }
+    },
+    "result_digest": "59ade2f6e114f0847f6acf352e817323a7ddc71893333630be7f9d8f90e37eb3",
+    "state": "succeeded",
+    "updated": 1791611384.9269762,
+    "worker_id": "load-worker-2"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.9419227,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "5893ea701ed43b197edae2774c8754c6336bb7e4cbb78f1ab342fab1a348caea",
+        "started": 1791611384.9164927,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.2411635,
+    "generation": 1,
+    "job_id": "load-000755",
+    "payload_digest": "407686237879d087bd7ca40e50e2a1dbeabe7c1c4e23efdd8358713f229f0e84",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000755",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "5893ea701ed43b197edae2774c8754c6336bb7e4cbb78f1ab342fab1a348caea",
+    "state": "succeeded",
+    "updated": 1791611384.9419227,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.9419227,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "4abb8df791f05a3c2060174a7b242b3830a30a4ae87eacb506e803794c57fd00",
+        "started": 1791611384.8443718,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.2729113,
+    "generation": 1,
+    "job_id": "load-000756",
+    "payload_digest": "1102584f4705f7d820b4b05666d7963e5160e97e08cfe812994a5536820a6299",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000756",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "4abb8df791f05a3c2060174a7b242b3830a30a4ae87eacb506e803794c57fd00",
+    "state": "succeeded",
+    "updated": 1791611384.9419227,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.9575498,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "68b4e0520350e4082fa0e2ebf62e5a804935933a807f57e5da6d4e871c0686c3",
+        "started": 1791611384.9381466,
+        "worker_id": "load-worker-2"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.292819,
+    "generation": 1,
+    "job_id": "load-000757",
+    "payload_digest": "adcd8813ce9e40d0e20adc64ab33d9a4ce2466bd23fc562684626a9ba9c4a284",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000757",
+        "llm_calls": 0,
+        "pid": 5064,
+        "worker_id": "load-worker-2"
+      }
+    },
+    "result_digest": "68b4e0520350e4082fa0e2ebf62e5a804935933a807f57e5da6d4e871c0686c3",
+    "state": "succeeded",
+    "updated": 1791611384.9575498,
+    "worker_id": "load-worker-2"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611384.9888115,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "fdc4a576b53270368a14b86cd3705410f62e3141a8028caf63dd17e5cb531158",
+        "started": 1791611384.9731562,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.314751,
+    "generation": 1,
+    "job_id": "load-000758",
+    "payload_digest": "8fff62600f2d3b0484bf56f1fba971cb47dbbc0eb99cc6d1d2fc0770308a3304",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000758",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "fdc4a576b53270368a14b86cd3705410f62e3141a8028caf63dd17e5cb531158",
+    "state": "succeeded",
+    "updated": 1791611384.9888115,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.0200663,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "35f94731cfadd3a992e5273eaf24d8cdca4f033c36ca7267a25932e5b6a98db4",
+        "started": 1791611384.9784257,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.3364294,
+    "generation": 1,
+    "job_id": "load-000759",
+    "payload_digest": "1826dadf73377c7c0cc2aa61367457f58b714e84457eb9d8efbd2b6f11fc82bf",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000759",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "35f94731cfadd3a992e5273eaf24d8cdca4f033c36ca7267a25932e5b6a98db4",
+    "state": "succeeded",
+    "updated": 1791611385.0200663,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.006159,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "be30e58e0329131eedc063b9f2ab92335c8186e2878459a15b6204f53bfebb85",
+        "started": 1791611384.9676123,
+        "worker_id": "load-worker-7"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.3543088,
+    "generation": 1,
+    "job_id": "load-000760",
+    "payload_digest": "f18ddfbf0a19dc56b89356e8378ea965356f3d65fb3501bb2e48004dc4fedee5",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000760",
+        "llm_calls": 0,
+        "pid": 7612,
+        "worker_id": "load-worker-7"
+      }
+    },
+    "result_digest": "be30e58e0329131eedc063b9f2ab92335c8186e2878459a15b6204f53bfebb85",
+    "state": "succeeded",
+    "updated": 1791611385.006159,
+    "worker_id": "load-worker-7"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.0217867,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "fb9e8136633ae3869f2375a93b78175a7f1daa0876841acd5bc31187faa449e7",
+        "started": 1791611385.0009058,
+        "worker_id": "load-worker-5"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.3802574,
+    "generation": 1,
+    "job_id": "load-000761",
+    "payload_digest": "a2945eb9f69f3ca1981ad201f1764b76f22521ab665364f1edad2014f443940e",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000761",
+        "llm_calls": 0,
+        "pid": 5720,
+        "worker_id": "load-worker-5"
+      }
+    },
+    "result_digest": "fb9e8136633ae3869f2375a93b78175a7f1daa0876841acd5bc31187faa449e7",
+    "state": "succeeded",
+    "updated": 1791611385.0217867,
+    "worker_id": "load-worker-5"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.0356212,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "31d24bc23134a3186ff9c9466f3b28ead4295745d1fffe6ec64816a21734cad9",
+        "started": 1791611385.012513,
+        "worker_id": "load-worker-7"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.405962,
+    "generation": 1,
+    "job_id": "load-000762",
+    "payload_digest": "7ad5e5a11333bafafe3b1ee9033c0a66ca4db79576d4bacfe94024cc60ebe180",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000762",
+        "llm_calls": 0,
+        "pid": 7612,
+        "worker_id": "load-worker-7"
+      }
+    },
+    "result_digest": "31d24bc23134a3186ff9c9466f3b28ead4295745d1fffe6ec64816a21734cad9",
+    "state": "succeeded",
+    "updated": 1791611385.0356212,
+    "worker_id": "load-worker-7"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.0512445,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "f7ce90b0238883fd2f3402f75372b5e1e5f55b7baa9905a231cea3e3f4d5aba2",
+        "started": 1791611385.0306427,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.4279244,
+    "generation": 1,
+    "job_id": "load-000763",
+    "payload_digest": "a126982d596595abe5df90e8db263f4749cdb7a6ebd427cbffc61f5b3727d033",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000763",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "f7ce90b0238883fd2f3402f75372b5e1e5f55b7baa9905a231cea3e3f4d5aba2",
+    "state": "succeeded",
+    "updated": 1791611385.0512445,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.0671172,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "fea359092f66c8a5a799d3c838c503929ff6da90dc6bc4931daee4165d5dc87b",
+        "started": 1791611385.0396526,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.452161,
+    "generation": 1,
+    "job_id": "load-000764",
+    "payload_digest": "f36dcd24c035482896e191df9c00499134e978d747deb3a0d9309ab36453a0bb",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000764",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "fea359092f66c8a5a799d3c838c503929ff6da90dc6bc4931daee4165d5dc87b",
+    "state": "succeeded",
+    "updated": 1791611385.0671172,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.0827622,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "3ae1f43e02dcfeddfcb516ad4395fb716a720c8043013ef087060c3be724cbc9",
+        "started": 1791611385.0593011,
+        "worker_id": "load-worker-7"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.4723196,
+    "generation": 1,
+    "job_id": "load-000765",
+    "payload_digest": "c0dae6fb2dab6133bdcf776918a563e5d9aef44aeecdab18667c5cf21f3956b3",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000765",
+        "llm_calls": 0,
+        "pid": 7612,
+        "worker_id": "load-worker-7"
+      }
+    },
+    "result_digest": "3ae1f43e02dcfeddfcb516ad4395fb716a720c8043013ef087060c3be724cbc9",
+    "state": "succeeded",
+    "updated": 1791611385.0827622,
+    "worker_id": "load-worker-7"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.098848,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "4772331097d404168cd4e22600df46ae7222623007b17e5ec927de1847d45e7a",
+        "started": 1791611385.0641208,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.5111094,
+    "generation": 1,
+    "job_id": "load-000766",
+    "payload_digest": "584c748a4c5c320104f9447139ef97b967c1d0ced66bc1ffcd8c4b5a67c8b83c",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000766",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "4772331097d404168cd4e22600df46ae7222623007b17e5ec927de1847d45e7a",
+    "state": "succeeded",
+    "updated": 1791611385.098848,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.1137633,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "8374a98afd7434556b168b3d0b8b8267aa12b3a51958e34c05464e7fb2af64e8",
+        "started": 1791611385.0868065,
+        "worker_id": "load-worker-3"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.5330205,
+    "generation": 1,
+    "job_id": "load-000767",
+    "payload_digest": "7c612d8ad22d290907492c2cbfb7839d610faa546e35e2020f2c8ae55dbf0cae",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000767",
+        "llm_calls": 0,
+        "pid": 6424,
+        "worker_id": "load-worker-3"
+      }
+    },
+    "result_digest": "8374a98afd7434556b168b3d0b8b8267aa12b3a51958e34c05464e7fb2af64e8",
+    "state": "succeeded",
+    "updated": 1791611385.1137633,
+    "worker_id": "load-worker-3"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.115778,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "4ce30da2e9960dc548f09a47d88bcc002da43f565e2ba962f43ff8e59e18d43e",
+        "started": 1791611385.0950727,
+        "worker_id": "load-worker-7"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.5647438,
+    "generation": 1,
+    "job_id": "load-000768",
+    "payload_digest": "b2862f09e311e51fb0d0bf9b6365f9bfd4a2672ec1bfacc18254ffe8ac73698a",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000768",
+        "llm_calls": 0,
+        "pid": 7612,
+        "worker_id": "load-worker-7"
+      }
+    },
+    "result_digest": "4ce30da2e9960dc548f09a47d88bcc002da43f565e2ba962f43ff8e59e18d43e",
+    "state": "succeeded",
+    "updated": 1791611385.115778,
+    "worker_id": "load-worker-7"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.129624,
+        "generation": 1,
+        "outcome": "succeeded",
+        "result_digest": "5f92b73608dc6991f718fa341644e2706e0e28f925b8f9b54a05036ce97af55a",
+        "started": 1791611385.1120007,
+        "worker_id": "load-worker-6"
+      }
+    ],
+    "attempts": 1,
+    "created": 1791611364.580609,
+    "generation": 1,
+    "job_id": "load-000769",
+    "payload_digest": "3cc6f5d37b3802a182a326bdfd300421aba0fef3afe187d2e665901f07598bc4",
+    "result": {
+      "evidence": {},
+      "outcome": "succeeded",
+      "patch": "",
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": {
+        "fixture": true,
+        "generation": 1,
+        "job_id": "load-000769",
+        "llm_calls": 0,
+        "pid": 2364,
+        "worker_id": "load-worker-6"
+      }
+    },
+    "result_digest": "5f92b73608dc6991f718fa341644e2706e0e28f925b8f9b54a05036ce97af55a",
+    "state": "succeeded",
+    "updated": 1791611385.129624,
+    "worker_id": "load-worker-6"
+  },
+  {
+    "attempt_history": [
+      {
+        "ended": 1791611385.14621,

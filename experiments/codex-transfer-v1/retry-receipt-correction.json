@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "kind": "windows_archive_inventory_correction",
+  "original_receipt_sha256": "ff5fb823b219e1df20784f1d58d98c68bf925598220a11c73c7f21df9ef7192e",
+  "original_receipt_unchanged": true,
+  "reason": "After archiving to a deeper directory, ordinary Windows pathlib.is_file silently missed ten existing partial task exports. Extended-length paths recovered their original bytes. No model result or source task was changed.",
+  "additional_preserved_files": [
+    {
+      "path": "setup-failures-attempt1/targets/last-baseline-empty-r1/model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r1/task.json",
+      "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+      "bytes": 6570
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-baseline-empty-r2/model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r2/task.json",
+      "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+      "bytes": 6570
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-empty-r1/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r1/task.json",
+      "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+      "bytes": 6570
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-empty-r2/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r2/task.json",
+      "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+      "bytes": 6570
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-verified-r1/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r1/task.json",
+      "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+      "bytes": 6570
+    },
+    {
+      "path": "setup-failures-attempt1/targets/last-retrieval-verified-r2/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r2/task.json",
+      "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+      "bytes": 6570
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-baseline-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r1/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-baseline-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r2/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-retrieval-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt1/targets/split-retrieval-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r2/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    }
+  ],
+  "complete_preserved_file_count": 31,
+  "original_model_calls": 0
+}

@@ -15,7 +15,7 @@ def main():
     parser.add_argument("--url", required=True)
     parser.add_argument("--root", required=True)
     parser.add_argument("--id", required=True)
-    parser.add_argument("--mode", choices=["run", "crash", "cancel"], default="run")
+    parser.add_argument("--mode", choices=["run", "crash", "cancel", "heartbeat"], default="run")
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--delay", type=float, default=0.1)
     args = parser.parse_args()
@@ -32,6 +32,19 @@ def main():
         directory.mkdir(parents=True)
         (root / (claim["job_id"] + ".started")).write_text(str(os.getpid()), encoding="utf-8")
         started = time.monotonic()
+        if args.mode == "heartbeat":
+            # Parent releases only after observing a renewed live lease beyond
+            # the original expiry over HTTP. No fixed sleep stands in for that proof.
+            while not (root / (claim["job_id"] + ".release")).exists():
+                if cancelled.wait(0.02):
+                    (root / (claim["job_id"] + ".cancelled")).write_text("observed", encoding="utf-8")
+                    return {"outcome": "failed", "result": {"cancelled": True}, "patch": "", "evidence": {}}
+                if time.monotonic() - started > args.delay:
+                    raise TimeoutError("Parent did not observe lease renewal before the fixture deadline")
+            return {"outcome": "succeeded", "result": {"pid": os.getpid(), "worker_id": args.id,
+                    "generation": claim["generation"]},
+                    "patch": "diff --git a/result.txt b/result.txt\n+" + claim["job_id"] + "\n",
+                    "evidence": {"trace.json": "a" * 64}}
         while time.monotonic() - started < args.delay:
             if cancelled.wait(0.02):
                 (root / (claim["job_id"] + ".cancelled")).write_text("observed", encoding="utf-8")

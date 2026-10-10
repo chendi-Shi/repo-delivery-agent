@@ -7,10 +7,12 @@ import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
+from dataclasses import replace
 from types import SimpleNamespace
 from unittest.mock import patch
 
 from delivery_agent.repository import RepoTask
+from delivery_agent.checkpoint import CheckpointStore, inspect_checkpoint
 from delivery_agent.knowledge import KnowledgeStore
 from delivery_agent.toolbox import ToolboxEnvironment
 from delivery_agent.upstream import ActionAuditEnvironment
@@ -33,13 +35,13 @@ class CodexTrialTests(unittest.TestCase):
                       'calls_with_usage': 1, 'unknown_requests': 1}
 
     def run_trial(self, public, *, audit, identity=True, setup_failure=False, export_failure=None, profile=None,
-                  extra_args=(), inspect_config=None):
+                  extra_args=(), inspect_config=None, label='fixture', checkpoint=False):
         private = public.parent / (public.name + '-private')
 
         def run(task, config, trial):
             self.assertIsNone(config.codex_binary)  # None enables the adapter's PATH discovery.
             self.assertEqual(config.profile, profile or 'recent')
-            self.assertEqual(trial.name, self.task.instance_id + '-' + (profile or 'recent') + '-fixture')
+            self.assertEqual(trial, private / 'trial')
             self.assertEqual(task, self.task)
             if inspect_config is not None:
                 inspect_config(config)
@@ -54,6 +56,18 @@ class CodexTrialTests(unittest.TestCase):
                         {'event': 'request', 'call': 2}, {'event': 'error', 'call': 2, 'exception_type': 'TimeoutError'}]
                 (trial / 'agent/request-views.jsonl').write_text(
                     ''.join(json.dumps(row) + '\n' for row in rows), encoding='utf-8')
+            if checkpoint:
+                store = CheckpointStore(trial / 'agent/checkpoint.json', {'fixture': True})
+                try:
+                    store.write(state={'model_usage': {'n_calls': 2, 'calls_with_usage': 1,
+                        'input_tokens': 31, 'output_tokens': 7, 'unknown_requests': 1}}, transition=None)
+                finally:
+                    store.close()
+                # Exercise the real audit writer and exporter as well as the checkpoint.
+                env = SimpleNamespace(execute=lambda action, **kwargs: {'output': 'fixture file list',
+                    'returncode': 0, 'exception_info': ''})
+                audited = ActionAuditEnvironment(env, trial / 'agent/action-audit.jsonl', lambda: 1)
+                audited.execute({'command': 'delivery-file list'})
             result = {'fixture': False, 'provider': 'codex_cli', 'status': 'failed', 'exit_status': None,
                       'seconds': 4.5, 'error_type': 'FileNotFoundError' if setup_failure else 'TimeoutError',
                       'model_patch': '', 'patch_sha256': runner.sha256(''), 'patch_valid': None,
@@ -70,7 +84,7 @@ class CodexTrialTests(unittest.TestCase):
               patch.object(runner, 'git', side_effect=git),
               patch.object(runner, 'run_repository', side_effect=run)):
             argv = ['--task', str(self.root / 'task.json'), '--output', str(private),
-                    '--evidence', str(public), '--label', 'fixture']
+                    '--evidence', str(public), '--label', label]
             if profile is not None:
                 argv += ['--profile', profile]
             argv += list(extra_args)
@@ -141,6 +155,44 @@ class CodexTrialTests(unittest.TestCase):
                 self.assertEqual(run['id'], self.task.instance_id + '-' + profile + '-fixture')
                 evidence = json.loads((public / run['evidence']).read_text(encoding='utf-8'))
                 self.assertEqual(evidence['profile'], profile)
+
+    def test_long_logical_ids_keep_real_checkpoint_and_exports_on_short_paths(self):
+        # Only the provider outcome is a fixture: checkpoint writes, action audit,
+        # hash validation and public export all use their real implementations.
+        self.task = replace(self.task, instance_id='owner__' + 'x' * 78)
+        label = 'long-label-' + 'y' * 49
+        public = self.root / 'long-artifact-directory'
+        private = public.parent / (public.name + '-private')
+        run_id = self.task.instance_id + '-retrieval-' + label
+        old_temporary = private / run_id / 'agent' / ('checkpoint.json.' + 'a' * 32 + '.tmp')
+        self.assertGreaterEqual(len(str(old_temporary)), 260)
+        self.assertEqual(self.run_trial(public, audit=True, profile='retrieval',
+            label=label, checkpoint=True), 0)
+        trial = private / 'trial'
+        actual_temporary = trial / 'agent' / ('checkpoint.json.' + 'a' * 32 + '.tmp')
+        self.assertLess(len(str(actual_temporary)), 260)
+        checkpoint = inspect_checkpoint(trial / 'agent/checkpoint.json', {'fixture': True})
+        self.assertEqual(checkpoint['revision'], 1)
+        self.assertEqual(checkpoint['state']['model_usage']['n_calls'], 2)
+        self.assertEqual(list((trial / 'agent').glob('checkpoint.json.*.tmp')), [])
+        manifest = json.loads((public / 'repository-ablation.json').read_text(encoding='utf-8'))
+        run = manifest['runs'][0]
+        self.assertEqual(run['id'], run_id)
+        self.assertEqual(run['evidence'], 'model-runs/trial/evidence.json')
+        self.assertEqual(run['task'], 'model-runs/trial/task.json')
+        self.assertEqual(run['patch'], 'model-runs/trial/model.patch')
+        task = json.loads((public / run['task']).read_text(encoding='utf-8'))
+        self.assertEqual(RepoTask.parse(task), self.task)
+        evidence = json.loads((public / run['evidence']).read_text(encoding='utf-8'))
+        self.assertEqual(evidence['action_audit']['private_audit_sha256'],
+            runner.sha256((trial / 'agent/action-audit.jsonl').read_bytes()))
+        self.assertEqual(evidence['action_audit']['actions'], 1)
+        self.assertLess(len(str(public / 'model-runs/trial/action-audit.jsonl')), 260)
+        summary = json.loads((public / 'summary.json').read_text(encoding='utf-8'))
+        self.assertEqual(summary['label'], label)
+        self.assertEqual(summary['model_calls'], 2)
+        self.assertEqual(summary['usage'], self.usage)
+        self.assertFalse(summary['submitted'])
 
     def test_explicit_empty_knowledge_reaches_runtime_and_public_receipt(self):
         paths = []

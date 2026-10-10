@@ -256,16 +256,51 @@ class HTTPIntegrationTests(unittest.TestCase):
     def test_two_independent_processes_claim_unique_jobs_and_heartbeat(self):
         for n in range(6):
             self.client.submit(f"job-{n}", payload(f"instance-{n}"))
-        first, root_a = self.child("worker-a", jobs=3, delay=6)
-        second, root_b = self.child("worker-b", jobs=3, delay=6)
+        first, root_a = self.child("worker-a", mode="heartbeat", jobs=3, delay=45)
+        second, root_b = self.child("worker-b", mode="heartbeat", jobs=3, delay=45)
+        worker_roots = {"worker-a": root_a, "worker-b": root_b}
+        renewals = {}
+
+        def diagnostic():
+            jobs = []
+            for row in self.client.request("/v1/jobs")["jobs"]:
+                full = self.client.request("/v1/jobs/" + row["job_id"])
+                jobs.append({key: full[key] for key in
+                    ("job_id", "state", "attempts", "generation", "last_error", "attempt_history")})
+            commits = {}
+            for worker_id, directory in worker_roots.items():
+                try:
+                    commits[worker_id] = json.loads((directory / "commits.json").read_text())
+                except (OSError, ValueError):
+                    commits[worker_id] = None
+            return json.dumps({"jobs": jobs, "commits": commits, "observed_renewals": renewals})
+
+        deadline = time.monotonic() + 45
+        while len(renewals) < 6 and time.monotonic() < deadline:
+            for row in self.client.request("/v1/jobs")["jobs"]:
+                if row["job_id"] in renewals or row["state"] != "leased":
+                    continue
+                full = self.client.request("/v1/jobs/" + row["job_id"])
+                if full["attempts"] != 1:
+                    self.fail(diagnostic())
+                original_expiry = full["attempt_history"][0]["started"] + self.store.lease_seconds
+                now = time.time()
+                if (full["state"] == "leased" and full["lease_until"] > original_expiry
+                        and original_expiry <= now < full["lease_until"]):
+                    renewals[row["job_id"]] = {"original_expiry": original_expiry,
+                        "observed_lease_until": full["lease_until"], "released_at": now}
+                    (worker_roots[full["worker_id"]] / (row["job_id"] + ".release")).write_text("renewal observed")
+            time.sleep(0.1)
+        self.assertEqual(len(renewals), 6, diagnostic())
         self.finish(first)
         self.finish(second)
         rows = self.client.request("/v1/jobs")["jobs"]
-        self.assertEqual({r["state"] for r in rows}, {"succeeded"})
-        self.assertEqual({r["attempts"] for r in rows}, {1})
+        self.assertEqual({r["state"] for r in rows}, {"succeeded"}, diagnostic())
+        self.assertEqual({r["attempts"] for r in rows}, {1}, diagnostic())
         pids = set()
         for row in rows:
             full = self.client.request("/v1/jobs/" + row["job_id"])
+            self.assertGreaterEqual(full["attempt_history"][0]["ended"], renewals[row["job_id"]]["original_expiry"])
             pids.add(full["result"]["result"]["pid"])
             self.assertEqual(full["result"]["evidence"]["trace.json"], "a" * 64)
             self.assertEqual(full["result"]["patch_sha256"], hashlib.sha256(full["result"]["patch"].encode()).hexdigest())

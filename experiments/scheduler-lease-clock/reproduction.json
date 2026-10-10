@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "fixture": true,
+  "llm_calls": 0,
+  "source_sha256": "64e123a6ca3fea3435cd19266557deca4944a7b82c9b4436c356500ff7b9cdcc",
+  "candidate_source_sha256": "75e4437ee79fa047a35735c49f71291c6d7fdf0a1835b526fa09aca46cb7c022",
+  "actual_sqlite_write_lock": true,
+  "clock": "controlled fixture clock advanced while write lock held",
+  "production_files_modified": false,
+  "before": [
+    {
+      "operation": "claim",
+      "clock_at_request": 1000.0,
+      "clock_after_lock_acquired": 1003.0,
+      "lease_seconds": 2,
+      "observed": {
+        "accepted": true,
+        "lease_until": 1002.0,
+        "state": null
+      },
+      "contract_passed": false
+    },
+    {
+      "operation": "heartbeat",
+      "clock_at_request": 1000.0,
+      "clock_after_lock_acquired": 1003.0,
+      "lease_seconds": 2,
+      "observed": {
+        "accepted": true,
+        "lease_until": 1002.0,
+        "state": null
+      },
+      "contract_passed": false
+    },
+    {
+      "operation": "complete",
+      "clock_at_request": 1000.0,
+      "clock_after_lock_acquired": 1003.0,
+      "lease_seconds": 2,
+      "observed": {
+        "accepted": true,
+        "lease_until": null,
+        "state": "succeeded"
+      },
+      "contract_passed": false
+    }
+  ],
+  "candidate_in_memory": [
+    {
+      "operation": "claim",
+      "clock_at_request": 1000.0,
+      "clock_after_lock_acquired": 1003.0,
+      "lease_seconds": 2,
+      "observed": {
+        "accepted": true,
+        "lease_until": 1005.0,
+        "state": null
+      },
+      "contract_passed": true
+    },
+    {
+      "operation": "heartbeat",
+      "clock_at_request": 1000.0,
+      "clock_after_lock_acquired": 1003.0,
+      "lease_seconds": 2,
+      "observed": {
+        "accepted": false,
+        "status": 409
+      },
+      "contract_passed": true
+    },
+    {
+      "operation": "complete",
+      "clock_at_request": 1000.0,
+      "clock_after_lock_acquired": 1003.0,
+      "lease_seconds": 2,
+      "observed": {
+        "accepted": false,
+        "status": 409
+      },
+      "contract_passed": true
+    }
+  ],
+  "interpretation": "Independent transaction-time sampling defect reproduced; this does not establish the cause of the historical Windows heartbeat CI failure."
+}

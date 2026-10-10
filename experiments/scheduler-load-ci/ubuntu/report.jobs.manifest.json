@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "kind": "byte_exact_text_parts_manifest",
+  "original_filename": "report.jobs.json",
+  "original_bytes": 1075441,
+  "original_sha256": "806faca0666acf003005ab191378705ab1adae4bdc2d06a1d5520d5ec5137192",
+  "encoding": "UTF-8",
+  "line_endings": "LF",
+  "part_limit_bytes": 65536,
+  "parts": [
+    {
+      "order": 1,
+      "path": "report.jobs.part-0001.txt",
+      "bytes": 65455,
+      "sha256": "d399c4ee46ee99b932be7f5d0930bde041a0b6c7ead6193e0660d94adac77e6c"
+    },
+    {
+      "order": 2,
+      "path": "report.jobs.part-0002.txt",
+      "bytes": 65518,
+      "sha256": "04f4e643c2486c5e612887f4a47bddbae279aa3611fb8c5ba040192a56ad4af5"
+    },
+    {
+      "order": 3,
+      "path": "report.jobs.part-0003.txt",
+      "bytes": 65525,
+      "sha256": "33e6c27e875bee84bb7c5aed17afd78d8c2cf72b409a3d246b15a3cfefa5ab7c"
+    },
+    {
+      "order": 4,
+      "path": "report.jobs.part-0004.txt",
+      "bytes": 65533,
+      "sha256": "d98f7ce827d8f6f2baa0c5615797f61a43390c2ebecacf5ca1440ffd3bc2d5dc"
+    },
+    {
+      "order": 5,
+      "path": "report.jobs.part-0005.txt",
+      "bytes": 65488,
+      "sha256": "925fd269c15eb494736a381046289919b384300bb6f0c4016f684c9ce657fc71"
+    },
+    {
+      "order": 6,
+      "path": "report.jobs.part-0006.txt",
+      "bytes": 65533,
+      "sha256": "6439d52d20ba0677594c2050c7459cd1c627241396b79ee6b3106f02e6f08370"
+    },
+    {
+      "order": 7,
+      "path": "report.jobs.part-0007.txt",
+      "bytes": 65464,
+      "sha256": "8aac95bd939583a19fb49f9327e8f8fdae22d20c7ce02fc35d47e29ea73f7bef"
+    },
+    {
+      "order": 8,
+      "path": "report.jobs.part-0008.txt",
+      "bytes": 65529,
+      "sha256": "88b8d1ea97e421ff8563923582f4eaa2b7dbecdf5b3b3f9579d1d96619e91b83"
+    },
+    {
+      "order": 9,
+      "path": "report.jobs.part-0009.txt",
+      "bytes": 65515,
+      "sha256": "2bec36757742cbb17035a94d18bd4e5888b98c312310091c7e489379e642e9ee"
+    },
+    {
+      "order": 10,
+      "path": "report.jobs.part-0010.txt",
+      "bytes": 65520,
+      "sha256": "1a1e24c3d3eda5bf0ed8ec22a5e718deb21bc263bff2b1fa8e08a5b97c7a9aae"
+    },
+    {
+      "order": 11,
+      "path": "report.jobs.part-0011.txt",
+      "bytes": 65463,
+      "sha256": "3c4c74d7b807962e0c261caeaa9fe1004bdcda6e0812659c35d33a60ea5b7343"
+    },
+    {
+      "order": 12,
+      "path": "report.jobs.part-0012.txt",
+      "bytes": 65532,
+      "sha256": "64b7628b50fab7afa0041dd3669374aa7d378586cac6b9c783915811be0d175d"
+    },
+    {
+      "order": 13,
+      "path": "report.jobs.part-0013.txt",
+      "bytes": 65519,
+      "sha256": "e0ad9794d1211e0ef37b94a1fd7919ea585868a7ec74797e5e3b116f47c6269c"
+    },
+    {
+      "order": 14,
+      "path": "report.jobs.part-0014.txt",
+      "bytes": 65532,
+      "sha256": "6fa634ca8335f6d5cf57afc6df8ccfa95039375b22b15ff9409062ed834b5d97"
+    },
+    {
+      "order": 15,
+      "path": "report.jobs.part-0015.txt",
+      "bytes": 65504,
+      "sha256": "fd403c6539244417c8e2c5de7a00d3b6da1b5246cb6c10a1e2b213c95648e7b7"
+    },
+    {
+      "order": 16,
+      "path": "report.jobs.part-0016.txt",
+      "bytes": 65529,
+      "sha256": "b815eb5621c8079a81b97316b3d247bc9bf0e62fc3dc6fa93b1901d058f75caa"
+    },
+    {
+      "order": 17,
+      "path": "report.jobs.part-0017.txt",
+      "bytes": 27282,
+      "sha256": "6a86a394964f3e26e4826a5d230f15ff8ee2ae40b5303f780ca535c91fae2905"
+    }
+  ],
+  "row_count": 1005,
+  "artifact": {
+    "id": 11660947546,
+    "run_id": 38028767040,
+    "head_sha": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+    "name": "scheduler-load-ubuntu-latest-38028767040-1",
+    "zip_bytes": 121578,
+    "zip_sha256": "07acaa18e8d79cdd02bc7242ce6ac55101670972c4b62ffe545c92b59efeceed",
+    "zip_digest_matches_github": true,
+    "original_zip_retained_local_path": "runs/scheduler-load-ci-downloads/ubuntu-original.zip"
+  },
+  "report": {
+    "path": "report.json",
+    "bytes": 5037,
+    "sha256": "1c11f37bfaf0fdf81ff47e479fbd466a752da955e372f35cabf00cdfa0506200"
+  },
+  "independent_readback_checks": {
+    "strict_consumer_matches_original": true,
+    "load_latency_and_throughput_recomputed": true,
+    "privacy_allowlists_checked": true
+  },
+  "reconstruction": [
+    "Read manifest parts in explicit order as bytes; verify each size and SHA-256.",
+    "Concatenate without separators or newline conversion; verify original size/SHA-256 and parse UTF-8 JSON.",
+    "The unchanged report readback_artifact.path identifies the reconstructed report.jobs.json; use exclusive creation to avoid overwriting evidence."
+  ],
+  "fixture": true,
+  "llm_calls": 0,
+  "physical_hosts": 1
+}

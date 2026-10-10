@@ -1,0 +1,115 @@
+"""Deterministic real-SQLite lock regression; no model calls or runtime edits."""
+from __future__ import annotations
+
+import difflib
+import hashlib
+import importlib.util
+import json
+import sys
+import tempfile
+import threading
+import types
+from pathlib import Path
+
+BASE = Path(__file__).resolve().parent
+REPO = BASE.parent / "repo-delivery-agent"
+sys.path.insert(0, str(REPO))
+from delivery_agent import scheduler
+
+
+def payload():
+    return {"task": {"instance_id": "lock-boundary", "repo": "example/project",
+        "base_commit": "a" * 40, "problem_statement": "Trusted scheduling fixture",
+        "image": "python:3.12-slim", "public_checks": []},
+        "config": {"model": "fixture", "profile": "baseline"}}
+
+
+def exercise(module, operation):
+    with tempfile.TemporaryDirectory() as directory:
+        now = [1000.0]
+        store = module.JobStore(Path(directory) / "queue.sqlite", lease_seconds=2, clock=lambda: now[0])
+        store.register("worker")
+        store.submit("job", payload())
+        claim = store.claim("worker") if operation != "claim" else None
+        blocker = store._connect()
+        blocker.execute("BEGIN IMMEDIATE")
+        begin_attempted = threading.Event()
+        original_connect = store._connect
+
+        def traced_connect():
+            connection = original_connect()
+            # SQLite emits this callback before executing BEGIN IMMEDIATE, so
+            # the other live connection still owns the write lock at this point.
+            connection.set_trace_callback(lambda sql: begin_attempted.set() if sql == "BEGIN IMMEDIATE" else None)
+            return connection
+
+        store._connect = traced_connect
+        outcome = {}
+
+        def run():
+            try:
+                if operation == "claim":
+                    result = store.claim("worker")
+                elif operation == "heartbeat":
+                    result = store.heartbeat("job", "worker", claim["lease_token"], claim["generation"])
+                else:
+                    result = store.complete("job", "worker", claim["lease_token"], claim["generation"],
+                        {"outcome": "succeeded", "result": {}, "patch": "", "evidence": {}})
+                outcome.update(accepted=True, lease_until=result.get("lease_until"), state=result.get("state"))
+            except module.SchedulerError as exc:
+                outcome.update(accepted=False, status=exc.status)
+            except BaseException as exc:
+                outcome.update(unexpected_error=type(exc).__name__)
+
+        thread = threading.Thread(target=run)
+        thread.start()
+        try:
+            if not begin_attempted.wait(5):
+                raise AssertionError("Operation never attempted its SQLite write transaction")
+            now[0] = 1003.0
+        finally:
+            blocker.commit()
+            blocker.close()
+        thread.join(timeout=5)
+        if thread.is_alive():
+            raise AssertionError("Operation did not finish after the real write lock was released")
+        if "unexpected_error" in outcome:
+            raise AssertionError(outcome)
+        passed = (outcome.get("lease_until") == 1005.0 if operation == "claim"
+                  else outcome == {"accepted": False, "status": 409})
+        return {"operation": operation, "clock_at_request": 1000.0, "clock_after_lock_acquired": 1003.0,
+                "lease_seconds": 2, "observed": outcome, "contract_passed": passed}
+
+
+def main():
+    source_path = REPO / "delivery_agent/scheduler.py"
+    original_bytes = source_path.read_bytes()
+    original = original_bytes.decode("utf-8")
+    old = "        now = self.clock()\n        with self._transaction() as db:\n"
+    new = "        with self._transaction() as db:\n            now = self.clock()\n"
+    if original.count(old) != 6:
+        raise AssertionError("Unexpected scheduler source; refusing a broad patch")
+    candidate_source = original.replace(old, new)
+    candidate = types.ModuleType("delivery_agent._scheduler_clock_candidate")
+    candidate.__package__ = "delivery_agent"
+    exec(compile(candidate_source, "<scheduler-clock-candidate>", "exec"), candidate.__dict__)
+    before = [exercise(scheduler, name) for name in ("claim", "heartbeat", "complete")]
+    after = [exercise(candidate, name) for name in ("claim", "heartbeat", "complete")]
+    if any(row["contract_passed"] for row in before) or not all(row["contract_passed"] for row in after):
+        raise AssertionError({"before": before, "after": after})
+    patch = "".join(difflib.unified_diff(original.splitlines(True), candidate_source.splitlines(True),
+        fromfile="a/delivery_agent/scheduler.py", tofile="b/delivery_agent/scheduler.py"))
+    (BASE / "scheduler-lease-clock.patch").write_text(patch, encoding="utf-8", newline="\n")
+    report = {"schema_version": 1, "fixture": True, "llm_calls": 0,
+        "source_sha256": hashlib.sha256(original_bytes).hexdigest(),
+        "candidate_source_sha256": hashlib.sha256(candidate_source.encode()).hexdigest(),
+        "actual_sqlite_write_lock": True, "clock": "controlled fixture clock advanced while write lock held",
+        "production_files_modified": False, "before": before, "candidate_in_memory": after,
+        "interpretation": "Independent transaction-time sampling defect reproduced; this does not establish the cause of the historical Windows heartbeat CI failure."}
+    destination = BASE / "scheduler-lease-clock-reproduction.json"
+    destination.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == "__main__":
+    main()

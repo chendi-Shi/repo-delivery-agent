@@ -176,8 +176,8 @@ class JobStore:
 
     def register(self, worker_id):
         worker_id = identifier(worker_id, "worker_id")
-        now = self.clock()
         with self._transaction() as db:
+            now = self.clock()
             db.execute("INSERT INTO workers VALUES(?,?,?) ON CONFLICT(worker_id) DO UPDATE SET last_seen=excluded.last_seen",
                        (worker_id, now, now))
         return {"worker_id": worker_id, "lease_seconds": self.lease_seconds}
@@ -188,8 +188,8 @@ class JobStore:
             raise SchedulerError("max_attempts must be 1..10")
         payload = canonical(validate_payload(payload))
         digest = hashlib.sha256(payload.encode()).hexdigest()
-        now = self.clock()
         with self._transaction() as db:
+            now = self.clock()
             existing = db.execute("SELECT * FROM jobs WHERE job_id=?", (job_id,)).fetchone()
             if existing:
                 if existing["payload_digest"] != digest or existing["max_attempts"] != max_attempts:
@@ -201,8 +201,8 @@ class JobStore:
 
     def claim(self, worker_id):
         worker_id = identifier(worker_id, "worker_id")
-        now = self.clock()
         with self._transaction() as db:
+            now = self.clock()
             self._recover(db, now)
             if not db.execute("SELECT 1 FROM workers WHERE worker_id=?", (worker_id,)).fetchone():
                 raise SchedulerError("Register worker before claiming", 409)
@@ -239,8 +239,8 @@ class JobStore:
         return row
 
     def heartbeat(self, job_id, worker_id, token, generation):
-        now = self.clock()
         with self._transaction() as db:
+            now = self.clock()
             row = self._lease(db, job_id, worker_id, token, generation, now)
             if row["state"] != "leased" or row["lease_until"] <= now:
                 raise SchedulerError("Lease expired or job was cancelled", 409)
@@ -253,8 +253,8 @@ class JobStore:
         completion = validate_completion(completion)
         encoded = canonical(completion)
         digest = hashlib.sha256(encoded.encode()).hexdigest()
-        now = self.clock()
         with self._transaction() as db:
+            now = self.clock()
             row = self._lease(db, job_id, worker_id, token, generation, now)
             if row["result_digest"] == digest and row["state"] in {"succeeded", "failed", "queued"}:
                 return {"job_id": job_id, "state": row["state"], "idempotent": True,
@@ -275,8 +275,8 @@ class JobStore:
 
     def cancel(self, job_id):
         identifier(job_id, "job_id")
-        now = self.clock()
         with self._transaction() as db:
+            now = self.clock()
             row = db.execute("SELECT * FROM jobs WHERE job_id=?", (job_id,)).fetchone()
             if row is None:
                 raise SchedulerError("Job not found", 404)

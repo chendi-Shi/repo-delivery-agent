@@ -1,0 +1,26 @@
+{
+  "knowledge_observed_read": true,
+  "nonempty_read_count": 1,
+  "observed_nonempty_read_count_lower_bound": 1,
+  "reads": [
+    {
+      "audit_line": 2,
+      "call": 2,
+      "ordinal": 1,
+      "source_id": "kc1d0a7049efc326aae781cfe11526ed9",
+      "content_sha256": "62d1e7546bf6231d9fdf9c3251e4a8864a0dc04f5ff0cc833e0956b9f1591740",
+      "verification_sha256": "a601a0fd655e8c5e85e3ce683cc1b8a4a35b217c64dd7f57abcb8bdaf0d1f25b",
+      "command_sha256": "4f78c1f5a48c0c95333e840ee0c71e310111db74d75752d3810227efc8911ae5",
+      "offset": 0,
+      "limit": 4000,
+      "returned_chars": 4000,
+      "slice_sha256": "fc2fabde7fff5f6d29d3c472e983414ecc183912c10594651cabfb9ae320397a"
+    }
+  ],
+  "audit_complete": true,
+  "public_audit_sha256": "8ed86430bbae30a3716d84000b8ce6e08443a45e1b7092029b7813d1311126bc",
+  "interpretation": "Reports actual nonempty source reads only; incorporation and benefit are not established.",
+  "input_package_sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+  "input_package": "knowledge-input.json",
+  "action_audit": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r2/action-audit.jsonl"
+}

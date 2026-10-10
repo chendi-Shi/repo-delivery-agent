@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "kind": "real_windows_checkpoint_path_probe",
+  "fixture": true,
+  "model_calls": 0,
+  "checkpoint_path_chars": 224,
+  "temporary_path_chars": 261,
+  "operation": "CheckpointStore.write",
+  "original_model_trials_modified": false,
+  "error_type": "FileNotFoundError",
+  "errno": 2,
+  "winerror": null,
+  "checkpoint_exists": false
+}

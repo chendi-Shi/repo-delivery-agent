@@ -235,7 +235,8 @@ def observed_knowledge_reads(audit_path, audit, records):
 
 def export_trial(result, task, opts, trial, public, run_id, summary, knowledge_records=()):
     """Export only after the measured outcome is durably recorded."""
-    target = public / 'model-runs' / run_id
+    # Logical run IDs stay in the manifest; filenames need not duplicate them.
+    target = public / 'model-runs' / 'trial'
     target.mkdir(parents=True)
     value = asdict(task)
     value['public_checks'] = list(task.public_checks)
@@ -329,7 +330,8 @@ def main(argv=None):
         parser.error('use new private and public directories for every trial')
     public.mkdir(parents=True)
     run_id = task.instance_id + '-' + opts.profile + '-' + opts.label
-    trial = private / run_id
+    # Reserve space for checkpoint UUID suffixes on ordinary Windows paths.
+    trial = private / 'trial'
     knowledge_db, knowledge_receipt, knowledge_records = prepare_knowledge(opts, task, private, public)
     config = SimpleNamespace(model=opts.model, codex_binary=opts.codex_binary, reasoning_effort='low',
         profile=opts.profile, max_steps=opts.max_steps, wall_seconds=opts.wall_seconds,

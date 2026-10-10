@@ -1,0 +1,217 @@
+diff --git a/docs/api.rst b/docs/api.rst
+index 7b40a8e..bb109b5 100644
+--- a/docs/api.rst
++++ b/docs/api.rst
+@@ -194,7 +194,7 @@ These tools yield certain items from an iterable.
+ .. autoclass:: islice_extended(iterable, start, stop[, step])
+   :noindex:
+ .. autofunction:: first(iterable[, default])
+-.. autofunction:: last(iterable[, default])
++.. autofunction:: last(iterable[, default], *, default_factory=None)
+ .. autofunction:: one(iterable, too_short=ValueError, too_long=ValueError)
+ .. autofunction:: only(iterable, default=None, too_long=ValueError)
+ .. autofunction:: strictly_n(iterable, n, too_short=None, too_long=None)
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..6dad859 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -277,29 +277,54 @@ def first(iterable, default=_marker):
+     return default
+ 
+ 
+-def last(iterable, default=_marker):
+-    """Return the last item of *iterable*, or *default* if *iterable* is
+-    empty.
++def last(iterable, default=_marker, *, default_factory=None):
++    """Return the last item of *iterable*, or a fallback if it is empty.
+ 
+         >>> last([0, 1, 2, 3])
+         3
+         >>> last([], 'some default')
+         'some default'
++        >>> last([], default_factory=list)
++        []
+ 
+-    If *default* is not provided and there are no items in the iterable,
+-    raise ``ValueError``.
++    The keyword-only *default_factory* constructs a fallback lazily. When
++    provided, it is called without arguments exactly once on empty input,
++    and its result is returned unchanged. It is never called on nonempty
++    input. ``None`` means no factory.
++
++    Providing both *default* (including ``None``) and a non-``None``
++    *default_factory* raises ``ValueError``. Otherwise, a non-``None`` factory
++    must be callable or ``TypeError`` is raised. These options are validated
++    before consuming *iterable*. Source and factory exceptions propagate.
++
++    If neither *default* nor a factory is provided and there are no items
++    in the iterable, raise ``ValueError``.
+     """
+-    try:
+-        if getattr(iterable, '__reversed__', None):
+-            return next(reversed(iterable))
+-        return deque(iterable, maxlen=1)[-1]
+-    except (IndexError, StopIteration):
+-        if default is _marker:
+-            raise ValueError(
+-                'last() was called on an empty iterable, '
+-                'and no default value was provided.'
+-            )
+-        return default
++    if default_factory is not None:
++        if default is not _marker:
++            raise ValueError('default and default_factory are mutually exclusive')
++        if not callable(default_factory):
++            raise TypeError('default_factory must be callable')
++
++    if getattr(iterable, '__reversed__', None):
++        iterator = reversed(iterable)
++        try:
++            return next(iterator)
++        except StopIteration:
++            pass
++    else:
++        tail = deque(iterable, maxlen=1)
++        if tail:
++            return tail[-1]
++
++    if default_factory is not None:
++        return default_factory()
++    if default is _marker:
++        raise ValueError(
++            'last() was called on an empty iterable, '
++            'and no default value was provided.'
++        )
++    return default
+ 
+ 
+ def nth_or_last(iterable, n, default=_marker):
+diff --git a/tests/test_more.py b/tests/test_more.py
+index 9ecdd06..7ac5300 100644
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -202,6 +202,124 @@ class LastTests(TestCase):
+         self.assertEqual(mi.last(ReversedIsNone()), 1)
+ 
+ 
++class LastFactoryTests(TestCase):
++    def test_empty_factory_results(self):
++        for value in (None, False, 0, [], {}):
++            for source in ([], iter([])):
++                with self.subTest(value=value, source=source):
++                    factory = mock.Mock(return_value=value)
++                    self.assertIs(mi.last(source, default_factory=factory), value)
++                    factory.assert_called_once_with()
++
++    def test_nonempty_factory_is_lazy(self):
++        factory = mock.Mock()
++        for value in (None, False, 0, [], {}):
++            for source in ([1, value], iter([1, value])):
++                self.assertIs(mi.last(source, default_factory=factory), value)
++        factory.assert_not_called()
++
++    def test_invalid_options_do_not_touch_source(self):
++        class Untouched:
++            def __iter__(self):
++                raise AssertionError('source consumed')
++
++            def __reversed__(self):
++                raise AssertionError('source reversed')
++
++        for value in (42, False, 'factory'):
++            with self.assertRaises(TypeError):
++                mi.last(Untouched(), default_factory=value)
++        for default in (None, False, 0, 'default'):
++            for factory in (list, 42):
++                with self.assertRaises(ValueError):
++                    mi.last(Untouched(), default, default_factory=factory)
++        with self.assertRaises(TypeError):
++            mi.last(Untouched(), None, list)
++
++    def test_none_factory_and_legacy_default(self):
++        self.assertIsNone(mi.last([], None, default_factory=None))
++        self.assertEqual(mi.last([], 'legacy'), 'legacy')
++        with self.assertRaises(ValueError):
++            mi.last([], default_factory=None)
++
++    def test_one_shot_iterator(self):
++        class Once:
++            def __init__(self):
++                self.values = iter([1, 2, 3])
++                self.iterations = 0
++
++            def __iter__(self):
++                self.iterations += 1
++                if self.iterations != 1:
++                    raise AssertionError('iterator restarted')
++                return self
++
++            def __next__(self):
++                return next(self.values)
++
++        source = Once()
++        factory = mock.Mock()
++        self.assertEqual(mi.last(source, default_factory=factory), 3)
++        self.assertEqual(source.iterations, 1)
++        factory.assert_not_called()
++
++    def test_reverse_only(self):
++        class ReverseOnly:
++            def __init__(self, values):
++                self.values = values
++
++            def __iter__(self):
++                raise AssertionError('forward iteration forbidden')
++
++            def __reversed__(self):
++                return iter(self.values)
++
++        factory = mock.Mock(return_value=[])
++        self.assertEqual(
++            mi.last(ReverseOnly([7, 6, 5]), default_factory=factory), 7
++        )
++        factory.assert_not_called()
++        self.assertIs(
++            mi.last(ReverseOnly([]), default_factory=factory),
++            factory.return_value,
++        )
++        factory.assert_called_once_with()
++
++    def test_factory_exceptions_propagate(self):
++        for error in (RuntimeError('factory'), IndexError('factory'),
++                      StopIteration('factory')):
++            factory = mock.Mock(side_effect=error)
++            with self.assertRaises(type(error)) as caught:
++                mi.last([], default_factory=factory)
++            self.assertIs(caught.exception, error)
++            factory.assert_called_once_with()
++
++    def test_source_exceptions_propagate(self):
++        for error in (RuntimeError('source'), IndexError('source')):
++            def broken_source():
++                yield 1
++                raise error
++
++            factory = mock.Mock()
++            with self.assertRaises(type(error)) as caught:
++                mi.last(broken_source(), default_factory=factory)
++            self.assertIs(caught.exception, error)
++            factory.assert_not_called()
++
++    def test_reverse_construction_exceptions_propagate(self):
++        for error in (RuntimeError('reverse'), IndexError('reverse'),
++                      StopIteration('reverse')):
++            class BrokenReverse:
++                def __reversed__(self):
++                    raise error
++
++            factory = mock.Mock()
++            with self.assertRaises(type(error)) as caught:
++                mi.last(BrokenReverse(), default_factory=factory)
++            self.assertIs(caught.exception, error)
++            factory.assert_not_called()
++
++
+ class NthOrLastTests(TestCase):
+     """Tests for ``nth_or_last()``"""
+ 

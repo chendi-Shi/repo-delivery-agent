@@ -1,0 +1,216 @@
+{
+  "schema": 1,
+  "kind": "predeclared_zero_call_subset_retry",
+  "fixture": false,
+  "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "original_execution": {
+    "path": "execution.json",
+    "sha256": "a4d5488f81293938991dd7fca03f43b0953dc00149a7c7647e8bc29a739f493d",
+    "bytes": 5580
+  },
+  "preserved_directory": "setup-failures-attempt2",
+  "preserved_launcher_trials": 4,
+  "original_model_calls": 0,
+  "original_model_attempts": 0,
+  "preserved_files": [
+    {
+      "path": "setup-failures-attempt2/checkpoint-path-diagnosis.json",
+      "sha256": "04c2f8c9ed9e101404ce73569471db96b5a08568d68ba413d01c8003cd1e5048",
+      "bytes": 366
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r1/model.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r1/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/summary.json",
+      "sha256": "0177145c54ab10a019dec2c7454d37ceb09abadf713c83a693f65881dae64e63",
+      "bytes": 2471
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r2/model.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r2/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/summary.json",
+      "sha256": "f87ea100b5be3d4d187aff0206dab5c56d421eedb082ef52032a5dc1d0fb18c2",
+      "bytes": 2472
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1/model.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/summary.json",
+      "sha256": "0e6ee5b83aed0aa4e6af2e97e27f45601b40b621cf503439c8285f3eb863c6b2",
+      "bytes": 2473
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+      "bytes": 413
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r2/model.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r2/task.json",
+      "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "bytes": 6191
+    },
+    {
+      "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/summary.json",
+      "sha256": "b8b8543ab267ad29fe193aa7f5dac5dae7cf46c4f72dacf15e081ebe612cfb86",
+      "bytes": 2475
+    }
+  ],
+  "original_setup_rows": [
+    {
+      "label": "split-baseline-empty-r1",
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "model_calls": 0,
+      "source_tracked_tree_clean": true,
+      "model_attempts": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 6.857891699997708,
+      "launcher_elapsed_seconds": 8.642490699989139,
+      "error_type": "FileNotFoundError",
+      "summary_sha256": "0177145c54ab10a019dec2c7454d37ceb09abadf713c83a693f65881dae64e63"
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "model_calls": 0,
+      "source_tracked_tree_clean": true,
+      "model_attempts": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 5.911354100011522,
+      "launcher_elapsed_seconds": 8.059662200001185,
+      "error_type": "FileNotFoundError",
+      "summary_sha256": "0e6ee5b83aed0aa4e6af2e97e27f45601b40b621cf503439c8285f3eb863c6b2"
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "model_calls": 0,
+      "source_tracked_tree_clean": false,
+      "model_attempts": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 11.92745209998975,
+      "launcher_elapsed_seconds": 15.753109999990556,
+      "error_type": "FileNotFoundError",
+      "summary_sha256": "f87ea100b5be3d4d187aff0206dab5c56d421eedb082ef52032a5dc1d0fb18c2"
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "model_calls": 0,
+      "source_tracked_tree_clean": false,
+      "model_attempts": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "seconds": 10.222869999997783,
+      "launcher_elapsed_seconds": 14.471243600011803,
+      "error_type": "FileNotFoundError",
+      "summary_sha256": "b8b8543ab267ad29fe193aa7f5dac5dae7cf46c4f72dacf15e081ebe612cfb86"
+    }
+  ],
+  "original_source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+  "retry": {
+    "target_directory": "targets",
+    "private_output": "runs/ct3",
+    "planned_trials": 4,
+    "max_parallel_trials": 2,
+    "planned_order": [
+      {
+        "label": "split-baseline-empty-r1",
+        "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+        "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+        "arm": "baseline-empty",
+        "profile": "baseline",
+        "repetition": 1,
+        "private_slot": "t1"
+      },
+      {
+        "label": "split-retrieval-empty-r1",
+        "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+        "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+        "arm": "retrieval-empty",
+        "profile": "retrieval",
+        "repetition": 1,
+        "private_slot": "t2"
+      },
+      {
+        "label": "split-baseline-empty-r2",
+        "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+        "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+        "arm": "baseline-empty",
+        "profile": "baseline",
+        "repetition": 2,
+        "private_slot": "t3"
+      },
+      {
+        "label": "split-retrieval-empty-r2",
+        "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+        "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+        "arm": "retrieval-empty",
+        "profile": "retrieval",
+        "repetition": 2,
+        "private_slot": "t4"
+      }
+    ],
+    "common": {
+      "selected_context_bytes": 64000,
+      "max_steps": 24,
+      "wall_seconds": 1800,
+      "request_timeout": 120,
+      "reasoning_effort": "low"
+    },
+    "model": "gpt-6-astra",
+    "provider": "codex_cli",
+    "knowledge_namespace": "codex-transfer-v1",
+    "knowledge_mode": "empty",
+    "tasks_budgets_and_labels_unchanged": true,
+    "runner_sha256": "3c64f4f1f07a37a7dfb9a8bab6c7261a5c7b52480f04833648bebc50228d5283",
+    "launcher_sha256": "ad518cf7050ad522248cd754ce1738fcb0fe65aae36fbdbeccb9d11f2ae70915"
+  },
+  "interpretation": "Only four recorded zero-call setup failures are retried. Their original public bytes remain archived; canonical comparison still has ten planned target samples."
+}
