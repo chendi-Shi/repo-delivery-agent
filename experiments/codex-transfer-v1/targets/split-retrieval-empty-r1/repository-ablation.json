@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "kind": "real_model_repository_ablation",
+  "runs": [
+    {
+      "id": "more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1",
+      "task": "model-runs/trial/task.json",
+      "patch": "model-runs/trial/model.patch",
+      "evidence": "model-runs/trial/evidence.json"
+    }
+  ],
+  "limitations": [
+    "One genuine remote-model attempt; not a paired comparison with previous Ollama trials.",
+    "Remote model aliases can change; recorded CLI version/binary hash do not pin server weights.",
+    "Source-only backend cannot execute tests; independent Docker verification remains required.",
+    "CLI prompt overhead is additional to selected context; usage includes actual CLI-reported tokens.",
+    "Seed and generation token cap are not enforced by this CLI adapter; request/step/wall bounds apply.",
+    "Subscription inference has no known per-request dollar price; missing costs are not zero."
+  ]
+}

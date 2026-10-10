@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "kind": "zero_call_subset_retry_execution",
+  "fixture": false,
+  "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "retry_receipt_sha256": "80a3cfbcb924e08e03579310b9ca5f3cf01ec5635e505a9ab0b7ec1909808846",
+  "original_execution_sha256": "a4d5488f81293938991dd7fca03f43b0953dc00149a7c7647e8bc29a739f493d",
+  "max_parallel_trials": 2,
+  "planned_order": [
+    {
+      "label": "split-baseline-empty-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "baseline-empty",
+      "profile": "baseline",
+      "repetition": 1,
+      "private_slot": "t1"
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "retrieval-empty",
+      "profile": "retrieval",
+      "repetition": 1,
+      "private_slot": "t2"
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "baseline-empty",
+      "profile": "baseline",
+      "repetition": 2,
+      "private_slot": "t3"
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "task": "examples/delivery-suite-v1/more-itertools-split-after.json",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "arm": "retrieval-empty",
+      "profile": "retrieval",
+      "repetition": 2,
+      "private_slot": "t4"
+    }
+  ],
+  "outcomes": [
+    {
+      "label": "split-baseline-empty-r1",
+      "launcher_returncode": 0,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 71.66906030000246,
+      "summary_present": true
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "launcher_returncode": 0,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 73.82670089999738,
+      "summary_present": true
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "launcher_returncode": 1,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 68.92947769998864,
+      "summary_present": true
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "launcher_returncode": 0,
+      "launcher_timed_out": false,
+      "launcher_elapsed_seconds": 67.22546670000884,
+      "summary_present": true
+    }
+  ],
+  "time_scope": "Concurrent local repository runs; elapsed time includes shared-host and remote-service contention."
+}

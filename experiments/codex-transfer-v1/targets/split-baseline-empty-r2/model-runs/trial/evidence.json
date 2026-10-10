@@ -1,0 +1,125 @@
+{
+  "fixture": false,
+  "provider": "codex_cli",
+  "status": "failed",
+  "exit_status": null,
+  "seconds": 66.18736830000125,
+  "patch_valid": null,
+  "profile": "baseline",
+  "model_name": "gpt-6-astra",
+  "model_digest": null,
+  "model_identity": {
+    "kind": "codex_cli",
+    "model": "gpt-6-astra",
+    "cli_version": "codex-cli 0.154.0",
+    "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+    "weight_digest_available": false,
+    "reasoning_effort": "low"
+  },
+  "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "task_hash": "ec13c75801df6c737e2f1571aaa548b108cb24478547eecf115aefb27d1c654c",
+  "model_call_unit": "cli_invocations",
+  "underlying_transport_request_count": null,
+  "usage_scope": "CLI-reported completed turns; internal transport retries may have unreported usage",
+  "error_type": "CodexProtocolError",
+  "usage": {
+    "complete": false,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "calls_with_usage": 0,
+    "unknown_requests": 1
+  },
+  "model_calls": 1,
+  "context_requests": 1,
+  "verification_status": "deferred",
+  "inference_backend": "files",
+  "cost_source": "chatgpt_plan_unpriced",
+  "monetary_cost": null,
+  "action_audit": {
+    "available": false,
+    "complete": false,
+    "actions": 0,
+    "kind_counts": {}
+  },
+  "implementation_sha256": "fdd1291f58624580735ad23330c601b7feb515a5b5333b7bb24387077d5076a8",
+  "knowledge_input": {
+    "tools_enabled": true,
+    "mode": "empty",
+    "record_count": 0,
+    "namespace_sha256": "eaf112313ecbfd87cacc68df20951b5b0aec0103da1adca1336fc42f26e9469b",
+    "package": "knowledge-input.json",
+    "package_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+    "source_database_sha256": null,
+    "origins": []
+  },
+  "knowledge_observation": {
+    "knowledge_observed_read": null,
+    "nonempty_read_count": null,
+    "reads": [],
+    "audit_complete": false,
+    "interpretation": "Read observation unavailable; usefulness is not measured.",
+    "input_package_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+    "input_package": "knowledge-input.json",
+    "action_audit": "model-runs/trial/action-audit.jsonl"
+  },
+  "configuration_sha256": "2cdf0f904f4868976828906f393e05dc56d514f14a6fd754a724866ce2636b8b",
+  "budgets": {
+    "max_steps": 24,
+    "selected_context_byte_budget": 64000,
+    "wall_seconds": 1800,
+    "request_timeout": 120,
+    "generation_token_cap_enforced": false,
+    "seed_enforced": false,
+    "cli_prompt_overhead_in_selected_context_budget": false,
+    "output_and_protocol_reserve": 3048,
+    "reasoning_effort": "low"
+  },
+  "export_recovery": {
+    "schema": 1,
+    "kind": "offline_codex_export_recovery",
+    "new_model_attempt": false,
+    "model_calls_added": 0,
+    "export_complete": true,
+    "original_private_inputs_unchanged": true,
+    "original_summary": {
+      "path": "summary.json",
+      "sha256": "f8ba237c3d66c2b6e762a6a9b77b052858e5417854ae0adb6f93fd6323c2691a"
+    },
+    "original_knowledge_input": {
+      "path": "knowledge-input.json",
+      "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba"
+    },
+    "original_export_error_type": "PermissionError",
+    "private_inputs": {
+      "result": {
+        "sha256": "7ace6b13407100cfe210f3040f1a9603701f71e4d0b66603278139b458d01248",
+        "bytes": 10391
+      },
+      "spec": {
+        "sha256": "e70515bd2d9cbffbf883619b98dd1a073fa05f6663f20815f0a60d95cb359257",
+        "bytes": 8614
+      },
+      "patch": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "request_audit": {
+        "sha256": "95b3132a6d5e67ca17a870ae383d783e9319c9cee2544c331e5b6af671564c96",
+        "bytes": 12579
+      },
+      "action_audit": null,
+      "checkpoint": {
+        "sha256": "09e0a3e610b8ed7a3b635d299ae95c5b2b8b6b2e16b109d44d72aa75cf4f0146",
+        "bytes": 23598
+      }
+    },
+    "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+    "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+    "recovered_counters": {
+      "context_requests": 1,
+      "attempt_started": true,
+      "attempted_count": 1
+    },
+    "recovery_script_sha256": "6cf5706424478ad81bffbc5cc95928fd440bbf709bc04362c0ded6d9714872fc"
+  }
+}

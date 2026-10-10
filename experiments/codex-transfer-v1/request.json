@@ -1,1 +1,12 @@
-{"schema":1,"stage":"targets-last","manifests":["experiments/codex-transfer-v1/targets/last-baseline-empty-r1/repository-ablation.json","experiments/codex-transfer-v1/targets/last-retrieval-empty-r1/repository-ablation.json","experiments/codex-transfer-v1/targets/last-retrieval-verified-r1/repository-ablation.json","experiments/codex-transfer-v1/targets/last-baseline-empty-r2/repository-ablation.json","experiments/codex-transfer-v1/targets/last-retrieval-empty-r2/repository-ablation.json","experiments/codex-transfer-v1/targets/last-retrieval-verified-r2/repository-ablation.json"]}
+{
+  "schema": 1,
+  "stage": "targets-split-and-supplement",
+  "manifests": [
+    "experiments/codex-transfer-v1/targets/split-baseline-empty-r1/repository-ablation.json",
+    "experiments/codex-transfer-v1/targets/split-retrieval-empty-r1/repository-ablation.json",
+    "experiments/codex-transfer-v1/targets/split-baseline-empty-r2/repository-ablation.json",
+    "experiments/codex-transfer-v1/targets/split-retrieval-empty-r2/repository-ablation.json",
+    "experiments/codex-transfer-v1/targets/split-baseline-empty-r3/repository-ablation.json",
+    "experiments/codex-transfer-v1/targets/split-retrieval-empty-r3/repository-ablation.json"
+  ]
+}

@@ -1,0 +1,175 @@
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..36886ae 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -1647,9 +1647,9 @@ def split_before(iterable, pred, maxsplit=-1):
+         yield buf
+ 
+ 
+-def split_after(iterable, pred, maxsplit=-1):
+-    """Yield lists of items from *iterable*, where each list ends with an
+-    item where callable *pred* returns ``True``:
++def split_after(iterable, pred, maxsplit=-1, *, keep_separator=True):
++    """Yield lists of items from *iterable*, splitting after each item
++    for which callable *pred* returns ``True``:
+ 
+         >>> list(split_after('one1two2', lambda s: s.isdigit()))
+         [['o', 'n', 'e', '1'], ['t', 'w', 'o', '2']]
+@@ -1657,12 +1657,31 @@ def split_after(iterable, pred, maxsplit=-1):
+         >>> list(split_after(range(10), lambda n: n % 3 == 0))
+         [[0], [1, 2, 3], [4, 5, 6], [7, 8, 9]]
+ 
++    By default, *keep_separator* is ``True`` and separators are included.
++    Set this keyword-only option to ``False`` to omit each item that triggers
++    a split. Leading and consecutive separators produce empty lists, but a
++    final separator does not produce an extra trailing list. Empty input
++    produces no lists:
++
++        >>> list(split_after([0, 1, 0, 0, 2, 0], lambda n: n == 0,
++        ...                  keep_separator=False))
++        [[], [1], [], [2]]
++
+     At most *maxsplit* splits are done. If *maxsplit* is not specified or -1,
+     then there is no limit on the number of splits:
+ 
+         >>> list(split_after(range(10), lambda n: n % 3 == 0, maxsplit=2))
+         [[0], [1, 2, 3], [4, 5, 6, 7, 8, 9]]
+ 
++    Once the limit is reached, the remaining tail is returned unchanged,
++    including later separators, without calling *pred*. With *maxsplit=0*,
++    the entire nonempty input is returned as one list without calling *pred*:
++
++        >>> list(split_after([1, 0, 2, 0], lambda n: n == 0, maxsplit=1,
++        ...                  keep_separator=False))
++        [[1], [2, 0]]
++
++    Input is consumed lazily: yielding a list does not read past its boundary.
+     """
+     if maxsplit == 0:
+         buf = list(iterable)
+@@ -1674,7 +1693,9 @@ def split_after(iterable, pred, maxsplit=-1):
+     it = iter(iterable)
+     for item in it:
+         buf.append(item)
+-        if pred(item) and buf:
++        if pred(item):
++            if not keep_separator:
++                buf.pop()
+             yield buf
+             if maxsplit == 1:
+                 buf = list(it)
+diff --git a/tests/test_more.py b/tests/test_more.py
+index 9ecdd06..a77997f 100644
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -1668,6 +1668,110 @@ class SplitBeforeTest(TestCase):
+ class SplitAfterTest(TestCase):
+     """Tests for ``split_after()``"""
+ 
++    def test_drop_separator(self):
++        cases = [
++            ([], []),
++            ([1, 2], [[1, 2]]),
++            ([0], [[]]),
++            ([0, 0], [[], []]),
++            ([0, 1, 0, 0, 2, 0], [[], [1], [], [2]]),
++            ([1, 0, 2], [[1], [2]]),
++        ]
++        for values, expected in cases:
++            with self.subTest(values=values):
++                self.assertEqual(
++                    list(mi.split_after(
++                        iter(values), lambda x: x == 0, keep_separator=False
++                    )),
++                    expected,
++                )
++
++    def test_drop_separator_maxsplit(self):
++        for values, limit, expected in [
++            ([1, 0, 2, 0], 0, [[1, 0, 2, 0]]),
++            ([], 0, []),
++            ([0], 1, [[]]),
++            ([1, 0, 2, 0], 1, [[1], [2, 0]]),
++            ([0, 0, 2, 0], 2, [[], [], [2, 0]]),
++            ([0, 0], 3, [[], []]),
++        ]:
++            with self.subTest(values=values, limit=limit):
++                self.assertEqual(
++                    list(mi.split_after(
++                        iter(values), lambda x: x == 0, limit,
++                        keep_separator=False,
++                    )),
++                    expected,
++                )
++
++    def test_separator_option_laziness(self):
++        for keep in (False, True):
++            with self.subTest(keep_separator=keep):
++                pulled, tested = [], []
++
++                def values():
++                    for value in [0, 1, 0, 2, 0]:
++                        pulled.append(value)
++                        yield value
++
++                def predicate(value):
++                    tested.append(value)
++                    return value == 0
++
++                chunks = mi.split_after(
++                    values(), predicate, 2, keep_separator=keep
++                )
++                self.assertEqual(pulled, [])
++                self.assertEqual(tested, [])
++                self.assertEqual(next(chunks), [0] if keep else [])
++                self.assertEqual(pulled, [0])
++                self.assertEqual(tested, [0])
++                self.assertEqual(next(chunks), [1, 0] if keep else [1])
++                self.assertEqual(pulled, [0, 1, 0])
++                self.assertEqual(tested, [0, 1, 0])
++                self.assertEqual(list(chunks), [[2, 0]])
++                self.assertEqual(pulled, [0, 1, 0, 2, 0])
++                self.assertEqual(tested, [0, 1, 0])
++
++    def test_zero_maxsplit_bypasses_predicate(self):
++        def predicate(value):
++            self.fail('predicate must not be called')
++
++        for keep in (False, True):
++            for values in ([], [0, 1, 0]):
++                with self.subTest(keep_separator=keep, values=values):
++                    self.assertEqual(
++                        list(mi.split_after(
++                            iter(values), predicate, 0, keep_separator=keep
++                        )),
++                        [values] if values else [],
++                    )
++
++    def test_keep_separator_keyword_only(self):
++        with self.assertRaises(TypeError):
++            mi.split_after([], bool, -1, False)
++
++    def test_drop_separator_predicate_exception(self):
++        def predicate(value):
++            raise RuntimeError('predicate failure')
++
++        with self.assertRaisesRegex(RuntimeError, 'predicate failure'):
++            next(mi.split_after([1], predicate, keep_separator=False))
++
++    def test_drop_separator_iterator_exception(self):
++        def values():
++            yield 0
++            raise RuntimeError('iterator failure')
++
++        for limit in (-1, 1):
++            with self.subTest(maxsplit=limit):
++                chunks = mi.split_after(
++                    values(), lambda x: x == 0, limit, keep_separator=False
++                )
++                self.assertEqual(next(chunks), [])
++                with self.assertRaisesRegex(RuntimeError, 'iterator failure'):
++                    next(chunks)
++
+     def test_starts_with_sep(self):
+         actual = list(mi.split_after('xooxoo', lambda c: c == 'x'))
+         expected = [['x'], ['o', 'o', 'x'], ['o', 'o']]

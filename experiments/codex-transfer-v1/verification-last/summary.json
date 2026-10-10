@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "request_sha256": "3e0dc0a7082507b059cc74108001c513e3513648d2f7ee4c8da241c4981d2f43",
+  "trials": [
+    {
+      "label": "last-baseline-empty-r1",
+      "manifest_sha256": "572ebc0a2ad9326f6779a653033ca5aef6c175798d576268a49b7fb1995d8242",
+      "delivery_successes": 1,
+      "infrastructure_failures": 0
+    },
+    {
+      "label": "last-retrieval-empty-r1",
+      "manifest_sha256": "33423dec2a3e3b0dc10c9e272255edb84b99fe1523f4012ee53356a44c981d95",
+      "delivery_successes": 0,
+      "infrastructure_failures": 0
+    },
+    {
+      "label": "last-retrieval-verified-r1",
+      "manifest_sha256": "7dddb8eaddf22887297ecddd433b78e6f0d732311bdf8eef2cbfe63ab1886a2e",
+      "delivery_successes": 1,
+      "infrastructure_failures": 0
+    },
+    {
+      "label": "last-baseline-empty-r2",
+      "manifest_sha256": "56e2abbce7d18d3faa9169b1bf6b64f4353c878f70779b4945cd11b8cfc7c5d0",
+      "delivery_successes": 1,
+      "infrastructure_failures": 0
+    },
+    {
+      "label": "last-retrieval-empty-r2",
+      "manifest_sha256": "dbbb5443b3bac962f8763c95a78aaca50532b96a0bc8a7273494d3b38d284149",
+      "delivery_successes": 0,
+      "infrastructure_failures": 0
+    },
+    {
+      "label": "last-retrieval-verified-r2",
+      "manifest_sha256": "6ee0e8b27486bf92af222ec8ffab6ab3defaeb9f145f0cd054a58e85c420688d",
+      "delivery_successes": 1,
+      "infrastructure_failures": 0
+    }
+  ]
+}
