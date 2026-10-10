@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "kind": "real_codex_source_trial",
+  "fixture": false,
+  "source_commit": "564d8e36fc510896c791f09457cc01775572603d",
+  "source_tracked_tree_clean": true,
+  "source_task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+  "source_task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+  "model_name": "gpt-6-astra",
+  "provider": "codex_cli",
+  "label": "codex-cli-proof-v2",
+  "model_call_unit": "cli_invocations",
+  "underlying_transport_request_count": null,
+  "usage_scope": "CLI-reported completed turns; internal transport retries may have unreported usage",
+  "complete": false,
+  "delivery_success": null,
+  "official_resolved": null,
+  "attempt_started": true,
+  "attempted_count": 1,
+  "context_requests": 24,
+  "usage": {
+    "complete": true,
+    "input_tokens": 301010,
+    "output_tokens": 543,
+    "calls_with_usage": 24,
+    "unknown_requests": 0
+  },
+  "model_calls": 24,
+  "scope": "one source-only attempt; independent Docker and official grading are separate",
+  "budgets": {
+    "max_steps": 24,
+    "selected_context_byte_budget": 32000,
+    "wall_seconds": 1800,
+    "request_timeout": 120,
+    "generation_token_cap_enforced": false,
+    "seed_enforced": false,
+    "cli_prompt_overhead_in_selected_context_budget": false,
+    "output_and_protocol_reserve": 3048,
+    "reasoning_effort": "low"
+  },
+  "model_status": "stopped",
+  "exit_status": "LimitsExceeded",
+  "model_identity": {
+    "kind": "codex_cli",
+    "model": "gpt-6-astra",
+    "cli_version": "codex-cli 0.154.0",
+    "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+    "weight_digest_available": false,
+    "reasoning_effort": "low"
+  },
+  "seconds": 357.88484950001293,
+  "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "patch_valid": true,
+  "error_type": null,
+  "submitted": false,
+  "action_audit": {
+    "available": true,
+    "complete": true,
+    "actions": 24,
+    "kind_counts": {
+      "delivery-file/list": 5,
+      "delivery-file/search": 7,
+      "delivery-file/read": 12
+    },
+    "private_audit_sha256": "fc59b323fb74244a511b93d75cbd1b64af250b3bb71627001af3e1913ef6ac23",
+    "public_audit_sha256": "7ac2acbdd245ba8f6a7b055ed56b61438fda9ad41c939ebc21edd306ce3a81d7"
+  },
+  "official_export": {
+    "submitted_count": 0,
+    "attempted_count": 1,
+    "agent_failure_count": 1,
+    "empty_patch_count": 0,
+    "official_resolved": null,
+    "original_public_task_sha256": "3ff859fc9db6c152cbcda6a777e3035f88b63798321519d3f22d30e7932cb892",
+    "source_result_sha256": "8ff94097b7637e2dc32d29a95279c1c44957d8bf79478826d9ac521b4c17b7d0"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "fixture": false,
+  "provider": "codex_cli",
+  "status": "stopped",
+  "exit_status": "LimitsExceeded",
+  "seconds": 357.88484950001293,
+  "patch_valid": true,
+  "profile": "recent",
+  "model_name": "gpt-6-astra",
+  "model_digest": null,
+  "model_identity": {
+    "kind": "codex_cli",
+    "model": "gpt-6-astra",
+    "cli_version": "codex-cli 0.154.0",
+    "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+    "weight_digest_available": false,
+    "reasoning_effort": "low"
+  },
+  "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "task_hash": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+  "model_call_unit": "cli_invocations",
+  "underlying_transport_request_count": null,
+  "usage_scope": "CLI-reported completed turns; internal transport retries may have unreported usage",
+  "error_type": null,
+  "usage": {
+    "complete": true,
+    "input_tokens": 301010,
+    "output_tokens": 543,
+    "calls_with_usage": 24,
+    "unknown_requests": 0
+  },
+  "model_calls": 24,
+  "context_requests": 24,
+  "verification_status": "deferred",
+  "inference_backend": "files",
+  "cost_source": "chatgpt_plan_unpriced",
+  "monetary_cost": {
+    "currency": "USD",
+    "reported_total": null,
+    "known_subtotal": 0.0,
+    "responses_with_known_cost": 0,
+    "responses_with_unknown_cost": 24,
+    "requests_without_cost_response": 0,
+    "complete": false,
+    "cost_limit_scope": "known_costs_only; unknown costs are not bounded by the monetary limit"
+  },
+  "action_audit": {
+    "available": true,
+    "complete": true,
+    "actions": 24,
+    "kind_counts": {
+      "delivery-file/list": 5,
+      "delivery-file/search": 7,
+      "delivery-file/read": 12
+    },
+    "private_audit_sha256": "fc59b323fb74244a511b93d75cbd1b64af250b3bb71627001af3e1913ef6ac23",
+    "public_audit_sha256": "7ac2acbdd245ba8f6a7b055ed56b61438fda9ad41c939ebc21edd306ce3a81d7"
+  },
+  "implementation_sha256": "156d950e12d7daadb444f5689fd5a65b5a5a7224e7c3c040896967bb8f5b5277",
+  "configuration_sha256": "75ef615e67e96eaf895616b00f809e7778de1454936c3560ed94ddb7cbc63d53",
+  "budgets": {
+    "max_steps": 24,
+    "selected_context_byte_budget": 32000,
+    "wall_seconds": 1800,
+    "request_timeout": 120,
+    "generation_token_cap_enforced": false,
+    "seed_enforced": false,
+    "cli_prompt_overhead_in_selected_context_budget": false,
+    "output_and_protocol_reserve": 3048,
+    "reasoning_effort": "low"
+  }
+}

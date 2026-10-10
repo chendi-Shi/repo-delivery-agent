@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "kind": "github_actions_engineering_validation",
+  "model_performance_evidence": false,
+  "source_commit": "564d8e36fc510896c791f09457cc01775572603d",
+  "run_id": 38021345202,
+  "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202",
+  "observed_at_utc": "2026-10-10T03:44:39Z",
+  "conclusion": "success",
+  "completed_jobs": 4,
+  "successful_jobs": 4,
+  "provenance": "GitHub connector completed job statuses and decoded job logs; exact checkout source SHA independently confirmed in all four job logs",
+  "raw_logs_included": false,
+  "unit_test_count_per_platform": 317,
+  "unit_test_platforms": 2,
+  "jobs": [
+    {
+      "job_id": 114122808965,
+      "name": "docker-integration",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202/job/114122808965",
+      "status": "completed",
+      "conclusion": "success",
+      "checkout_source_sha": "564d8e36fc510896c791f09457cc01775572603d",
+      "checkout_source_sha_confirmed": true,
+      "observed_log_span": {
+        "first_timestamp_utc": "2026-10-10T03:39:45.3155048Z",
+        "last_timestamp_utc": "2026-10-10T03:40:36.9612116Z",
+        "seconds": 51.646,
+        "duration_scope": "Difference between first and last timestamp in downloaded job log, rounded to milliseconds; not GitHub queue time or a provider measurement"
+      },
+      "tests": null,
+      "skipped": null,
+      "fixture": true,
+      "docker_smoke_passed": true,
+      "docker_recovery_smoke_passed": true,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "smoke_checks": [
+        "persistent session",
+        "read-only Git metadata",
+        "disabled container network",
+        "new-file patch export",
+        "fresh patch application",
+        "independent container check"
+      ],
+      "recovery_checks": [
+        "real process crash",
+        "same container reattachment",
+        "isolation identity validation",
+        "completed action not repeated",
+        "budget/history continuation",
+        "submission after recovery",
+        "resumed container cleanup"
+      ],
+      "scope": "Actual Docker execution and crash recovery with deterministic fixture model responses; no unittest count is reported for these smoke scripts, and these are not model performance results"
+    },
+    {
+      "job_id": 114122809078,
+      "name": "unit (ubuntu-latest)",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202/job/114122809078",
+      "status": "completed",
+      "conclusion": "success",
+      "checkout_source_sha": "564d8e36fc510896c791f09457cc01775572603d",
+      "checkout_source_sha_confirmed": true,
+      "observed_log_span": {
+        "first_timestamp_utc": "2026-10-10T03:39:45.4006870Z",
+        "last_timestamp_utc": "2026-10-10T03:40:57.6083914Z",
+        "seconds": 72.208,
+        "duration_scope": "Difference between first and last timestamp in downloaded job log, rounded to milliseconds; not GitHub queue time or a provider measurement"
+      },
+      "tests": 317,
+      "skipped": 0,
+      "seconds": 34.698,
+      "duration_scope": "Unittest suite runtime reported by unittest, not the full CI job duration",
+      "log_result": "Ran 317 tests in 34.698s; OK"
+    },
+    {
+      "job_id": 114122809108,
+      "name": "unit (windows-latest)",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202/job/114122809108",
+      "status": "completed",
+      "conclusion": "success",
+      "checkout_source_sha": "564d8e36fc510896c791f09457cc01775572603d",
+      "checkout_source_sha_confirmed": true,
+      "observed_log_span": {
+        "first_timestamp_utc": "2026-10-10T03:39:47.5535785Z",
+        "last_timestamp_utc": "2026-10-10T03:43:31.2027222Z",
+        "seconds": 223.649,
+        "duration_scope": "Difference between first and last timestamp in downloaded job log, rounded to milliseconds; not GitHub queue time or a provider measurement"
+      },
+      "tests": 317,
+      "skipped": 0,
+      "seconds": 100.981,
+      "duration_scope": "Unittest suite runtime reported by unittest, not the full CI job duration",
+      "log_result": "Ran 317 tests in 100.981s; OK"
+    },
+    {
+      "job_id": 114122809119,
+      "name": "real-model-patch-verification",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202/job/114122809119",
+      "status": "completed",
+      "conclusion": "success",
+      "checkout_source_sha": "564d8e36fc510896c791f09457cc01775572603d",
+      "checkout_source_sha_confirmed": true,
+      "observed_log_span": {
+        "first_timestamp_utc": "2026-10-10T03:39:45.4186662Z",
+        "last_timestamp_utc": "2026-10-10T03:40:07.6206186Z",
+        "seconds": 22.202,
+        "duration_scope": "Difference between first and last timestamp in downloaded job log, rounded to milliseconds; not GitHub queue time or a provider measurement"
+      },
+      "tests": null,
+      "skipped": null,
+      "input_manifest": "experiments/round-2-3b/repository-ablation.json",
+      "verification_summary": {
+        "attempts": 6,
+        "submitted": 0,
+        "public_delivery_denominator": 3,
+        "no_public_checks_attempts": 3,
+        "delivery_successes": 0,
+        "public_delivery_rate": 0,
+        "delivery_rate_all_attempts": null
+      },
+      "scope": "Independent verification of retained earlier model patches; successful job execution does not mean successful task delivery, and this is not the new Codex trial"
+    }
+  ],
+  "limitations": [
+    "The same 317-test suite ran on two platforms; this is not a claim of 634 distinct tests.",
+    "Codex transport tests use a deterministic child-process protocol fixture; CI does not use the user's ChatGPT credentials or establish genuine model task success.",
+    "CLI/network inference trials and their independent task/official grading must be reported separately.",
+    "Null test/skip counts on smoke and verification jobs mean not applicable, not zero exercised checks."
+  ]
+}

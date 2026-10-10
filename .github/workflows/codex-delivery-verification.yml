@@ -2,7 +2,7 @@ name: independent verification of Codex model patches
 on:
   push:
     branches: [main]
-    paths: ['experiments/codex-cli-proof-v1/**']
+    paths: ['experiments/codex-cli-proof-v*/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -13,6 +13,10 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        round: [codex-cli-proof-v1, codex-cli-proof-v2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,13 +25,13 @@ jobs:
       - name: Reapply the real saved patch and execute frozen public checks
         run: >-
           python scripts/grade_experiments.py
-          --manifest experiments/codex-cli-proof-v1/repository-ablation.json
-          --output runs/codex-public-verification.json --pull-images
+          --manifest experiments/${{ matrix.round }}/repository-ablation.json
+          --output runs/${{ matrix.round }}-verification.json --pull-images
       - name: Retain independent outcomes including failures
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: codex-public-verification-${{ github.run_id }}-${{ github.run_attempt }}
-          path: runs/codex-public-verification.json
+          name: ${{ matrix.round }}-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/${{ matrix.round }}-verification.json
           if-no-files-found: error
           retention-days: 30

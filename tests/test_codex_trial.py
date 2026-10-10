@@ -27,11 +27,13 @@ class CodexTrialTests(unittest.TestCase):
         self.usage = {'complete': False, 'input_tokens': 31, 'output_tokens': 7,
                       'calls_with_usage': 1, 'unknown_requests': 1}
 
-    def run_trial(self, public, *, audit, identity=True, setup_failure=False, export_failure=None):
+    def run_trial(self, public, *, audit, identity=True, setup_failure=False, export_failure=None, profile=None):
         private = public.parent / (public.name + '-private')
 
         def run(task, config, trial):
             self.assertIsNone(config.codex_binary)  # None enables the adapter's PATH discovery.
+            self.assertEqual(config.profile, profile or 'recent')
+            self.assertEqual(trial.name, self.task.instance_id + '-' + (profile or 'recent') + '-fixture')
             self.assertEqual(task, self.task)
             trial.mkdir(parents=True)
             (trial / 'model.patch').write_bytes(b'')
@@ -59,6 +61,8 @@ class CodexTrialTests(unittest.TestCase):
               patch.object(runner, 'run_repository', side_effect=run)):
             argv = ['--task', str(self.root / 'task.json'), '--output', str(private),
                     '--evidence', str(public), '--label', 'fixture']
+            if profile is not None:
+                argv += ['--profile', profile]
             if export_failure is not None:
                 with patch.object(runner, 'export_action_audit', side_effect=export_failure):
                     return runner.main(argv)
@@ -113,6 +117,19 @@ class CodexTrialTests(unittest.TestCase):
                     self.assertIsNone(saved['attempt_started'])
                     self.assertEqual(saved['attempt_accounting'], 'unknown_inconsistent_request_audit')
                     self.assertFalse((public / 'model-runs').exists())
+
+    def test_selected_profile_reaches_runtime_summary_and_exported_evidence(self):
+        for profile in ('baseline', 'retrieval'):
+            with self.subTest(profile=profile):
+                public = self.root / (profile + '-public')
+                self.assertEqual(self.run_trial(public, audit=True, profile=profile), 0)
+                summary = json.loads((public / 'summary.json').read_text(encoding='utf-8'))
+                self.assertEqual(summary['profile'], profile)
+                manifest = json.loads((public / 'repository-ablation.json').read_text(encoding='utf-8'))
+                run = manifest['runs'][0]
+                self.assertEqual(run['id'], self.task.instance_id + '-' + profile + '-fixture')
+                evidence = json.loads((public / run['evidence']).read_text(encoding='utf-8'))
+                self.assertEqual(evidence['profile'], profile)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,51 @@
+{
+  "ollama_version": "0.40.2",
+  "ollama_archive_sha256": "726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04",
+  "model": {
+    "name": "qwen2.5-coder:7b",
+    "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+    "size": 4683087561,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen2",
+      "families": [
+        "qwen2"
+      ],
+      "parameter_size": "7.6B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 32768,
+      "embedding_length": 3584,
+      "runner": "ggml"
+    }
+  },
+  "hardware": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "total_memory_bytes": 8323969024,
+    "agent_container_cpus": 2,
+    "agent_container_memory": "1g"
+  },
+  "preload": "empty generate with explicit configured num_ctx; no task prompt or model-selected action",
+  "prewarm_runtime": {
+    "schema": 1,
+    "kind": "owned_ollama_runtime_sample",
+    "phase": "after_prewarm",
+    "status": "observed",
+    "observed_at_unix_seconds": 1791601754.5410228,
+    "host_memory": {
+      "status": "observed",
+      "mem_available_bytes": 1610649600,
+      "swap_free_bytes": 3221135360
+    },
+    "configured_context_tokens": 16000,
+    "model_runtime": {
+      "name": "qwen2.5-coder:7b",
+      "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+      "context_length": 16000,
+      "size": 5927128268,
+      "size_vram": 0
+    }
+  }
+}

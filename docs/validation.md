@@ -2,6 +2,14 @@
 
 验证日期：2026-10-10。这里分别记录实现契约、真实容器、真实模型、公开检查和官方评分。CI job 成功表示流程执行成功，不能替代模型交付成功。
 
+## Codex 适配与真实尝试
+
+源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 已通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。四个 job 的源码 SHA 均已核对，见 [收据](../experiments/ci-codex-adapter/validation.json)。
+
+首个 Codex 真实尝试在一次成功目录读取后发生 PermissionError，保留实际用量、空补丁和失败状态；原因尚未确定，见 [首轮分析](../experiments/codex-cli-proof-v1/analysis.md)。每轮使用独立目录，后续重跑不能覆盖首轮失败。公开检查和官方评分各自保留验收结果，提交状态不能替代它们。
+
+第三次 7B Docker 试验已完成：14 次调用、38,661/249 tokens、1,882.810 秒，TimeExceeded；没有源码读写或提交，公开检查 0/1，official_resolved=null。10 次历史搜索和 4 次历史读取形成了另一种重复查询，原始证据及分析见 [closure-proof-v3](../experiments/closure-proof-v3/analysis.md)。下面按原验证日期保留历史阶段记录。
+
 ## 新增 Docker 交付验证
 
 最新 [0fcd3a2 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 已通过 Linux 290 项（32.537 秒）、Windows 290 项（99.273 秒），均无 skip；真实 Docker 执行与进程崩溃恢复、既有模型补丁的独立 verifier job 同时通过。四个 job 的 checkout SHA 均匹配 `0fcd3a2490279ada546fdd6918b23d743a7b3e45`，实际日志计数和来源见 [恢复与证据校验 CI 收据](../experiments/ci-closure-recovery/validation.json)。截至 2026-10-10 11:11（北京时间），[单任务模型试验 38019441864](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 仍在推理，[固定队列 38019441857](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行来源任务，尚无本轮交付结论。

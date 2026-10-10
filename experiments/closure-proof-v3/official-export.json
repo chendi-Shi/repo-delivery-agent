@@ -1,0 +1,18 @@
+{
+  "submitted_count": 0,
+  "attempted_count": 1,
+  "agent_failure_count": 1,
+  "empty_patch_count": 0,
+  "status": "exported_real_attempt",
+  "original_public_task_sha256": "3ff859fc9db6c152cbcda6a777e3035f88b63798321519d3f22d30e7932cb892",
+  "model_id": "repo-delivery-qwen2_5-coder-7b",
+  "task_image_and_checks_differ_from_official": true,
+  "submitted": [],
+  "excluded": [
+    {
+      "instance_id": "psf__requests-2931",
+      "reason": "not_submitted"
+    }
+  ],
+  "official_resolved": null
+}

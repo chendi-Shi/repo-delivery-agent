@@ -45,7 +45,7 @@ def export_trial(result, task, opts, trial, public, run_id, summary):
     provenance = result['provenance']
     evidence = {key: result.get(key) for key in ('fixture', 'provider', 'status', 'exit_status',
         'seconds', 'patch_valid')}
-    evidence.update(profile='recent', model_name=opts.model, model_digest=None,
+    evidence.update(profile=opts.profile, model_name=opts.model, model_digest=None,
         model_identity=provenance.get('model_identity'), patch_sha256=sha256(patch), task_hash=task.fingerprint(),
         model_call_unit=summary['model_call_unit'], underlying_transport_request_count=None,
         usage_scope=summary['usage_scope'], error_type=summary['error_type'],
@@ -85,6 +85,7 @@ def main(argv=None):
     parser.add_argument('--task', default='examples/delivery-suite-v1/requests-2931-public.json')
     parser.add_argument('--model', default='gpt-6-astra')
     parser.add_argument('--codex-binary', default=None)
+    parser.add_argument('--profile', choices=['baseline', 'recent', 'retrieval'], default='recent')
     parser.add_argument('--output', required=True)
     parser.add_argument('--evidence', required=True)
     parser.add_argument('--label', required=True)
@@ -106,10 +107,10 @@ def main(argv=None):
     if private.exists() or public.exists():
         parser.error('use new private and public directories for every trial')
     public.mkdir(parents=True)
-    run_id = task.instance_id + '-recent-' + opts.label
+    run_id = task.instance_id + '-' + opts.profile + '-' + opts.label
     trial = private / run_id
     config = SimpleNamespace(model=opts.model, codex_binary=opts.codex_binary, reasoning_effort='low',
-        profile='recent', max_steps=opts.max_steps, wall_seconds=opts.wall_seconds,
+        profile=opts.profile, max_steps=opts.max_steps, wall_seconds=opts.wall_seconds,
         context_tokens=opts.context_tokens, max_output_tokens=2048, request_timeout=opts.request_timeout,
         command_timeout=60, seed=42, cost_limit=3.0, cost_tracking=None, api_base=None,
         provider='codex_cli', backend='files', ollama_mode='json', skills=[], knowledge_db=None)
@@ -117,7 +118,7 @@ def main(argv=None):
         'source_commit': git(ROOT, 'rev-parse', 'HEAD').stdout.decode().strip(),
         'source_tracked_tree_clean': not bool(git(ROOT, 'status', '--porcelain', '--untracked-files=no').stdout.strip()),
         'source_task_sha256': sha256(original), 'source_task_fingerprint': task.fingerprint(),
-        'model_name': opts.model, 'provider': 'codex_cli', 'label': opts.label,
+        'model_name': opts.model, 'provider': 'codex_cli', 'profile': opts.profile, 'label': opts.label,
         'model_call_unit': 'cli_invocations', 'underlying_transport_request_count': None,
         'usage_scope': 'CLI-reported completed turns; internal transport retries may have unreported usage',
         'complete': False, 'delivery_success': None, 'official_resolved': None,

@@ -1,0 +1,75 @@
+{
+  "fixture": false,
+  "provider": "ollama_native",
+  "status": "stopped",
+  "exit_status": "TimeExceeded",
+  "seconds": 1882.81046854,
+  "error_type": null,
+  "patch_valid": true,
+  "profile": "recent",
+  "model_name": "ollama_chat/qwen2.5-coder:7b",
+  "model_digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+  "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "task_hash": "f1b9ca1ff4e53d8bfd1a36cd2daec029008f6d607f08f777b2617c8d1721bf97",
+  "effective_task_fingerprint": "aebe7a2a3f1dd01c3f51c42aabd8739cf9113b092b5bb93c090661de7697f7ff",
+  "usage": {
+    "complete": true,
+    "input_tokens": 38661,
+    "output_tokens": 249,
+    "calls_with_usage": 14,
+    "unknown_requests": 0
+  },
+  "context_requests": 14,
+  "model_calls": 14,
+  "verification_status": "deferred",
+  "internal_verification_status": "failed",
+  "internal_public_checks": [
+    {
+      "command": "python -c 'from pathlib import Path\nfrom urllib.parse import parse_qs\nimport requests\nassert Path(requests.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test frozen checkout\"\nurl = \"http://example.invalid/upload\"\nfor text in (\"normal text\", \"caf\\u00e9\"):\n    prepared = requests.Request(\"PUT\", url, data=text).prepare()\n    assert prepared.body == text and isinstance(prepared.body, str)\nprepared = requests.Request(\"POST\", url, data={\"a\": \"1\", \"b\": \"two words\"}).prepare()\nassert parse_qs(prepared.body) == {\"a\": [\"1\"], \"b\": [\"two words\"]}\nassert prepared.headers[\"Content-Type\"] == \"application/x-www-form-urlencoded\"\nprepared = requests.Request(\"POST\", url, data=[(\"x\", \"1\"), (\"x\", \"2\")]).prepare()\nassert parse_qs(prepared.body) == {\"x\": [\"1\", \"2\"]}\nprepared = requests.Request(\"POST\", url, data=None).prepare()\nassert prepared.body is None and prepared.headers[\"Content-Length\"] == \"0\"\nprepared = requests.Request(\"GET\", url, params={\"q\": \"text\"}).prepare()\nassert prepared.url.endswith(\"?q=text\")\nprint(\"offline text and form compatibility passed\")\n'",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -c 'from pathlib import Path\nimport requests\nassert Path(requests.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test frozen checkout\"\npayloads = (\n    \"\\u00f6\\u00f6\\u00f6\".encode(\"utf-8\"),\n    b\"\\x00\\xff\\x80\\xfe\",\n    bytes(range(256)),\n    b\"plain ascii bytes\",\n)\nfor method in (\"PUT\", \"POST\"):\n    for payload in payloads:\n        prepared = requests.Request(method, \"http://example.invalid/upload\", data=payload,\n                                    headers={\"Content-Type\": \"application/octet-stream\"}).prepare()\n        assert isinstance(prepared.body, bytes), \"binary body must remain bytes\"\n        assert prepared.body == payload, \"binary payload was changed\"\n        assert prepared.headers[\"Content-Length\"] == str(len(payload))\n        assert prepared.headers[\"Content-Type\"] == \"application/octet-stream\"\n        assert prepared.method == method\nprint(\"offline binary payload contract passed\")\n'",
+      "returncode": 1,
+      "passed": false
+    }
+  ],
+  "inference_backend": "docker",
+  "cost_source": "unpriced_local",
+  "implementation_sha256": "a5e060d59c24abb9de5581e311acf97b8b910233e1606fd6a230e17b577d4f0c",
+  "configuration_sha256": "5d43bacc18a9465455c9f1660a5016c35978853e4a862ce44d0d4e780e97cff2",
+  "budgets": {
+    "max_steps": 24,
+    "context_tokens": 16000,
+    "max_output_tokens": 1500,
+    "wall_seconds": 1800,
+    "request_timeout": 300,
+    "command_timeout": 90,
+    "seed": 42,
+    "cost_limit": 3.0
+  },
+  "action_audit": {
+    "available": true,
+    "complete": true,
+    "actions": 14,
+    "kind_counts": {
+      "delivery-history/search": 10,
+      "delivery-history/read": 4
+    },
+    "private_audit_sha256": "d370206b0281b46ae15c4c855925653653ed5612fa8256788a6550b3b6c548ac",
+    "public_audit_sha256": "9469b21960bbf0a6efffc7f01236d98f96717ca042c5f3f1e23d03bbce387acb"
+  },
+  "bindings": {
+    "source_task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+    "source_task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+    "effective_task_fingerprint": "aebe7a2a3f1dd01c3f51c42aabd8739cf9113b092b5bb93c090661de7697f7ff",
+    "public_task_fingerprint": "f1b9ca1ff4e53d8bfd1a36cd2daec029008f6d607f08f777b2617c8d1721bf97",
+    "public_base_reference": "python:3.8-slim",
+    "public_base_digest": "python@sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382f29c5a613f",
+    "public_base_image_id": "sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed17f45ee3",
+    "inference_image_id": "sha256:978eca6e18eccd38ae0ff73ac49efcccd99e8b2a0ea228767a14f89407efdfad",
+    "operator_dockerfile_sha256": "e685961364ad3529f7f123e7ad599952868aad90a91eeb781c04b2930b1c1f66",
+    "image_policy": "tools added outside the agent; inference image differs from portable public verifier base"
+  }
+}

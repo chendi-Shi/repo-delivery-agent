@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "kind": "operator_public_baseline",
+  "model_free": true,
+  "llm_calls": 0,
+  "task_fingerprint": "f1b9ca1ff4e53d8bfd1a36cd2daec029008f6d607f08f777b2617c8d1721bf97",
+  "public_base_reference": "python@sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382f29c5a613f",
+  "resolved_image_id": "sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed17f45ee3",
+  "checks": [
+    {
+      "ordinal": 1,
+      "command_sha256": "56a47f1515cf13486086ce632021ab4610d03edfb6a4dcf7d1d05c9cb6d9226f",
+      "returncode": 0,
+      "passed": true,
+      "output_sha256": "a6bb48fe0309dd6d60312082af039dc141cf0a523969f6a7487f6a41a54a413c",
+      "output_preview": "offline text and form compatibility passed\n",
+      "observed_exception_types": []
+    },
+    {
+      "ordinal": 2,
+      "command_sha256": "1f907b653e18c08b7c7f207cab868b207b07b15b016cb9569a3796689cf56c02",
+      "returncode": 1,
+      "passed": false,
+      "output_sha256": "a444ceb1e683e15de998908620dcf75a5d7358eb1e5eb1384b23dda5ec790c02",
+      "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 12, in <module>\n  File \"/workspace/requests/models.py\", line 239, in prepare\n    p.prepare(\n  File \"/workspace/requests/models.py\", line 296, in prepare\n    self.prepare_body(data, files, json)\n  File \"/workspace/requests/models.py\", line 447, in prepare_body\n    body = self._encode_params(data)\n  File \"/workspace/requests/models.py\", line 84, in _encode_params\n    return to_native_string(data)\n  File \"/workspace/requests/utils.py\", line 700, in to_native_string\n    out = string.decode(encoding)\nUnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 0: ordinal not in range(128)\n",
+      "observed_exception_types": [
+        "UnicodeDecodeError"
+      ]
+    }
+  ],
+  "initial_check_passed": true,
+  "feature_gap_confirmed": true,
+  "unknown_failure": false,
+  "scope": "registered public checks before model inference; excluded from model trial denominator"
+}

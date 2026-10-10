@@ -27,6 +27,7 @@ python scripts/run_codex_trial.py `
   --output runs/codex-cli-proof-v1 `
   --evidence experiments/codex-cli-proof-v1 `
   --label v1 `
+  --profile recent `
   --max-steps 24 `
   --context-tokens 32000 `
   --wall-seconds 1800 `
@@ -34,6 +35,8 @@ python scripts/run_codex_trial.py `
 ```
 
 这只是复现命令，不是已完成结果。每次试验使用全新的输出和证据目录；模型名称必须是该账号实际可用的显式名称。`gpt-6-astra` 是本次配置的远程别名，不是所有账号均可用的承诺。
+
+`--profile` 接受 `baseline`、`recent` 和 `retrieval`，默认 `recent`。`baseline` 保留历史，在超预算时明确停止；`recent` 和 `retrieval` 选择历史视图。切换策略或预算属于新的试验配置，必须使用新目录并记录变化，不能覆盖先前失败或直接推断策略收益。
 
 `runs/` 被 Git 忽略，用来保存工作副本、完整轨迹、请求视图和检查点。`experiments/` 只接收经过筛选的任务、补丁、动作审计、用量和配置证据。发布前仍须检查导出内容；忽略目录不是权限隔离机制。推理使用本机认证，独立 CI 验收只需要保存的补丁和公开检查，不需要模型凭据。
 

@@ -199,7 +199,7 @@ python scripts/semantic_smoke.py
 
 新增 [7B Docker 真实交付实验](experiments/closure-proof-v1/analysis.md) 保留了一个确定失败：24 次重复误用 Skill 工具、空补丁、未提交、独立公开验收失败。实际动作审计定位了错误，随后修复 Skill/源码读取指引，并加入依据真实失败记录生成的重复调用反馈；协议测试不能代替后续模型实测。未取得真实模型的官方解题成绩，不能据此宣称成功率提升。
 
-工程验证已在 [0fcd3a2 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 中通过 Windows 和 Linux 各 290 项测试，均无 skip，耗时分别为 99.273 秒和 32.537 秒；真实 Docker 运行、崩溃恢复及既有补丁的独立 verifier job 也通过，匹配源码的收据见 [CI 记录](experiments/ci-closure-recovery/validation.json)。[官方容器合同检查](experiments/official-harness-contract/summary.json) 使用零 LLM 调用的控制补丁，实际评分器报告补丁应用成功、问题未解决、无基础设施错误；它验证评分链路，不进入模型成绩。此前真实模型的 [官方门禁](experiments/official-gate-v02/summary.json) 为 `no_submissions`。截至 2026-10-10 11:11（北京时间），新的 [单任务模型试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 和 [固定队列来源试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行，尚未取得本轮交付结果。各阶段完整证据见 [验证记录](docs/validation.md) 和对应 [GitHub Actions](https://github.com/chendi-Shi/repo-delivery-agent/actions)。
+源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 已通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。匹配源码的日志收据见 [CI 记录](experiments/ci-codex-adapter/validation.json)。这证明工程契约与验收流程，不代表模型修复成功。真实尝试及失败均保存在 [experiments](experiments)；第三次 7B 试验仍陷入历史查询循环，见 [原因分析](experiments/closure-proof-v3/analysis.md)。新接入的 Codex 使用单独的真实任务记录，不与原本的 Ollama 对照合并统计。当前各阶段结论见 [验证记录](docs/validation.md)。
 
 ## 产物与岗位对应
 

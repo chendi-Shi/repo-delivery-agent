@@ -4,7 +4,7 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
-源码提交 [0fcd3a2 的实际 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441913) 已通过 Windows/Linux 各 290 项、0 skip，测试耗时分别为 99.273/32.537 秒，真实 Docker 执行、崩溃恢复和独立 verifier 也通过；证据见 [CI 收据](../experiments/ci-closure-recovery/validation.json)。此前源码推理阶段保留的 19 次真实尝试全部未提交，有公开检查的任务交付为 0/10。两次新增 7B Docker 试验也完整保留：第一次重复误用 Skill 工具；修复后第二次能正确读取 Skill，但又陷入空读取与非法历史搜索交替的循环。两次均为 24 次调用、空补丁、公开验收失败，没有模型官方 resolved 分数。后续修复及效果分别记录，不能把工具调用成功当成交付成功。截至 2026-10-10 11:11（北京时间），[新单任务试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441864) 与 [新固定队列来源试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38019441857) 仍在运行，尚无本轮交付结果。逐题 usage、补丁和 CI 来源见 [验证记录](validation.md)、[第一轮分析](../experiments/closure-proof-v1/analysis.md) 与 [第二轮分析](../experiments/closure-proof-v2/analysis.md)。
+源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 已通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。实际收据见 [CI 记录](../experiments/ci-codex-adapter/validation.json)。三次 7B Docker 试验均未完成提交；第三次出现历史检索反复命中自身输出的循环，详见 [第三轮分析](../experiments/closure-proof-v3/analysis.md)。新增 [Codex 模型适配](codex-provider.md) 保留真实调用与失败，用独立 Docker 和正式评分判断交付。原始失败、用量及后续结果见 [验证记录](validation.md)。
 
 ## 复用了什么，自主实现了什么
 
