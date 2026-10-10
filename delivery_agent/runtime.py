@@ -42,8 +42,10 @@ class DockerSession:
             raise ValueError("Session requires an isolated checkout with real Git metadata")
         # Agent can edit source but cannot inject host Git fsmonitor/clean filters,
         # replace repository identity, or point its metadata at another checkout.
+        # The owned Linux session lasts until explicit cleanup. A fixed sleep
+        # would also charge pre-agent setup time against the agent's wall budget.
         argv += ["--mount", f"type=bind,source={metadata},target=/workspace/.git,readonly",
-                 "-e", "PYTHONDONTWRITEBYTECODE=1", "-e", "HOME=/tmp", self.image_id, "sleep", "3600"]
+                 "-e", "PYTHONDONTWRITEBYTECODE=1", "-e", "HOME=/tmp", self.image_id, "sleep", "infinity"]
         try:
             self.container_id = subprocess.run(argv, check=True, capture_output=True, timeout=120).stdout.decode().strip()
         except BaseException as original:

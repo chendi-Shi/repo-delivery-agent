@@ -422,6 +422,9 @@ def _receipt(value, key, target, arm, plan, root, *, plan_sha256=None, source_at
             _check(source.get("fixture") is not True, "fixture artifacts cannot supply model-effect evidence")
             bound[name] = source
     actual_summary = bound["summary"]
+    requests = _integer(actual_summary.get("observed_provider_requests"), nullable=True)
+    _check(requests is None or (requests > 0) is started,
+           "observed provider request count contradicts whether a model attempt started")
     for field, expected_value in {"instance_id": key[0], "attempt_started": started,
             "attempted_count": attempted, "model_status": status, "status": status,
             "exit_status": exit_status, "model_digest": model["digest"], "seconds": seconds,
@@ -503,7 +506,8 @@ def _receipt(value, key, target, arm, plan, root, *, plan_sha256=None, source_at
             "delivery_success": delivery, "usage_complete": measured,
             "actual_input_tokens": input_tokens if measured else None,
             "actual_output_tokens": output_tokens if measured else None, "actual_model_calls": calls,
-            "actual_seconds": seconds, "knowledge_observed_read": observed, "knowledge_observed_reuse": observed,
+            "actual_seconds": seconds, "observed_provider_requests": requests,
+            "knowledge_observed_read": observed, "knowledge_observed_reuse": observed,
             "knowledge_read_evidence": read_evidence, "artifacts": refs}
 
 
@@ -512,7 +516,8 @@ def _missing(key, target, *, reason="missing_trial"):
             "submitted": None, "infrastructure_failed": None, "attempt_started": None, "attempted_count": None,
             "all_checks_passed": None, "delivery_success": None, "usage_complete": False,
             "actual_input_tokens": None, "actual_output_tokens": None, "actual_model_calls": None,
-            "actual_seconds": None, "knowledge_observed_read": None, "knowledge_observed_reuse": None,
+            "actual_seconds": None, "observed_provider_requests": None,
+            "knowledge_observed_read": None, "knowledge_observed_reuse": None,
             "knowledge_read_evidence": {}, "artifacts": {}}
 
 
@@ -606,7 +611,10 @@ def _sources(plan_keys, observations, root, plan):
         supplied[key] = row
     records = []
     for key in plan_keys:
-        record = {"instance_id": key[0], "seed": key[1], "status": "missing_trial", "submitted": None, "delivery_success": None}
+        record = {"instance_id": key[0], "seed": key[1], "status": "missing_trial", "submitted": None,
+                  "delivery_success": None, "usage_complete": False, "actual_input_tokens": None,
+                  "actual_output_tokens": None, "actual_model_calls": None, "actual_seconds": None,
+                  "observed_provider_requests": None}
         try:
             if key in supplied:
                 value, ref = _reference(root, supplied[key]["receipt"])
@@ -619,6 +627,8 @@ def _sources(plan_keys, observations, root, plan):
                 actual = _receipt(value, (key[0], key[1], source_arm["id"]), target, source_arm, plan, root)
                 record.update(status=actual["status"], submitted=actual["submitted"], delivery_success=actual["delivery_success"],
                               attempt_started=actual["attempt_started"], attempted_count=actual["attempted_count"],
+                              **{field: actual[field] for field in ("usage_complete", "actual_input_tokens", "actual_output_tokens",
+                                  "actual_model_calls", "actual_seconds", "observed_provider_requests")},
                               artifacts=actual["artifacts"], receipt=ref)
         except MissingArtifact:
             record["status"] = "missing_artifact"

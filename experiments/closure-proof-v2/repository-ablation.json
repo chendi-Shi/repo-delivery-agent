@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "kind": "real_model_repository_ablation",
+  "runs": [
+    {
+      "id": "psf__requests-2931-recent-closure-38016237749-1",
+      "task": "model-runs/psf__requests-2931-recent-closure-38016237749-1/task.json",
+      "patch": "model-runs/psf__requests-2931-recent-closure-38016237749-1/model.patch",
+      "evidence": "model-runs/psf__requests-2931-recent-closure-38016237749-1/evidence.json"
+    }
+  ],
+  "limitations": [
+    "One live Docker trial; no fixed actions or answer patch.",
+    "Inference tools image and independently pulled public verifier base differ."
+  ]
+}

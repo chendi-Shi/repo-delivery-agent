@@ -77,12 +77,62 @@ def hardware_metadata():
             "total_memory_bytes": memory, "agent_container_cpus": 2, "agent_container_memory": "1g"}
 
 
+def host_memory_telemetry(path=Path("/proc/meminfo")):
+    """Read only two bounded numeric Linux resource counters."""
+    result = {"status": "unknown", "mem_available_bytes": None, "swap_free_bytes": None}
+    try:
+        with Path(path).open("r", encoding="ascii") as stream:
+            content = stream.read(65537)
+        if len(content) > 65536:
+            raise ValueError("host memory telemetry exceeds bounds")
+        for source, target in (("MemAvailable", "mem_available_bytes"), ("SwapFree", "swap_free_bytes")):
+            values = re.findall(r"^" + source + r":\s+(\d+) kB$", content, re.M)
+            if len(values) == 1 and int(values[0]) <= 2 ** 53 // 1024:
+                result[target] = int(values[0]) * 1024
+        result["status"] = "observed" if all(result[key] is not None for key in
+            ("mem_available_bytes", "swap_free_bytes")) else "unknown"
+    except Exception as exc:
+        result["error_type"] = type(exc).__name__
+    return result
+
+
+def runtime_telemetry(daemon, phase):
+    """Best-effort public allowlist: no other model details, prompts or logs."""
+    value = {"schema": 1, "kind": "owned_ollama_runtime_sample", "phase": phase, "status": "unknown",
+             "observed_at_unix_seconds": time.time(), "host_memory": host_memory_telemetry(),
+             "configured_context_tokens": getattr(daemon, "context_tokens", None), "model_runtime": None}
+    try:
+        expected = daemon.identity["digest"]
+        if not SHA.fullmatch(str(expected)) or not re.fullmatch(r"[A-Za-z0-9_./:-]{1,160}", daemon.model):
+            raise ValueError("runtime telemetry requires a resolved public model identity")
+        response = daemon.request("/api/ps", timeout=5)
+        rows = response.get("models")
+        if not isinstance(rows, list) or len(rows) > 128:
+            raise ValueError("runtime telemetry model list violates bounds")
+        matches = [row for row in rows if isinstance(row, dict) and row.get("name", row.get("model")) == daemon.model
+                   and row.get("digest") == expected]
+        if len(matches) != 1:
+            value["reason"] = "expected_model_not_uniquely_observed"
+            return value
+        row = matches[0]
+        observed = {"name": daemon.model, "digest": expected}
+        for key in ("context_length", "size", "size_vram"):
+            item = row.get(key)
+            observed[key] = item if type(item) is int and 0 <= item <= 2 ** 53 else None
+        value.update(model_runtime=observed, status="observed" if all(observed[key] is not None
+            for key in ("context_length", "size", "size_vram")) else "partial")
+    except Exception as exc:
+        value["error_type"] = type(exc).__name__
+    return value
+
+
 class OwnedOllama:
     """Own an isolated daemon; never borrow or stop another local service."""
     def __init__(self, binary, private_root, *, model, context_tokens):
         self.binary, self.private = Path(binary).resolve(), Path(private_root).resolve()
         self.model, self.context_tokens = model, context_tokens
         self.process, self.log, self.identity = None, None, None
+        self.prewarm_telemetry = None
         self.opener = build_opener(ProxyHandler({}))
 
     def request(self, path, body=None, *, timeout=15):
@@ -135,7 +185,7 @@ class OwnedOllama:
             subprocess.run([str(self.binary), "pull", self.model], stdout=self.log, stderr=subprocess.STDOUT,
                            check=True, timeout=1200, env=environment)
             self.identity = self.current_identity()
-            self.request("/api/generate", {"model": self.model, "stream": False, "keep_alive": "30m"}, timeout=300)
+            self.prewarm()
             self.assert_identity()
             return self
         except BaseException:
@@ -145,6 +195,13 @@ class OwnedOllama:
     def assert_identity(self):
         if self.current_identity()["digest"] != self.identity["digest"]:
             raise ValueError("Ollama weights changed during the experiment")
+
+    def prewarm(self):
+        try:
+            self.request("/api/generate", {"model": self.model, "stream": False, "keep_alive": "30m",
+                                          "options": {"num_ctx": self.context_tokens}}, timeout=300)
+        finally:
+            self.prewarm_telemetry = runtime_telemetry(self, "after_prewarm")
 
     def close(self):
         try:
@@ -246,7 +303,7 @@ def preflight_context(task, args, workspace, knowledge=None):
     from delivery_agent.ollama_model import OllamaModel
     from delivery_agent.skills import SkillRegistry, BUILTIN_SKILLS
     from delivery_agent.toolbox import ToolboxEnvironment
-    from delivery_agent.upstream import (require_upstream, HISTORY_GUIDE, ContextConfig, ContextPolicy,
+    from delivery_agent.upstream import (require_upstream, compose_instance_template, ContextConfig, ContextPolicy,
                                          ContextBudgetExceeded, estimate_tokens, UPSTREAM_VERSION)
     actual_default = require_upstream()
     class TemplateEnvironment:
@@ -263,7 +320,7 @@ def preflight_context(task, args, workspace, knowledge=None):
     inventory = FileEnvironment(workspace).inventory(task.repo.rsplit("/", 1)[-1])
     prompt = task.problem_statement + "\n\n" + inventory + \
         "\n\nPublic checks (independent final benchmark tests are unavailable):\n" + "\n".join(task.public_checks)
-    instance = "{{task}}" + HISTORY_GUIDE + toolbox.guide()
+    instance = compose_instance_template("{{task}}", toolbox=toolbox)
     agent = actual_default(model, environment, system_template=SYSTEM, instance_template=instance,
         step_limit=args.max_steps, cost_limit=args.cost_limit, wall_time_limit_seconds=args.wall_seconds,
         max_consecutive_format_errors=3)
@@ -287,11 +344,13 @@ def preflight_context(task, args, workspace, knowledge=None):
     probe = [*messages, {"role": "assistant", "content": "", "tool_calls": [{"id": "budget-only", "type": "function",
             "function": {"name": "bash", "arguments": '{"command":"budget-only: no execution"}'}}]},
              {"role": "tool", "tool_call_id": "budget-only", "content": "x" * 8000}]
+    receipt["synthetic_ascii_unselected_estimated_budget"] = estimate_tokens(probe)
     try:
         _, selected = policy.select(probe)
         receipt["synthetic_ascii_tool_view_estimated_budget"] = selected["estimated_input_tokens"]
-    except ContextBudgetExceeded:
+    except ContextBudgetExceeded as exc:
         receipt["synthetic_ascii_tool_view_fits"] = False
+        receipt["synthetic_ascii_budget_error"] = str(exc)
     return receipt
 
 
@@ -415,12 +474,13 @@ def export_trial(result, public_task, target, *, profile, budgets, bindings, pri
     internal = result.get("public_checks", [])
     internal_summary = [{key: row.get(key) for key in ("command", "returncode", "passed")}
                         for row in internal if isinstance(row, dict)]
+    measured_usage, measured_calls = normalized_usage(result, private_run)
     evidence = {key: result.get(key) for key in ("fixture", "provider", "status", "exit_status", "seconds", "error_type", "patch_valid")}
     evidence.update(profile=profile, model_name=provenance.get("config", {}).get("model"),
         model_digest=provenance.get("model_digest"), patch_sha256=sha256(patch), task_hash=public_task.fingerprint(),
-        effective_task_fingerprint=provenance.get("task_hash"), usage=(result.get("delivery") or {}).get("usage") or {},
+        effective_task_fingerprint=provenance.get("task_hash"), usage=measured_usage,
         context_requests=context_requests,
-        model_calls=(result.get("delivery") or {}).get("model_calls"),
+        model_calls=measured_calls,
         verification_status="deferred", internal_verification_status=result.get("verification_status"),
         internal_public_checks=internal_summary, inference_backend="docker", cost_source="unpriced_local",
         implementation_sha256=provenance.get("implementation_sha256"),
@@ -485,6 +545,7 @@ def run_proof(args):
         "scope": "one public task; no general effect estimate or official benchmark score"}
     atomic_json(public / "summary.json", summary)
     image = None
+    result = {}
     try:
         effective, public_task, image = prepare_task_image(task, private)
         baseline = run_baseline_checks(public_task, private)
@@ -501,7 +562,8 @@ def run_proof(args):
         with OwnedOllama(args.ollama, private, model=args.model, context_tokens=args.context_tokens) as daemon:
             environment = {"ollama_version": OLLAMA_VERSION, "ollama_archive_sha256": OLLAMA_ARCHIVE_SHA256,
                 "model": daemon.identity, "hardware": summary["hardware"],
-                "preload": "empty generate; no task prompt or model-selected action"}
+                "preload": "empty generate with explicit configured num_ctx; no task prompt or model-selected action",
+                "prewarm_runtime": getattr(daemon, "prewarm_telemetry", None)}
             atomic_json(public / "environment.json", environment)
             bindings = {"source_task_sha256": summary["source_task_sha256"], "source_task_fingerprint": task.fingerprint(),
                         "effective_task_fingerprint": effective.fingerprint(), "public_task_fingerprint": public_task.fingerprint(),
@@ -515,14 +577,19 @@ def run_proof(args):
             summary.update(agent_pipeline_invoked=True, attempt_id="a" + uuid.uuid4().hex,
                 instance_id=task.instance_id, model_digest=daemon.identity["digest"], bindings=bindings,
                 model_status="unknown_started", model_calls=None, usage=None)
+            summary["runtime_telemetry"] = [runtime_telemetry(daemon, "before_agent_pipeline")]
             atomic_json(public / "summary.json", summary)
-            result = run_repository(effective, trial_args, trial)
-            measured_usage, measured_calls = normalized_usage(result)
+            try:
+                result = run_repository(effective, trial_args, trial)
+            finally:
+                summary["runtime_telemetry"].append(runtime_telemetry(daemon, "after_agent_pipeline"))
+                atomic_json(public / "summary.json", summary)
+            measured_usage, measured_calls = normalized_usage(result, trial)
             requested = actual_request_count(trial)
             summary.update(model_status=result.get("status"), exit_status=result.get("exit_status"),
                            seconds=result.get("seconds"), usage=measured_usage, model_calls=measured_calls,
                            attempt_started=requested > 0, attempted_count=int(requested > 0),
-                           observed_provider_requests=requested)
+                           observed_provider_requests=requested, model_error_type=safe_error_type(result.get("error_type")))
             atomic_json(public / "summary.json", summary)
             if requested == 0 or not isinstance(result.get("delivery"), dict):
                 raise ValueError("no complete actual agent outcome; setup failures remain infrastructure unknown")
@@ -556,12 +623,19 @@ def run_proof(args):
         atomic_json(public / "summary.json", summary)
         return summary
     except Exception as exc:
-        summary.update(complete=False, infrastructure_error_type=type(exc).__name__)
+        summary.update(complete=False, runner_error_type=type(exc).__name__,
+                       infrastructure_error_type=safe_error_type(result.get("error_type")) or type(exc).__name__)
         if summary.get("agent_pipeline_invoked"):
             try:
+                measured_usage, measured_calls = normalized_usage(result, trial)
+                summary.update(usage=measured_usage, model_calls=measured_calls)
                 requested = actual_request_count(trial)
+                if measured_calls and requested == 0:
+                    raise ValueError("reported provider usage has no persisted request audit")
                 summary.update(attempt_started=requested > 0, attempted_count=int(requested > 0),
-                               observed_provider_requests=requested)
+                               observed_provider_requests=requested, usage=measured_usage, model_calls=measured_calls,
+                               model_error_type=safe_error_type(result.get("error_type")),
+                               provider_diagnostics=request_audit_statistics(trial)["diagnostics"])
             except (OSError, ValueError):
                 summary.update(attempt_started=None, attempted_count=None, observed_provider_requests=None,
                                attempt_accounting="unknown_unreadable_request_audit")
@@ -653,7 +727,7 @@ def checks_passed(rows, expected):
     return all(row.get("returncode") == 0 and row.get("passed") is True for row in rows)
 
 
-def normalized_usage(result):
+def normalized_usage(result, private_trial=None):
     delivery = result.get("delivery") or {}
     usage = delivery.get("usage") or {}
     calls = delivery.get("model_calls")
@@ -663,17 +737,40 @@ def normalized_usage(result):
     unknown = usage.get("unknown_requests", 0)
     if type(observed) is not int or type(unknown) is not int or min(observed, unknown) < 0:
         raise ValueError("invalid actual provider usage counters")
+    if calls is not None and observed > calls:
+        raise ValueError("measured usage exceeds the reported provider calls")
+    tokens = {key: usage.get(key) for key in ("input_tokens", "output_tokens")}
+    if any(value is not None and (type(value) is not int or value < 0) for value in tokens.values()):
+        raise ValueError("invalid actual provider token measurements")
+    unknown = max(unknown, calls - observed if calls is not None else 0)
     complete = (usage.get("complete") is True and calls is not None and observed == calls and unknown == 0
-                and all(type(usage.get(key)) is int and usage[key] >= 0 for key in ("input_tokens", "output_tokens")))
-    return {"complete": complete, "input_tokens": usage.get("input_tokens") if complete else None,
-            "output_tokens": usage.get("output_tokens") if complete else None,
-            "calls_with_usage": observed, "unknown_requests": unknown}, calls
+                and all(value is not None for value in tokens.values()))
+    measured = {"complete": complete, **tokens, "calls_with_usage": observed, "unknown_requests": unknown}
+    if not complete and private_trial is not None:
+        audit = Path(private_trial) / "agent" / "request-views.jsonl"
+        # Missing durable evidence cannot erase a result's known calls or
+        # confirmed partial token subtotal. Request-denominator checks remain
+        # separate and fail closed when those sources disagree.
+        if not audit.exists() and (calls or observed or unknown or any(value is not None for value in tokens.values())):
+            return measured, calls
+        recovered = request_audit_statistics(private_trial)
+        if (calls is not None and recovered["model_calls"] < calls or
+                recovered["usage"]["calls_with_usage"] < observed or
+                any(value is not None and (recovered["usage"][key] is None or
+                    recovered["usage"][key] < value) for key, value in tokens.items())):
+            calls = max(calls or 0, recovered["model_calls"])
+            measured["unknown_requests"] = max(unknown, calls - observed)
+            return measured, calls
+        return recovered["usage"], recovered["model_calls"]
+    return measured, calls
 
 
 def actual_request_count(private_trial):
     """Count persisted provider requests, excluding checkout/setup/template work."""
     path = Path(private_trial) / "agent" / "request-views.jsonl"
     if not path.exists():
+        if (path.parent / "checkpoint.json").exists():
+            raise ValueError("checkpoint without a provider request audit cannot establish zero requests")
         return 0
     if path.is_symlink() or path.stat().st_size > 8 * 1024 * 1024:
         raise ValueError("provider request audit violates bounds")
@@ -685,6 +782,93 @@ def actual_request_count(private_trial):
     if any(type(call) is not int or call < 1 for call in calls) or len(calls) != len(set(calls)):
         raise ValueError("provider request audit counters are ambiguous")
     return len(calls)
+
+
+def safe_error_type(value):
+    return value if isinstance(value, str) and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]{0,99}", value) else None
+
+
+def request_audit_statistics(private_trial):
+    """Recover confirmed provider measurements without publishing raw requests.
+
+    Incomplete token values are confirmed subtotals, not total usage. Requests
+    without confirmed token usage remain unknown, including provider timeouts.
+    A checksum-validated checkpoint can cover the durable-response-before-log
+    crash window; it never creates an unaudited provider request.
+    """
+    directory = Path(private_trial) / "agent"
+    audit = directory / "request-views.jsonl"
+    if not audit.exists() and (directory / "checkpoint.json").exists():
+        raise ValueError("checkpoint without a provider request audit cannot establish zero usage")
+    requested, responses, errors = set(), {}, set()
+    if audit.exists():
+        if audit.is_symlink() or audit.stat().st_size > 8 * 1024 * 1024:
+            raise ValueError("provider request audit violates bounds")
+        for line in audit.read_text(encoding="utf-8").splitlines():
+            row = json.loads(line)
+            event, call = row.get("event"), row.get("call")
+            if event not in {"request", "response", "error"}:
+                continue
+            if type(call) is not int or call < 1:
+                raise ValueError("provider request audit counters are ambiguous")
+            if event == "request":
+                if call in requested:
+                    raise ValueError("provider request audit contains duplicate requests")
+                requested.add(call)
+            elif call not in requested:
+                raise ValueError("provider observation has no preceding request")
+            elif event == "response":
+                if call in responses:
+                    raise ValueError("provider request audit contains duplicate responses")
+                responses[call] = row.get("usage")
+            elif error := safe_error_type(row.get("exception_type")):
+                errors.add(error)
+    covered, prompt, completion, unknown_hint = 0, 0, 0, 0
+    for usage in responses.values():
+        if not isinstance(usage, dict):
+            continue
+        left = usage.get("prompt_tokens", usage.get("input_tokens"))
+        right = usage.get("completion_tokens", usage.get("output_tokens"))
+        if all(type(value) is int and value >= 0 for value in (left, right)):
+            covered += 1
+            prompt += left
+            completion += right
+    diagnostics = {"usage_source": "durable_request_audit", "request_error_types": sorted(errors),
+                   "request_audit_sha256": file_sha256(audit) if audit.is_file() else None,
+                   "checkpoint_usage_recovered": False,
+                   "incomplete_token_values": "confirmed subtotals; unknown requests are excluded"}
+    checkpoint = directory / "checkpoint.json"
+    if checkpoint.exists():
+        try:
+            if checkpoint.is_symlink() or checkpoint.stat().st_size > 16 * 1024 * 1024:
+                raise ValueError("checkpoint measurement artifact violates bounds")
+            from delivery_agent.checkpoint import inspect_checkpoint
+            measured = inspect_checkpoint(checkpoint)["state"].get("model_usage", {})
+            keys = ("n_calls", "calls_with_usage", "input_tokens", "output_tokens", "unknown_requests")
+            if (any(type(measured.get(key)) is not int or measured[key] < 0 for key in keys)
+                    or measured["n_calls"] != len(requested) or measured["calls_with_usage"] > len(requested)
+                    or measured["unknown_requests"] > len(requested)):
+                raise ValueError("checkpoint measurements differ from audited provider requests")
+            if measured["calls_with_usage"] == covered and (
+                    measured["input_tokens"] != prompt or measured["output_tokens"] != completion):
+                raise ValueError("checkpoint measurements contradict confirmed audit totals")
+            if measured["calls_with_usage"] > covered:
+                if measured["input_tokens"] < prompt or measured["output_tokens"] < completion:
+                    raise ValueError("checkpoint measurements discard confirmed audit usage")
+                covered, prompt, completion = (measured[key] for key in
+                                               ("calls_with_usage", "input_tokens", "output_tokens"))
+                diagnostics.update(usage_source="durable_checkpoint_and_request_audit",
+                                   checkpoint_usage_recovered=True)
+            diagnostics["checkpoint_sha256"] = file_sha256(checkpoint)
+            unknown_hint = measured["unknown_requests"]
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            diagnostics["checkpoint_error_type"] = type(exc).__name__
+    calls = len(requested)
+    unknown = max(calls - covered, unknown_hint)
+    usage = {"complete": covered == calls and unknown == 0, "input_tokens": prompt if covered or calls == 0 else None,
+             "output_tokens": completion if covered or calls == 0 else None,
+             "calls_with_usage": covered, "unknown_requests": unknown}
+    return {"model_calls": calls, "usage": usage, "diagnostics": diagnostics}
 
 
 def observed_source_reuse(audit, origin):
@@ -729,7 +913,8 @@ def execute_cohort_trial(args, plan, task, raw, image, daemon, private, public, 
         "attempted_count": 0, "instance_id": task.instance_id, "model_status": "infrastructure_failed",
         "delivery_success": None, "complete": False, "official_resolved": None, "model": args.model,
         "model_digest": plan["model"]["digest"], "budgets": budgets, "profile": arm["profile"], "arm": arm["id"],
-        "hardware": hardware_metadata(), "source_task_sha256": sha256(raw)}
+        "hardware": hardware_metadata(), "source_task_sha256": sha256(raw),
+        "prewarm_runtime": getattr(daemon, "prewarm_telemetry", None)}
     result, evidence, verified = {}, None, None
     internal, external = None, None
     failure = False
@@ -751,12 +936,18 @@ def execute_cohort_trial(args, plan, task, raw, image, daemon, private, public, 
             raise ValueError("cohort model differs from the predeclared weights")
         summary.update(attempt_started=True, attempted_count=1, attempt_id="a" + uuid.uuid4().hex,
                        model_status="unknown_started")
+        summary["runtime_telemetry"] = [runtime_telemetry(daemon, "before_agent_pipeline")]
         atomic_json(summary_path, summary)
-        result = run_repository(effective, trial_args, private / "trial")
+        try:
+            result = run_repository(effective, trial_args, private / "trial")
+        finally:
+            summary["runtime_telemetry"].append(runtime_telemetry(daemon, "after_agent_pipeline"))
+            atomic_json(summary_path, summary)
         requested = actual_request_count(private / "trial")
         summary.update(attempt_started=requested > 0, attempted_count=int(requested > 0),
                        observed_provider_requests=requested, agent_pipeline_invoked=True)
-        summary.update(model_status=result.get("status"), exit_status=result.get("exit_status"), seconds=result.get("seconds"))
+        summary.update(model_status=result.get("status"), exit_status=result.get("exit_status"), seconds=result.get("seconds"),
+                       model_error_type=safe_error_type(result.get("error_type")))
         atomic_json(summary_path, summary)
         if requested == 0 or not isinstance(result.get("delivery"), dict):
             raise ValueError("no complete actual agent outcome; setup failures remain infrastructure unknown")
@@ -799,17 +990,24 @@ def execute_cohort_trial(args, plan, task, raw, image, daemon, private, public, 
         requested = actual_request_count(private / "trial")
         summary.update(attempt_started=requested > 0, attempted_count=int(requested > 0),
                        observed_provider_requests=requested)
-        summary.update(infrastructure_error_type=type(exc).__name__, complete=False, delivery_success=None)
+        summary.update(runner_error_type=type(exc).__name__,
+                       infrastructure_error_type=safe_error_type(result.get("error_type")) or type(exc).__name__,
+                       model_error_type=safe_error_type(result.get("error_type")), complete=False, delivery_success=None)
     finally:
         store.close()
         atomic_json(summary_path, summary)
-    usage, calls = normalized_usage(result)
-    if not summary["attempt_started"]:
-        calls = 0
+    usage, calls = normalized_usage(result, private / "trial")
+    if calls and not summary["attempt_started"]:
+        summary.update(usage=usage, model_calls=calls, attempt_started=None, attempted_count=None,
+                       observed_provider_requests=None, attempt_accounting="unknown_missing_request_audit")
+        atomic_json(summary_path, summary)
+        raise ValueError("reported provider usage has no matching persisted request audit")
     submitted = result.get("status") == "submitted" and result.get("exit_status") == "Submitted"
     status = result.get("status") if result.get("status") in {"submitted", "stopped", "failed"} else "infrastructure_failed"
     summary.update(model_status=status, exit_status=result.get("exit_status"), seconds=result.get("seconds"),
                    usage=usage, model_calls=calls, internal_checks_passed=internal, external_checks_passed=external)
+    if failure:
+        summary["provider_diagnostics"] = request_audit_statistics(private / "trial")["diagnostics"]
     atomic_json(summary_path, summary)
     receipt = {"schema": 1, "kind": "closure_trial_receipt", "fixture": False,
         "instance_id": task.instance_id, "seed": args.seed, "arm": arm["id"], "role": role,
@@ -933,7 +1131,8 @@ def run_cohort_seed(args):
             atomic_json(public / "matrix.json", matrix)
             atomic_json(public / "environment.json", {"model": daemon.identity, "hardware": hardware_metadata(),
                 "ollama_version": OLLAMA_VERSION, "ollama_archive_sha256": OLLAMA_ARCHIVE_SHA256,
-                "image": plan["image"], "official_resolved": None})
+                "image": plan["image"], "official_resolved": None,
+                "prewarm_runtime": getattr(daemon, "prewarm_telemetry", None)})
             sources = []
             if args.mode == "transfer":
                 source_private = private / "source"
@@ -1194,7 +1393,7 @@ def main(argv=None):
     if (not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,31}", args.label) or not 1 <= args.max_steps <= 100
             or not 4096 <= args.context_tokens <= 32768 or not 128 <= args.max_output_tokens <= 4000
             or args.max_output_tokens + 1000 >= args.context_tokens or not 60 <= args.wall_seconds <= 3600
-            or not 10 <= args.request_timeout <= 300 or not 1 <= args.command_timeout <= 300
+            or not 10 <= args.request_timeout <= 600 or not 1 <= args.command_timeout <= 300
             or not math.isfinite(args.cost_limit) or args.cost_limit <= 0):
         parser.error("invalid bounded delivery trial parameters")
     try:

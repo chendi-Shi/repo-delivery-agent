@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "kind": "real_docker_delivery_proof",
+  "fixture": false,
+  "mode": "proof",
+  "delivery_success": false,
+  "complete": true,
+  "model": "qwen2.5-coder:7b",
+  "ollama_mode": "json",
+  "source_task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+  "source_task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+  "budgets": {
+    "max_steps": 24,
+    "context_tokens": 16000,
+    "max_output_tokens": 1500,
+    "wall_seconds": 1800,
+    "request_timeout": 300,
+    "command_timeout": 90,
+    "seed": 42,
+    "cost_limit": 3.0
+  },
+  "hardware": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "total_memory_bytes": 8322932736,
+    "agent_container_cpus": 2,
+    "agent_container_memory": "1g"
+  },
+  "official_resolved": null,
+  "source_commit": "21f1f5f00b3294a79af3cfb6fcc19b7a4a5e8065",
+  "runner_sha256": "e1076f120000a928b5dad2f95eb86c56abe45ed36a20debe3dcd7a552831db15",
+  "label": "closure-38016237749-1",
+  "attempt_started": true,
+  "attempted_count": 1,
+  "attempt_id": "a513a9f52edc94ce8b6db83bb7421600e",
+  "scope": "one public task; no general effect estimate or official benchmark score",
+  "baseline_receipt_sha256": "1f665666299abe1dbebe4afb767ea2373ef916efae48dcbd0cf8c5e2f78941d8",
+  "baseline_feature_gap_confirmed": true,
+  "context_preflight_sha256": "3f72ebc3a2ead7355120cb9fab66cf0e9b883a37e8166514e02cd226079beefb",
+  "instance_id": "psf__requests-2931",
+  "model_digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+  "bindings": {
+    "source_task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+    "source_task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+    "effective_task_fingerprint": "93ed66fbfd943a9cbc0800ba4a70430d710fe6a79ea76ba9def0f3146d7f0bb3",
+    "public_task_fingerprint": "f1b9ca1ff4e53d8bfd1a36cd2daec029008f6d607f08f777b2617c8d1721bf97",
+    "public_base_reference": "python:3.8-slim",
+    "public_base_digest": "python@sha256:1d52838af602b4b5a831beb13a0e4d073280665ea7be7f69ce2382f29c5a613f",
+    "public_base_image_id": "sha256:b5f62925bd0f63f48cc8acd5e87d0c3a07e2f229cd2fb0a9586e68ed17f45ee3",
+    "inference_image_id": "sha256:4ca24440358185629835b28c9d10005c62e18d5b46e838d6099b47e4d55f830e",
+    "operator_dockerfile_sha256": "e685961364ad3529f7f123e7ad599952868aad90a91eeb781c04b2930b1c1f66",
+    "image_policy": "tools added outside the agent; inference image differs from portable public verifier base"
+  },
+  "model_status": "stopped",
+  "model_calls": null,
+  "usage": null,
+  "exit_status": "LimitsExceeded",
+  "seconds": 1624.6837470359999,
+  "official_export": {
+    "submitted_count": 0,
+    "attempted_count": 1,
+    "agent_failure_count": 1,
+    "empty_patch_count": 0,
+    "status": "exported_real_attempt",
+    "original_public_task_sha256": "3ff859fc9db6c152cbcda6a777e3035f88b63798321519d3f22d30e7932cb892",
+    "model_id": "repo-delivery-qwen2_5-coder-7b",
+    "task_image_and_checks_differ_from_official": true,
+    "submitted": [],
+    "excluded": [
+      {
+        "instance_id": "psf__requests-2931",
+        "reason": "not_submitted"
+      }
+    ],
+    "official_resolved": null
+  },
+  "internal_independent_checks_passed": false,
+  "external_independent_checks_passed": false,
+  "action_audit": {
+    "available": true,
+    "complete": true,
+    "actions": 24,
+    "kind_counts": {
+      "delivery-skill/read": 12,
+      "delivery-history/search": 12
+    },
+    "private_audit_sha256": "01a76a2e1aef864791c39d0b788d948e70f956b54e9c57430b20d1804c4cf898",
+    "public_audit_sha256": "c5705473369b34b313f5beda5b0da35bc8f832d6f6fab60297e0e0bba25654cc"
+  },
+  "public_verification_sha256": "729487d55995340f1b851f854f3ad254c3e9607f0fb9ef0e2f25e8cecb56731e",
+  "operator_image_cleanup_exit_code": 0
+}

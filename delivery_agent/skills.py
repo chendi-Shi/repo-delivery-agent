@@ -157,7 +157,8 @@ class SkillRegistry:
         skill = self.skills.get(name_or_id) or next((s for s in self.skills.values()
                                                     if s.source_id == name_or_id), None)
         if skill is None:
-            raise ValueError("unknown skill name or source ID")
+            raise ValueError("unknown skill name or source ID; run delivery-skill list 32 0 "
+                "and use a name or source_id from its results")
         relative = PurePosixPath(path)
         if (not path or "\\" in path or relative.is_absolute() or ".." in relative.parts
                 or ":" in path or relative.as_posix() != path or path not in skill.files):
@@ -175,8 +176,15 @@ class SkillRegistry:
             raise ValueError("skill resource changed after the manifest was frozen")
         text = raw.decode("utf-8")
         end = min(len(text), offset + limit)
-        return {"name": skill.name, "source_id": skill.source_id, "path": path,
+        result = {"name": skill.name, "source_id": skill.source_id, "path": path,
                 "sha256": skill.files[path], "offset": offset, "total_chars": len(text),
                 "text": text[offset:end], "next_offset": end if end < len(text) else None,
+                "eof": end == len(text),
                 "resources": sorted(skill.files) if path == "SKILL.md" else [],
                 "trust": "operator-selected skill instructions; no executable resource is automatically run"}
+        if result["eof"]:
+            result["guidance"] = ("End of this skill resource; there is no further content. "
+                "Do not request a higher offset. Read another listed attachment only if relevant. "
+                "Once relevant skill references are exhausted, inspect repository source using the "
+                "execution environment's file-reading commands and proceed with the task.")
+        return result

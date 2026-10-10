@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "kind": "operator_public_baseline",
+  "model_free": true,
+  "llm_calls": 0,
+  "task_fingerprint": "9419c8a044acd68a2bd8d7ecaf16e8d4c2f505437c20bc7b418da275f9852f6f",
+  "public_base_reference": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+  "resolved_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+  "checks": [
+    {
+      "ordinal": 1,
+      "command_sha256": "108bc908918667100189d01c39388aa930dacb74fe68baac31283a4a2c1044ce",
+      "returncode": 0,
+      "passed": true,
+      "output_sha256": "affad9eeee30f7c3db96d0bb340bd2c448522fb889d1405acde062eec605ec2f",
+      "output_preview": "test_default (tests.test_more.FirstTests.test_default) ... ok\ntest_empty (tests.test_more.FirstTests.test_empty) ... ok\ntest_many (tests.test_more.FirstTests.test_many) ... ok\ntest_one (tests.test_more.FirstTests.test_one) ... ok\ntest_basic (tests.test_more.LastTests.test_basic) ... ok\ntest_default (tests.test_more.LastTests.test_default) ... ok\ntest_empty (tests.test_more.LastTests.test_empty) ... ok\ntest_reversed_is_none (tests.test_more.LastTests.test_reversed_is_none) ... ok\ntest_empty_collection (tests.test_more.SplitAfterTest.test_empty_collection) ... ok\ntest_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok\ntest_max_split (tests.test_more.SplitAfterTest.test_max_split) ... ok\ntest_no_sep (tests.test_more.SplitAfterTest.test_no_sep) ... ok\ntest_starts_with_sep (tests.test_more.SplitAfterTest.test_starts_with_sep) ... ok\ntest_even (tests.test_more.ChunkedTests.test_even)\nTest when ``n`` divides evenly into the length of the iterable. ... ok\ntest_negative (tests.test_more.ChunkedTests.test_negative)\nTest that a negative ``n`` raises a clear ``ValueError``, matching ... ok\ntest_none (tests.test_more.ChunkedTests.test_none)\nTest when ``n`` has the value ``None``. ... ok\ntest_odd (tests.test_more.ChunkedTests.test_odd)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true (tests.test_more.ChunkedTests.test_strict_being_true)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true_with_size_none (tests.test_more.ChunkedTests.test_strict_being_true_with_size_none)\nTest when ``n`` has value ``None`` and the keyword strict is True ... ok\ntest_strict_false (tests.test_more.ChunkedTests.test_strict_false)\nTest when ``n`` does not divide evenly into the length of the ... ok\n\n----------------------------------------------------------------------\nRan 20 tests in 0.002s\n\nOK\nfrozen upstream compatibility regressions passed\n",
+      "observed_exception_types": []
+    },
+    {
+      "ordinal": 2,
+      "command_sha256": "20ee9fbb589adcc319ba989eb4c29012784ada19969d9320dc8aa0428f61c0ad",
+      "returncode": 1,
+      "passed": false,
+      "output_sha256": "6853bdd034aa1821c1d850362e3f9e5d2a1a63e086ed9b8f443d527a2bc2d98a",
+      "output_preview": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nKeyError: 'keep_separator'\n",
+      "observed_exception_types": [
+        "KeyError"
+      ]
+    }
+  ],
+  "initial_check_passed": true,
+  "feature_gap_confirmed": true,
+  "unknown_failure": false,
+  "scope": "registered public checks before model inference; excluded from model trial denominator"
+}

@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "kind": "static_context_budget",
+  "model_free": true,
+  "llm_calls": 0,
+  "upstream_version": "2.4.6",
+  "default_agent_module": "minisweagent.agents.default",
+  "estimate_method": "utf8_bytes_plus_message_framing",
+  "provider_usage": null,
+  "context_parameter": 16000,
+  "reserved_budget": 2500,
+  "available_input_budget": 13500,
+  "initial_estimated_input_budget": 7622,
+  "system_template_sha256": "4ccf6d756774bcb0ed6ae107037f4b92fd4acb41458ef10a25cd15407e9836f2",
+  "user_payload_sha256": "44216a95df5decb2fc3818621e2e93f72d8c4312c55c76a427a5787f2fd42f4a",
+  "inventory_sha256": "901e7aee321a665610c76ac9210cb268f0a866069b30218388f38b3c88b0589b",
+  "initial_fits": true,
+  "synthetic_ascii_tool_view_fits": true,
+  "scope": "policy byte estimate, not measured model tokens; synthetic view is never executed or sent to a provider",
+  "synthetic_ascii_tool_view_estimated_budget": 11983
+}

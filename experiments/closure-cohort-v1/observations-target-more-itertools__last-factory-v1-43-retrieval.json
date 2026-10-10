@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "kind": "closure_cohort_observations",
+  "plan_sha256": "a7d65a20ce8a8eb1ac341c89d51e78e6766e0bb6a5955ad1fd8b63990f1ed9ad",
+  "source_attempts": [],
+  "runs": [
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "retrieval",
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-43-retrieval/trial-receipt.json",
+        "sha256": "069b44964f37a5bad390119ce5c168d1eeb0511496254f15293278a16bfe621a"
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "kind": "fixed_closure_cohort",
+  "fixture": false,
+  "frozen_before_execution": true,
+  "suite_id": "delivery-suite-v1",
+  "mode": "transfer",
+  "model": {
+    "name": "qwen3:4b-instruct",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0"
+  },
+  "common": {
+    "provider": "ollama_native",
+    "backend": "docker",
+    "tools_sha256": "0a633f42e304bf95f737e8e266f0509ddee8207d1de3c84fa4186b40861a8b2a",
+    "implementation_sha256": "8a775af07a01b15301ad2f5393a9315c593997abd72fecf4cb6b12e9b25f5d4b",
+    "budgets": {
+      "max_steps": 24,
+      "context_tokens": 24000,
+      "max_output_tokens": 1500,
+      "wall_seconds": 1800,
+      "request_timeout": 300,
+      "command_timeout": 90,
+      "cost_limit": 3.0,
+      "temperature": 0
+    }
+  },
+  "arms": [
+    {
+      "id": "baseline",
+      "profile": "baseline",
+      "knowledge": "none"
+    },
+    {
+      "id": "retrieval",
+      "profile": "retrieval",
+      "knowledge": "none"
+    },
+    {
+      "id": "verified-source",
+      "profile": "retrieval",
+      "knowledge": "verified_source"
+    }
+  ],
+  "reference_arm": "baseline",
+  "seeds": [
+    42,
+    43
+  ],
+  "targets": [
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "role": "near_transfer",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "task_fingerprint": "21184c67303d6e684267548c8eb227bbf947466dcbce9e9490d435931c713228",
+      "repo": "more-itertools/more-itertools",
+      "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "inference_image_id": "sha256:ed3e8474eade01cefd02f1a56b45dc7362017509e5a05708009db5704793187a",
+      "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "public_checks_sha256": "998faacab41717892267ad6d8ceb52e3d2fbe459cfb739ee02bc78ac09ef1bd4",
+      "arms": [
+        "baseline",
+        "retrieval",
+        "verified-source"
+      ]
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "role": "holdout",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "task_fingerprint": "ec13c75801df6c737e2f1571aaa548b108cb24478547eecf115aefb27d1c654c",
+      "repo": "more-itertools/more-itertools",
+      "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+      "inference_image_id": "sha256:ed3e8474eade01cefd02f1a56b45dc7362017509e5a05708009db5704793187a",
+      "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "public_checks_sha256": "95ae302033618ba770aa84e78f7e0e70870e532057619831f7f067c67ecfb40f",
+      "arms": [
+        "baseline",
+        "retrieval"
+      ]
+    }
+  ],
+  "source_attempts": [
+    {
+      "instance_id": "more-itertools__first-factory-v1",
+      "seed": 42
+    }
+  ],
+  "image": {
+    "public_base_reference": "python:3.12-slim",
+    "public_base_digest": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+    "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+    "inference_image_id": "sha256:ed3e8474eade01cefd02f1a56b45dc7362017509e5a05708009db5704793187a",
+    "operator_dockerfile_sha256": "40f6bdea1e3a1c4e3742f2d190e74c09d91bfce9577e03fb18756f4dcc438d11",
+    "image_policy": "tools added outside the agent; inference image differs from portable public verifier base"
+  },
+  "knowledge_namespace": "closure:more-itertools:81c21a8db1c922260cd673841257fb9b112c1318",
+  "source_commit": "a662b2bb25d5c0174ef4b49d7802e1ad7d2bde37",
+  "limitations": [
+    "Ten paired public target trials, not an official benchmark score.",
+    "Verified source experience is permitted only on the distinct near-transfer task."
+  ]
+}

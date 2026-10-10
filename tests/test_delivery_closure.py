@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.metadata
+import io
 import json
 import os
 import tempfile
@@ -23,6 +24,65 @@ def public_task(image="python:3.8-slim"):
 
 
 class DeliveryClosureTests(unittest.TestCase):
+    def test_cli_accepts_bounded_600_second_requests_and_rejects_excess(self):
+        with patch.object(runner, "run_proof", return_value={"delivery_success": True}) as proof, \
+                patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO):
+            self.assertEqual(runner.main(["--ollama", "unused-contract-binary", "--request-timeout", "600",
+                                          "--wall-seconds", "3600"]), 0)
+            self.assertEqual(proof.call_args.args[0].request_timeout, 600)
+            self.assertEqual(proof.call_args.args[0].wall_seconds, 3600)
+            proof.reset_mock()
+            for extra in (["--request-timeout", "601"], ["--wall-seconds", "3601"]):
+                with self.subTest(extra=extra), self.assertRaises(SystemExit) as stopped:
+                    runner.main(["--ollama", "unused-contract-binary", *extra])
+                self.assertEqual(stopped.exception.code, 2)
+            proof.assert_not_called()
+
+    def test_prewarm_context_and_runtime_telemetry_keep_only_actual_allowlisted_values(self):
+        daemon = runner.OwnedOllama("unused-contract-binary", ".", model="qwen3:4b-instruct", context_tokens=24000)
+        daemon.identity = {"digest": "a" * 64}
+        observed = []
+        def request(path, body=None, *, timeout=15):
+            observed.append((path, body, timeout))
+            if path == "/api/generate":
+                self.assertEqual(body, {"model": daemon.model, "stream": False, "keep_alive": "30m",
+                                       "options": {"num_ctx": 24000}})
+                return {}
+            return {"models": [{"name": "unrelated-model", "digest": "b" * 64, "private": "secret-context"},
+                {"name": daemon.model, "digest": "a" * 64, "context_length": 12000,
+                 "size": 1234, "size_vram": 0, "private": "secret-context"}]}
+        with patch.object(daemon, "request", side_effect=request), \
+                patch.object(runner, "host_memory_telemetry", return_value={"status": "observed",
+                    "mem_available_bytes": 4096, "swap_free_bytes": 0}):
+            daemon.prewarm()
+        self.assertEqual([row[0] for row in observed], ["/api/generate", "/api/ps"])
+        self.assertEqual(observed[-1][-1], 5)
+        sample = daemon.prewarm_telemetry
+        self.assertEqual(sample["phase"], "after_prewarm")
+        self.assertEqual(sample["status"], "observed")
+        self.assertEqual(sample["configured_context_tokens"], 24000)
+        self.assertEqual(sample["model_runtime"], {"name": daemon.model, "digest": "a" * 64,
+                                                   "context_length": 12000, "size": 1234, "size_vram": 0})
+        self.assertNotIn("secret-context", json.dumps(sample))
+        self.assertNotIn("unrelated-model", json.dumps(sample))
+        with patch.object(daemon, "request", side_effect=TimeoutError("private service diagnostic")):
+            missing = runner.runtime_telemetry(daemon, "after_agent_pipeline")
+        self.assertEqual(missing["status"], "unknown")
+        self.assertIsNone(missing["model_runtime"])
+        self.assertEqual(missing["error_type"], "TimeoutError")
+        self.assertNotIn("private service diagnostic", json.dumps(missing))
+
+    def test_host_memory_telemetry_is_bounded_numeric_and_missing_is_unknown(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "meminfo"
+            path.write_text("MemAvailable: 123 kB\nSwapFree: 8 kB\nPrivateField: forbidden-content\n", encoding="ascii")
+            self.assertEqual(runner.host_memory_telemetry(path), {"status": "observed",
+                "mem_available_bytes": 123 * 1024, "swap_free_bytes": 8 * 1024})
+            missing = runner.host_memory_telemetry(path.with_name("missing"))
+            self.assertEqual(missing["status"], "unknown")
+            self.assertIsNone(missing["mem_available_bytes"])
+            self.assertIsNone(missing["swap_free_bytes"])
+
     def cohort_contract(self):
         args = argparse.Namespace(model="qwen3:4b-instruct", mode="transfer", seed=42, max_output_tokens=1500,
             request_timeout=300, context_tokens=24000, ollama_mode="json", max_steps=24,
@@ -82,6 +142,42 @@ class DeliveryClosureTests(unittest.TestCase):
             self.assertFalse(receipt["attempt_started"])
             self.assertEqual(receipt["model_calls"], 0)
             self.assertEqual(actual["attempted_count"], 0)
+
+    def test_interrupted_provider_preserves_root_error_and_unknown_request_usage(self):
+        args, plan, tasks, image = self.cohort_contract()
+        task, raw = tasks["more-itertools-last-factory.json"]
+        arm = next(row for row in plan["arms"] if row["id"] == "baseline")
+        daemon = SimpleNamespace(identity={"digest": "a" * 64}, assert_identity=lambda: None)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            private, public = root / "private", root / "public"
+            private.mkdir(); public.mkdir()
+            def timeout_boundary(given_task, given_args, directory):
+                (directory / "agent").mkdir(parents=True)
+                (directory / "agent" / "request-views.jsonl").write_text(
+                    '{"event":"request","call":1,"messages":["private diagnostic fixture"]}\n'
+                    '{"event":"error","call":1,"exception_type":"TimeoutError"}\n')
+                return {"status": "failed", "seconds": 300., "error_type": "TimeoutError",
+                        "provenance": {"model_digest": "a" * 64}}
+            with patch.object(runner, "run_baseline_checks", return_value={"resolved_image_id": image["public_base_image_id"],
+                                                                        "feature_gap_confirmed": True}), \
+                    patch.object(runner, "preflight_context", return_value={"initial_fits": True, "synthetic_ascii_tool_view_fits": True}), \
+                    patch.object(runner, "run_repository", side_effect=timeout_boundary):
+                receipt, _, _ = runner.execute_cohort_trial(args, plan, task, raw, image, daemon,
+                    private, public, "target", arm=arm, role="near_transfer")
+            summary = json.loads((public / "target" / "summary.json").read_text(encoding="utf-8"))
+            self.assertEqual(summary["infrastructure_error_type"], "TimeoutError")
+            self.assertEqual(summary["model_error_type"], "TimeoutError")
+            self.assertEqual(summary["runner_error_type"], "ValueError")
+            self.assertEqual(summary["provider_diagnostics"]["request_error_types"], ["TimeoutError"])
+            self.assertEqual([sample["phase"] for sample in summary["runtime_telemetry"]],
+                             ["before_agent_pipeline", "after_agent_pipeline"])
+            self.assertEqual(receipt["model_calls"], 1)
+            self.assertEqual(receipt["usage"], {"complete": False, "input_tokens": None, "output_tokens": None,
+                                               "calls_with_usage": 0, "unknown_requests": 1})
+            self.assertTrue(receipt["infrastructure_failed"])
+            self.assertIsNone(receipt["delivery_success"])
+            self.assertNotIn("private diagnostic fixture", json.dumps(summary))
 
     def test_cohort_submitted_and_failed_checks_bind_through_real_summary_consumer(self):
         from scripts.summarize_closure_suite import _receipt
@@ -196,6 +292,105 @@ class DeliveryClosureTests(unittest.TestCase):
                 '{"event":"request","call":1}\n{"event":"error","call":1}\n')
             self.assertEqual(runner.actual_request_count(trial), 1)
 
+    def test_partial_usage_recovers_confirmed_subtotals_and_checksum_bound_checkpoint_gap(self):
+        from delivery_agent.checkpoint import CheckpointStore
+        with tempfile.TemporaryDirectory() as temporary:
+            trial = Path(temporary)
+            agent = trial / "agent"
+            agent.mkdir()
+            audit = agent / "request-views.jsonl"
+            audit.write_text('{"event":"request","call":1}\n'
+                '{"event":"response","call":1,"usage":{"prompt_tokens":100,"completion_tokens":20}}\n'
+                '{"event":"request","call":2}\n'
+                '{"event":"error","call":2,"exception_type":"TimeoutError"}\n')
+            usage, calls = runner.normalized_usage({}, trial)
+            self.assertEqual(calls, 2)
+            self.assertEqual(usage, {"complete": False, "input_tokens": 100, "output_tokens": 20,
+                                     "calls_with_usage": 1, "unknown_requests": 1})
+            # A different crash window: response is committed durably, but the
+            # request-view response record was not appended before interruption.
+            audit.write_text(audit.read_text().split('{"event":"error"')[0])
+            checkpoint = agent / "checkpoint.json"
+            store = CheckpointStore(checkpoint, {"fixture": "measurement contract"})
+            try:
+                store.write(state={"model_usage": {"n_calls": 2, "calls_with_usage": 2,
+                    "input_tokens": 300, "output_tokens": 50, "unknown_requests": 0}}, transition=None)
+            finally:
+                store.close()
+            recovered = runner.request_audit_statistics(trial)
+            self.assertTrue(recovered["diagnostics"]["checkpoint_usage_recovered"])
+            self.assertEqual(recovered["usage"], {"complete": True, "input_tokens": 300, "output_tokens": 50,
+                                                  "calls_with_usage": 2, "unknown_requests": 0})
+            corrupt = json.loads(checkpoint.read_text(encoding="utf-8"))
+            corrupt["state"]["model_usage"]["input_tokens"] = 999999
+            checkpoint.write_text(json.dumps(corrupt))
+            rejected = runner.request_audit_statistics(trial)
+            self.assertFalse(rejected["diagnostics"]["checkpoint_usage_recovered"])
+            self.assertEqual(rejected["diagnostics"]["checkpoint_error_type"], "CheckpointMismatch")
+            self.assertEqual(rejected["usage"], usage)
+
+    def test_partial_result_usage_survives_missing_or_less_complete_request_audit(self):
+        partial = {"delivery": {"model_calls": 2, "usage": {"complete": False, "input_tokens": 100,
+            "output_tokens": 20, "calls_with_usage": 1, "unknown_requests": 0}}}
+        expected = {"complete": False, "input_tokens": 100, "output_tokens": 20,
+                    "calls_with_usage": 1, "unknown_requests": 1}
+        with tempfile.TemporaryDirectory() as temporary:
+            trial = Path(temporary)
+            for audit_text in (None, "", '{"event":"request","call":1}\n'):
+                with self.subTest(audit_text=audit_text):
+                    if audit_text is not None:
+                        (trial / "agent").mkdir(exist_ok=True)
+                        (trial / "agent" / "request-views.jsonl").write_text(audit_text)
+                    self.assertEqual(runner.normalized_usage(partial, trial), (expected, 2))
+            self.assertEqual(runner.normalized_usage(partial), (expected, 2))
+            unknown, calls = runner.normalized_usage({"delivery": {"model_calls": 2}}, trial / "missing")
+            self.assertEqual(calls, 2)
+            self.assertFalse(unknown["complete"])
+            self.assertEqual(unknown["unknown_requests"], 2)
+            self.assertIsNone(unknown["input_tokens"])
+
+    def test_checkpoint_without_request_audit_cannot_become_complete_zero_usage(self):
+        from delivery_agent.checkpoint import CheckpointStore
+        with tempfile.TemporaryDirectory() as temporary:
+            trial = Path(temporary)
+            (trial / "agent").mkdir()
+            store = CheckpointStore(trial / "agent" / "checkpoint.json", {"fixture": "missing audit contract"})
+            try:
+                store.write(state={"model_usage": {"n_calls": 2, "calls_with_usage": 1,
+                    "input_tokens": 100, "output_tokens": 20, "unknown_requests": 1}}, transition=None)
+            finally:
+                store.close()
+            with self.assertRaisesRegex(ValueError, "without a provider request audit"):
+                runner.normalized_usage({}, trial)
+            with self.assertRaisesRegex(ValueError, "without a provider request audit"):
+                runner.actual_request_count(trial)
+
+    def test_missing_audit_preserves_partial_summary_without_fabricating_zero_call_receipt(self):
+        args, plan, tasks, image = self.cohort_contract()
+        task, raw = tasks["more-itertools-last-factory.json"]
+        arm = next(row for row in plan["arms"] if row["id"] == "baseline")
+        daemon = SimpleNamespace(identity={"digest": "a" * 64}, assert_identity=lambda: None)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            private, public = root / "private", root / "public"
+            private.mkdir(); public.mkdir()
+            with patch.object(runner, "run_baseline_checks", return_value={"resolved_image_id": image["public_base_image_id"],
+                                                                        "feature_gap_confirmed": True}), \
+                    patch.object(runner, "preflight_context", return_value={"initial_fits": True, "synthetic_ascii_tool_view_fits": True}), \
+                    patch.object(runner, "run_repository", return_value={"status": "failed", "delivery": {
+                        "model_calls": 2, "usage": {"complete": False, "input_tokens": 100, "output_tokens": 20,
+                            "calls_with_usage": 1, "unknown_requests": 1}}}):
+                with self.assertRaisesRegex(ValueError, "matching persisted request audit"):
+                    runner.execute_cohort_trial(args, plan, task, raw, image, daemon,
+                        private, public, "target", arm=arm, role="near_transfer")
+            summary = json.loads((public / "target" / "summary.json").read_text(encoding="utf-8"))
+            self.assertEqual(summary["model_calls"], 2)
+            self.assertEqual(summary["usage"]["input_tokens"], 100)
+            self.assertEqual(summary["usage"]["unknown_requests"], 1)
+            self.assertFalse(summary["usage"]["complete"])
+            self.assertIsNone(summary["attempt_started"])
+            self.assertFalse((public / "target" / "trial-receipt.json").exists())
+
     def test_every_cohort_task_template_fits_with_bounded_inventory_and_large_latest_observation(self):
         from delivery_agent.knowledge import KnowledgeStore
         try:
@@ -215,7 +410,7 @@ class DeliveryClosureTests(unittest.TestCase):
                             with self.subTest(instance=task.instance_id, profile=profile):
                                 receipt = runner.preflight_context(task, args, root, knowledge=store)
                                 self.assertTrue(receipt["initial_fits"])
-                                self.assertTrue(receipt["synthetic_ascii_tool_view_fits"])
+                                self.assertTrue(receipt["synthetic_ascii_tool_view_fits"], receipt)
                                 self.assertIsNone(receipt["provider_usage"])
             finally:
                 store.close()
@@ -477,7 +672,8 @@ class DeliveryClosureTests(unittest.TestCase):
                     self.assertFalse(failure["attempt_started"])
                     self.assertEqual(failure["model_status"], "unknown_started")
                     self.assertIsNone(failure["delivery_success"])
-                    self.assertIsNone(failure["usage"])
+                    self.assertEqual(failure["usage"]["input_tokens"], 0)
+                    self.assertEqual(failure["model_calls"], 0)
                     self.assertFalse(failure["complete"])
             self.assertTrue(summary["internal_independent_checks_passed"])
             self.assertFalse(summary["external_independent_checks_passed"])

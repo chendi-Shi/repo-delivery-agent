@@ -12,6 +12,7 @@ from delivery_agent.ollama_model import OllamaModel
 from delivery_agent.skills import SkillRegistry
 from delivery_agent.toolbox import ToolboxEnvironment
 from delivery_agent.knowledge import KnowledgeStore
+from delivery_agent.history import HistoryEnvironment, HistoryStore
 
 
 class SourceBoundaryTests(unittest.TestCase):
@@ -116,6 +117,57 @@ class SourceBoundaryTests(unittest.TestCase):
         source = box.execute({'command': 'delivery-file read module.py'})
         self.assertEqual(source['returncode'], 0)
         self.assertEqual(source['output'], 'value = 1\n')
+
+    def test_skill_and_history_eof_stop_paging_without_changing_original_text(self):
+        registry = SkillRegistry()
+        box = ToolboxEnvironment(self.env, registry)
+        first = json.loads(box.execute({'command': 'delivery-skill read python-regression SKILL.md 0 4000'})['output'])
+        self.assertTrue(first['text'])
+        self.assertTrue(first['eof'])
+        for offset in (first['total_chars'], first['total_chars'] + 50):
+            result = box.execute({'command': f'delivery-skill read python-regression SKILL.md {offset} 100'})
+            value = json.loads(result['output'])
+            self.assertEqual(result['returncode'], 0)
+            self.assertEqual(value['text'], '')
+            self.assertIsNone(value['next_offset'])
+            self.assertTrue(value['eof'])
+            self.assertIn('no further content', value['guidance'])
+            self.assertIn('repository source', value['guidance'])
+        store = HistoryStore(self.root / 'history.sqlite')
+        self.addCleanup(store.close)
+        source = store.append({'role': 'tool', 'content': 'complete evidence'})
+        for offset in (len('complete evidence'), len('complete evidence') + 50):
+            value = store.read(source, offset)
+            self.assertEqual(value['text'], '')
+            self.assertTrue(value['eof'])
+            self.assertIsNone(value['next_offset'])
+            self.assertIn('no further content', value['guidance'])
+
+    def test_copyable_guides_and_malformed_history_call_have_real_recovery_commands(self):
+        from delivery_agent.upstream import HISTORY_GUIDE
+        registry = SkillRegistry()
+        kb = KnowledgeStore(self.root / 'guidance-kb.sqlite', 'fixture')
+        self.addCleanup(kb.close)
+        box = ToolboxEnvironment(self.env, registry, kb)
+        guide = box.guide() + HISTORY_GUIDE
+        self.assertNotIn('[limit', guide)
+        self.assertNotIn('[character-offset]', guide)
+        self.assertIn('Other commands exposed by the execution environment', guide)
+        for line in box.guide().splitlines():
+            if line.startswith(('delivery-skill ', 'delivery-knowledge ')):
+                self.assertEqual(box.execute({'command': line})['returncode'], 0, line)
+        store = HistoryStore(self.root / 'history-guide.sqlite')
+        self.addCleanup(store.close)
+        store.append({'role': 'user', 'content': 'Investigate the error.'})
+        env = HistoryEnvironment(box, store)
+        rejected = env.execute({'command': "delivery-history search 'literal query' [limit 1..8]"})
+        self.assertEqual(rejected['returncode'], 2)
+        guidance = json.loads(rejected['output'])['guidance']
+        self.assertNotIn('[LIMIT]', guidance)
+        for line in guidance.splitlines():
+            if line.startswith('delivery-history '):
+                self.assertEqual(env.execute({'command': line})['returncode'], 0, line)
+        self.assertEqual((self.root / 'module.py').read_text(), 'value = 1\n')
 
 
 @unittest.skipUnless(importlib.util.find_spec('minisweagent'), 'pinned upstream optional dependency required')

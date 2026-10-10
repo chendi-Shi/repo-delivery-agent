@@ -1,0 +1,864 @@
+{
+  "schema": 1,
+  "kind": "fixed_closure_cohort_summary",
+  "fixture": false,
+  "suite_id": "delivery-suite-v1",
+  "plan_sha256": "a7d65a20ce8a8eb1ac341c89d51e78e6766e0bb6a5955ad1fd8b63990f1ed9ad",
+  "observations_sha256": "271e35cfcc34b9a97df958d32d1ef71e927250c68b701b26cf9e475e4aa7c6e5",
+  "model": {
+    "name": "qwen3:4b-instruct",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0"
+  },
+  "common": {
+    "provider": "ollama_native",
+    "backend": "docker",
+    "tools_sha256": "0a633f42e304bf95f737e8e266f0509ddee8207d1de3c84fa4186b40861a8b2a",
+    "implementation_sha256": "8a775af07a01b15301ad2f5393a9315c593997abd72fecf4cb6b12e9b25f5d4b",
+    "budgets": {
+      "max_steps": 24,
+      "context_tokens": 24000,
+      "max_output_tokens": 1500,
+      "wall_seconds": 1800,
+      "request_timeout": 300,
+      "command_timeout": 90,
+      "cost_limit": 3.0,
+      "temperature": 0
+    }
+  },
+  "expected_target_attempts": 10,
+  "complete": false,
+  "by_arm": {
+    "baseline": {
+      "profile": "baseline",
+      "knowledge": "none",
+      "expected_attempts": 4,
+      "observed_attempts": 4,
+      "status_counts": {
+        "failed": 4
+      },
+      "submitted_count": 0,
+      "submission_unknown_count": 0,
+      "infrastructure_failure_count": 4,
+      "actual_model_attempt_count": 4,
+      "actual_attempt_unknown_count": 0,
+      "blocked_before_model_count": 0,
+      "submitted_rate": 0.0,
+      "all_check_success_count": 0,
+      "all_check_unknown_count": 4,
+      "all_check_success_rate": null,
+      "delivery_success_count": 0,
+      "delivery_failure_count": 0,
+      "delivery_unknown_count": 4,
+      "delivery_success_rate": null,
+      "confirmed_delivery_success_fraction": 0.0,
+      "token_usage_covered_attempts": 0,
+      "total_actual_input_tokens": null,
+      "total_actual_output_tokens": null,
+      "total_actual_model_calls": null,
+      "total_actual_seconds": 1291.605729455,
+      "actual_provider_tokens_per_delivery_success": null,
+      "actual_seconds_per_delivery_success": null,
+      "knowledge_observed_reuse_count": 0
+    },
+    "retrieval": {
+      "profile": "retrieval",
+      "knowledge": "none",
+      "expected_attempts": 4,
+      "observed_attempts": 4,
+      "status_counts": {
+        "failed": 4
+      },
+      "submitted_count": 0,
+      "submission_unknown_count": 0,
+      "infrastructure_failure_count": 4,
+      "actual_model_attempt_count": 4,
+      "actual_attempt_unknown_count": 0,
+      "blocked_before_model_count": 0,
+      "submitted_rate": 0.0,
+      "all_check_success_count": 0,
+      "all_check_unknown_count": 4,
+      "all_check_success_rate": null,
+      "delivery_success_count": 0,
+      "delivery_failure_count": 0,
+      "delivery_unknown_count": 4,
+      "delivery_success_rate": null,
+      "confirmed_delivery_success_fraction": 0.0,
+      "token_usage_covered_attempts": 0,
+      "total_actual_input_tokens": null,
+      "total_actual_output_tokens": null,
+      "total_actual_model_calls": null,
+      "total_actual_seconds": 2207.252828135,
+      "actual_provider_tokens_per_delivery_success": null,
+      "actual_seconds_per_delivery_success": null,
+      "knowledge_observed_reuse_count": 0
+    },
+    "verified-source": {
+      "profile": "retrieval",
+      "knowledge": "verified_source",
+      "expected_attempts": 2,
+      "observed_attempts": 2,
+      "status_counts": {
+        "infrastructure_failed": 2
+      },
+      "submitted_count": 0,
+      "submission_unknown_count": 0,
+      "infrastructure_failure_count": 2,
+      "actual_model_attempt_count": 0,
+      "actual_attempt_unknown_count": 0,
+      "blocked_before_model_count": 2,
+      "submitted_rate": 0.0,
+      "all_check_success_count": 0,
+      "all_check_unknown_count": 2,
+      "all_check_success_rate": null,
+      "delivery_success_count": 0,
+      "delivery_failure_count": 0,
+      "delivery_unknown_count": 2,
+      "delivery_success_rate": null,
+      "confirmed_delivery_success_fraction": 0.0,
+      "token_usage_covered_attempts": 2,
+      "total_actual_input_tokens": 0,
+      "total_actual_output_tokens": 0,
+      "total_actual_model_calls": 0,
+      "total_actual_seconds": null,
+      "actual_provider_tokens_per_delivery_success": null,
+      "actual_seconds_per_delivery_success": null,
+      "knowledge_observed_reuse_count": 0
+    }
+  },
+  "by_role": {
+    "holdout": {
+      "baseline": {
+        "expected_attempts": 2,
+        "observed_attempts": 2,
+        "status_counts": {
+          "failed": 2
+        },
+        "submitted_count": 0,
+        "submission_unknown_count": 0,
+        "infrastructure_failure_count": 2,
+        "actual_model_attempt_count": 2,
+        "actual_attempt_unknown_count": 0,
+        "blocked_before_model_count": 0,
+        "submitted_rate": 0.0,
+        "all_check_success_count": 0,
+        "all_check_unknown_count": 2,
+        "all_check_success_rate": null,
+        "delivery_success_count": 0,
+        "delivery_failure_count": 0,
+        "delivery_unknown_count": 2,
+        "delivery_success_rate": null,
+        "confirmed_delivery_success_fraction": 0.0,
+        "token_usage_covered_attempts": 0,
+        "total_actual_input_tokens": null,
+        "total_actual_output_tokens": null,
+        "total_actual_model_calls": null,
+        "total_actual_seconds": 792.783359344,
+        "actual_provider_tokens_per_delivery_success": null,
+        "actual_seconds_per_delivery_success": null,
+        "knowledge_observed_reuse_count": 0
+      },
+      "retrieval": {
+        "expected_attempts": 2,
+        "observed_attempts": 2,
+        "status_counts": {
+          "failed": 2
+        },
+        "submitted_count": 0,
+        "submission_unknown_count": 0,
+        "infrastructure_failure_count": 2,
+        "actual_model_attempt_count": 2,
+        "actual_attempt_unknown_count": 0,
+        "blocked_before_model_count": 0,
+        "submitted_rate": 0.0,
+        "all_check_success_count": 0,
+        "all_check_unknown_count": 2,
+        "all_check_success_rate": null,
+        "delivery_success_count": 0,
+        "delivery_failure_count": 0,
+        "delivery_unknown_count": 2,
+        "delivery_success_rate": null,
+        "confirmed_delivery_success_fraction": 0.0,
+        "token_usage_covered_attempts": 0,
+        "total_actual_input_tokens": null,
+        "total_actual_output_tokens": null,
+        "total_actual_model_calls": null,
+        "total_actual_seconds": 797.807563145,
+        "actual_provider_tokens_per_delivery_success": null,
+        "actual_seconds_per_delivery_success": null,
+        "knowledge_observed_reuse_count": 0
+      },
+      "verified-source": {
+        "expected_attempts": 0,
+        "observed_attempts": 0,
+        "status_counts": {},
+        "submitted_count": 0,
+        "submission_unknown_count": 0,
+        "infrastructure_failure_count": 0,
+        "actual_model_attempt_count": 0,
+        "actual_attempt_unknown_count": 0,
+        "blocked_before_model_count": 0,
+        "submitted_rate": null,
+        "all_check_success_count": 0,
+        "all_check_unknown_count": 0,
+        "all_check_success_rate": null,
+        "delivery_success_count": 0,
+        "delivery_failure_count": 0,
+        "delivery_unknown_count": 0,
+        "delivery_success_rate": null,
+        "confirmed_delivery_success_fraction": null,
+        "token_usage_covered_attempts": 0,
+        "total_actual_input_tokens": null,
+        "total_actual_output_tokens": null,
+        "total_actual_model_calls": null,
+        "total_actual_seconds": null,
+        "actual_provider_tokens_per_delivery_success": null,
+        "actual_seconds_per_delivery_success": null,
+        "knowledge_observed_reuse_count": 0
+      }
+    },
+    "near_transfer": {
+      "baseline": {
+        "expected_attempts": 2,
+        "observed_attempts": 2,
+        "status_counts": {
+          "failed": 2
+        },
+        "submitted_count": 0,
+        "submission_unknown_count": 0,
+        "infrastructure_failure_count": 2,
+        "actual_model_attempt_count": 2,
+        "actual_attempt_unknown_count": 0,
+        "blocked_before_model_count": 0,
+        "submitted_rate": 0.0,
+        "all_check_success_count": 0,
+        "all_check_unknown_count": 2,
+        "all_check_success_rate": null,
+        "delivery_success_count": 0,
+        "delivery_failure_count": 0,
+        "delivery_unknown_count": 2,
+        "delivery_success_rate": null,
+        "confirmed_delivery_success_fraction": 0.0,
+        "token_usage_covered_attempts": 0,
+        "total_actual_input_tokens": null,
+        "total_actual_output_tokens": null,
+        "total_actual_model_calls": null,
+        "total_actual_seconds": 498.82237011100005,
+        "actual_provider_tokens_per_delivery_success": null,
+        "actual_seconds_per_delivery_success": null,
+        "knowledge_observed_reuse_count": 0
+      },
+      "retrieval": {
+        "expected_attempts": 2,
+        "observed_attempts": 2,
+        "status_counts": {
+          "failed": 2
+        },
+        "submitted_count": 0,
+        "submission_unknown_count": 0,
+        "infrastructure_failure_count": 2,
+        "actual_model_attempt_count": 2,
+        "actual_attempt_unknown_count": 0,
+        "blocked_before_model_count": 0,
+        "submitted_rate": 0.0,
+        "all_check_success_count": 0,
+        "all_check_unknown_count": 2,
+        "all_check_success_rate": null,
+        "delivery_success_count": 0,
+        "delivery_failure_count": 0,
+        "delivery_unknown_count": 2,
+        "delivery_success_rate": null,
+        "confirmed_delivery_success_fraction": 0.0,
+        "token_usage_covered_attempts": 0,
+        "total_actual_input_tokens": null,
+        "total_actual_output_tokens": null,
+        "total_actual_model_calls": null,
+        "total_actual_seconds": 1409.44526499,
+        "actual_provider_tokens_per_delivery_success": null,
+        "actual_seconds_per_delivery_success": null,
+        "knowledge_observed_reuse_count": 0
+      },
+      "verified-source": {
+        "expected_attempts": 2,
+        "observed_attempts": 2,
+        "status_counts": {
+          "infrastructure_failed": 2
+        },
+        "submitted_count": 0,
+        "submission_unknown_count": 0,
+        "infrastructure_failure_count": 2,
+        "actual_model_attempt_count": 0,
+        "actual_attempt_unknown_count": 0,
+        "blocked_before_model_count": 2,
+        "submitted_rate": 0.0,
+        "all_check_success_count": 0,
+        "all_check_unknown_count": 2,
+        "all_check_success_rate": null,
+        "delivery_success_count": 0,
+        "delivery_failure_count": 0,
+        "delivery_unknown_count": 2,
+        "delivery_success_rate": null,
+        "confirmed_delivery_success_fraction": 0.0,
+        "token_usage_covered_attempts": 2,
+        "total_actual_input_tokens": 0,
+        "total_actual_output_tokens": 0,
+        "total_actual_model_calls": 0,
+        "total_actual_seconds": null,
+        "actual_provider_tokens_per_delivery_success": null,
+        "actual_seconds_per_delivery_success": null,
+        "knowledge_observed_reuse_count": 0
+      }
+    }
+  },
+  "paired": {
+    "reference_arm": "baseline",
+    "contrast_policy": "frozen reference comparisons plus all same-profile unseeded-to-verified-source contrasts",
+    "comparisons": {
+      "retrieval": {
+        "reference_arm": "baseline",
+        "challenger_arm": "retrieval",
+        "intervention": "context_only",
+        "expected_pairs": 4,
+        "successful_pairs": 0,
+        "success_discordance": {
+          "both_success": 0,
+          "both_failure": 0,
+          "reference_only": 0,
+          "challenger_only": 0,
+          "unknown": 4
+        },
+        "efficiency_scope": "both arms delivered successfully; delta = challenger minus reference",
+        "mean_delta_actual_input_tokens": null,
+        "mean_delta_actual_output_tokens": null,
+        "mean_delta_actual_model_calls": null,
+        "mean_delta_actual_seconds": null
+      },
+      "verified-source": {
+        "reference_arm": "baseline",
+        "challenger_arm": "verified-source",
+        "intervention": "context_and_knowledge",
+        "expected_pairs": 2,
+        "successful_pairs": 0,
+        "success_discordance": {
+          "both_success": 0,
+          "both_failure": 0,
+          "reference_only": 0,
+          "challenger_only": 0,
+          "unknown": 2
+        },
+        "efficiency_scope": "both arms delivered successfully; delta = challenger minus reference",
+        "mean_delta_actual_input_tokens": null,
+        "mean_delta_actual_output_tokens": null,
+        "mean_delta_actual_model_calls": null,
+        "mean_delta_actual_seconds": null
+      },
+      "retrieval->verified-source": {
+        "reference_arm": "retrieval",
+        "challenger_arm": "verified-source",
+        "intervention": "knowledge_only",
+        "expected_pairs": 2,
+        "successful_pairs": 0,
+        "success_discordance": {
+          "both_success": 0,
+          "both_failure": 0,
+          "reference_only": 0,
+          "challenger_only": 0,
+          "unknown": 2
+        },
+        "efficiency_scope": "both arms delivered successfully; delta = challenger minus reference",
+        "mean_delta_actual_input_tokens": null,
+        "mean_delta_actual_output_tokens": null,
+        "mean_delta_actual_model_calls": null,
+        "mean_delta_actual_seconds": null
+      }
+    },
+    "pairs": [
+      {
+        "comparison_id": "retrieval",
+        "intervention": "context_only",
+        "instance_id": "more-itertools__last-factory-v1",
+        "seed": 42,
+        "role": "near_transfer",
+        "reference_arm": "baseline",
+        "challenger_arm": "retrieval",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "retrieval",
+        "intervention": "context_only",
+        "instance_id": "more-itertools__last-factory-v1",
+        "seed": 43,
+        "role": "near_transfer",
+        "reference_arm": "baseline",
+        "challenger_arm": "retrieval",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "retrieval",
+        "intervention": "context_only",
+        "instance_id": "more-itertools__split-after-keep-separator-v1",
+        "seed": 42,
+        "role": "holdout",
+        "reference_arm": "baseline",
+        "challenger_arm": "retrieval",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "retrieval",
+        "intervention": "context_only",
+        "instance_id": "more-itertools__split-after-keep-separator-v1",
+        "seed": 43,
+        "role": "holdout",
+        "reference_arm": "baseline",
+        "challenger_arm": "retrieval",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "verified-source",
+        "intervention": "context_and_knowledge",
+        "instance_id": "more-itertools__last-factory-v1",
+        "seed": 42,
+        "role": "near_transfer",
+        "reference_arm": "baseline",
+        "challenger_arm": "verified-source",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "verified-source",
+        "intervention": "context_and_knowledge",
+        "instance_id": "more-itertools__last-factory-v1",
+        "seed": 43,
+        "role": "near_transfer",
+        "reference_arm": "baseline",
+        "challenger_arm": "verified-source",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "retrieval->verified-source",
+        "intervention": "knowledge_only",
+        "instance_id": "more-itertools__last-factory-v1",
+        "seed": 42,
+        "role": "near_transfer",
+        "reference_arm": "retrieval",
+        "challenger_arm": "verified-source",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      },
+      {
+        "comparison_id": "retrieval->verified-source",
+        "intervention": "knowledge_only",
+        "instance_id": "more-itertools__last-factory-v1",
+        "seed": 43,
+        "role": "near_transfer",
+        "reference_arm": "retrieval",
+        "challenger_arm": "verified-source",
+        "reference_delivery_success": null,
+        "challenger_delivery_success": null,
+        "success_discordance": "unknown",
+        "successful_pair_scope": false,
+        "delta_actual_input_tokens": null,
+        "delta_actual_output_tokens": null,
+        "delta_actual_model_calls": null,
+        "delta_actual_seconds": null
+      }
+    ]
+  },
+  "source_attempts": {
+    "scope": "source seed attempts only; excluded from every target denominator",
+    "expected_attempts": 1,
+    "submitted_count": 0,
+    "actual_model_attempt_count": 1,
+    "delivery_success_count": 0,
+    "attempts": [
+      {
+        "instance_id": "more-itertools__first-factory-v1",
+        "seed": 42,
+        "status": "failed",
+        "submitted": false,
+        "delivery_success": null,
+        "attempt_started": true,
+        "attempted_count": 1,
+        "artifacts": {
+          "summary": {
+            "path": "source-trial/summary.json",
+            "sha256": "d1193ca708896244c36dec631045fe110960e2119b467ea9619055445ddda81f"
+          },
+          "evidence": null,
+          "verification": null
+        },
+        "receipt": {
+          "path": "source-trial/trial-receipt.json",
+          "sha256": "0f6380b9aae855eaedb6cc7917d2aa1bd2b26687fae1b2dfa108d658665e6f8d"
+        }
+      }
+    ]
+  },
+  "target_attempts": [
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "baseline",
+      "role": "near_transfer",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 248.798513676,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__last-factory-v1-42-baseline/summary.json",
+          "sha256": "645056130a4dbe01cac3fb465ecdf61b15a6eb0207205505e9ca462802c4f02b"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-42-baseline/trial-receipt.json",
+        "sha256": "6aac7ff9503deebb853b384b7191d1f8b15381931c280d35835b6a732c53cccd"
+      }
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "retrieval",
+      "role": "near_transfer",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 1108.581551778,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__last-factory-v1-42-retrieval/summary.json",
+          "sha256": "c13cda7dc3f9e34d83303f3ddc78ddfd857e0388bb0de685ff495c2f1973633a"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-42-retrieval/trial-receipt.json",
+        "sha256": "684f29966674e9743f1ea02c5d017bdbef09c78b171043fe7f64b32b0b1c6fa5"
+      }
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "verified-source",
+      "role": "near_transfer",
+      "status": "infrastructure_failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": false,
+      "attempted_count": 0,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": true,
+      "actual_input_tokens": 0,
+      "actual_output_tokens": 0,
+      "actual_model_calls": 0,
+      "actual_seconds": null,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__last-factory-v1-42-verified-source/summary.json",
+          "sha256": "e4b30caeb91b051845a32db22a1cd0cc842bbf77a08e3528834935912f935c68"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-42-verified-source/trial-receipt.json",
+        "sha256": "be1f09a0f2249861767f7f836b0167de5366e50c7b7e1279592b59a85f0cdf2b"
+      }
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "baseline",
+      "role": "near_transfer",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 250.02385643500003,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__last-factory-v1-43-baseline/summary.json",
+          "sha256": "ec09346e245fc8a61b1a98ab1817a9cb706cf778ac2e38b37fb937ca427dc7a0"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-43-baseline/trial-receipt.json",
+        "sha256": "73a7ad59929812825e93a2c7bc5cdfb4124a3188fc30b95c4d4987d3e25acb20"
+      }
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "retrieval",
+      "role": "near_transfer",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 300.863713212,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__last-factory-v1-43-retrieval/summary.json",
+          "sha256": "5cc923dfa8ad7d56d00edf1430f544bece8735d53eb2c5c8364e9d667c0426c2"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-43-retrieval/trial-receipt.json",
+        "sha256": "069b44964f37a5bad390119ce5c168d1eeb0511496254f15293278a16bfe621a"
+      }
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "verified-source",
+      "role": "near_transfer",
+      "status": "infrastructure_failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": false,
+      "attempted_count": 0,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": true,
+      "actual_input_tokens": 0,
+      "actual_output_tokens": 0,
+      "actual_model_calls": 0,
+      "actual_seconds": null,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__last-factory-v1-43-verified-source/summary.json",
+          "sha256": "e4b30caeb91b051845a32db22a1cd0cc842bbf77a08e3528834935912f935c68"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__last-factory-v1-43-verified-source/trial-receipt.json",
+        "sha256": "221e785379eacf65437cf35c450bf40252400668e872261138926fb04008b4b6"
+      }
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 42,
+      "arm": "baseline",
+      "role": "holdout",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 300.973244267,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__split-after-keep-separator-v1-42-baseline/summary.json",
+          "sha256": "a93278ebdf8111ef1a9ad57ddebc5ec281009836083800eaade9001fffb7e851"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__split-after-keep-separator-v1-42-baseline/trial-receipt.json",
+        "sha256": "a0db9ec557d3e0c1358c8a705934698456261a210487cd4b2c9e063c454f8196"
+      }
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 42,
+      "arm": "retrieval",
+      "role": "holdout",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 496.969625275,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__split-after-keep-separator-v1-42-retrieval/summary.json",
+          "sha256": "7d4db8aec03a09b1c11ed4454c17c2b70728066b81a69ff3141e3ebd74332d36"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__split-after-keep-separator-v1-42-retrieval/trial-receipt.json",
+        "sha256": "39696f9f83f6a28d8cd2705c99d9363269a93f38e129dabf4cd38581dd6fbc3e"
+      }
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 43,
+      "arm": "baseline",
+      "role": "holdout",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 491.810115077,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__split-after-keep-separator-v1-43-baseline/summary.json",
+          "sha256": "948b171b5970a5b91a64ce39393161eaddaf597aa70d1f63678aec1a87907049"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__split-after-keep-separator-v1-43-baseline/trial-receipt.json",
+        "sha256": "52287e4e1d0800a31e7782174c470c10fbd99d30eecaa368ebf6cbab8aeb8121"
+      }
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 43,
+      "arm": "retrieval",
+      "role": "holdout",
+      "status": "failed",
+      "submitted": false,
+      "infrastructure_failed": true,
+      "attempt_started": true,
+      "attempted_count": 1,
+      "all_checks_passed": null,
+      "delivery_success": null,
+      "usage_complete": false,
+      "actual_input_tokens": null,
+      "actual_output_tokens": null,
+      "actual_model_calls": null,
+      "actual_seconds": 300.83793787,
+      "knowledge_observed_reuse": false,
+      "artifacts": {
+        "summary": {
+          "path": "target-more-itertools__split-after-keep-separator-v1-43-retrieval/summary.json",
+          "sha256": "7f2268a104a4405f711dec06e0ae6e08f8fbdc48eab75d78c1e0e33251e4376c"
+        },
+        "evidence": null,
+        "verification": null
+      },
+      "receipt": {
+        "path": "target-more-itertools__split-after-keep-separator-v1-43-retrieval/trial-receipt.json",
+        "sha256": "b974848e5bd73ac19ccec5c1741e6b8db6bbe3cbb060826ea14c8437488425f6"
+      }
+    }
+  ],
+  "official_resolved": null,
+  "global_improvement_claim": false,
+  "limitations": [
+    "The frozen cohort is small and predeclared; no significance test or general improvement claim.",
+    "Near-transfer and holdout roles are reported separately; source seed attempts are not target successes.",
+    "Actual provider usage only; any incomplete arm coverage makes its total token metric null.",
+    "Successful-pair efficiency and cost per delivery success across all attempts have different scopes.",
+    "Receipt hashes bind runner artifacts; this summary does not replace independent verification or prove freeze timing."
+  ]
+}

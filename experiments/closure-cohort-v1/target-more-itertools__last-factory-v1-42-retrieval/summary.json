@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "fixture": false,
+  "kind": "real_docker_closure_trial",
+  "attempt_started": true,
+  "attempted_count": 1,
+  "instance_id": "more-itertools__last-factory-v1",
+  "model_status": "failed",
+  "delivery_success": null,
+  "complete": false,
+  "official_resolved": null,
+  "model": "qwen3:4b-instruct",
+  "model_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+  "budgets": {
+    "max_steps": 24,
+    "context_tokens": 24000,
+    "max_output_tokens": 1500,
+    "wall_seconds": 1800,
+    "request_timeout": 300,
+    "command_timeout": 90,
+    "cost_limit": 3.0,
+    "temperature": 0,
+    "seed": 42
+  },
+  "profile": "retrieval",
+  "arm": "retrieval",
+  "hardware": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "total_memory_bytes": 8323969024,
+    "agent_container_cpus": 2,
+    "agent_container_memory": "1g"
+  },
+  "source_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+  "attempt_id": "a4be238fa295c41068184bae49efa8b45",
+  "observed_provider_requests": 8,
+  "agent_pipeline_invoked": true,
+  "exit_status": null,
+  "seconds": 1108.581551778,
+  "infrastructure_error_type": "ValueError",
+  "usage": {
+    "complete": false,
+    "input_tokens": null,
+    "output_tokens": null,
+    "calls_with_usage": 0,
+    "unknown_requests": 0
+  },
+  "model_calls": null,
+  "internal_checks_passed": null,
+  "external_checks_passed": null
+}

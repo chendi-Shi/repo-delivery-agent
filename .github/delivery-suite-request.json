@@ -1,10 +1,13 @@
 {
   "schema": 1,
-  "request": "first-source-last-and-split-fixed-cohort-v1",
+  "request": "first-source-last-and-split-staged-cohort-v2",
   "model": "qwen3:4b-instruct",
   "context_tokens": 24000,
+  "request_timeout": 600,
+  "wall_seconds": 3600,
+  "target_dispatch_gate": "verified_source_eligible",
   "source_attempts": 1,
   "target_trials": 10,
   "seeds": [42, 43],
-  "purpose": "Run the frozen source, matched target comparisons and hash-bound aggregation; preserve failures and unknown outcomes."
+  "purpose": "Retain the first timeout cohort; attempt the same frozen source with bounded extended request time and runtime telemetry. Dispatch targets only after a verified eligible source; keep undispatched planned rows unknown."
 }

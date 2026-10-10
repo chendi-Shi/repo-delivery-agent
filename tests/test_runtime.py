@@ -118,6 +118,17 @@ class RuntimeTests(RuntimeCase):
         self.assertEqual(session.get_template_vars()["image"], IMAGE_ID)
         self.assertTrue(all(not kwargs.get("shell", False) for _, kwargs in self.docker.calls))
 
+    def test_persistent_container_has_no_idle_deadline_and_context_exit_removes_it(self):
+        with self.session(timeout=3600) as session:
+            argv = next(argv for argv, _ in self.docker.calls if argv[:2] == ["docker", "run"])
+            self.assertEqual(argv[-3:], [IMAGE_ID, "sleep", "infinity"])
+            self.assertFalse(any(argv[:2] == ["docker", "rm"] for argv, _ in self.docker.calls))
+            self.assertFalse(session.closed)
+        self.assertTrue(session.closed)
+        self.assertEqual(self.docker.calls[-1][0], ["docker", "rm", "-f", "container-123"])
+        session.close()
+        self.assertEqual(sum(argv[:2] == ["docker", "rm"] for argv, _ in self.docker.calls), 1)
+
     def test_workspace_without_git_metadata_never_starts_a_container(self):
         (self.work / ".git").rmdir()
         with self.assertRaisesRegex(ValueError, "Git metadata"):

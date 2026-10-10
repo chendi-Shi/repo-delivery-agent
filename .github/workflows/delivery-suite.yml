@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: delivery-suite-${{ github.ref }}
+  group: delivery-suite-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   source:
@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 90
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
+      seed_eligible: ${{ steps.plan.outputs.seed_eligible }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,19 +40,29 @@ jobs:
           --ollama "$RUNNER_TEMP/ollama-pin/bin/ollama" --model qwen3:4b-instruct
           --ollama-mode json --profile recent --label source
           --max-steps 24 --context-tokens 24000 --max-output-tokens 1500
-          --wall-seconds 1800 --request-timeout 300 --command-timeout 90 --seed 42
+          --wall-seconds 3600 --request-timeout 600 --command-timeout 90 --seed 42
           --output runs/closure-source-private --evidence runs/closure-source-public
       - name: Export the predeclared target matrix
         id: plan
+        if: always()
         run: |
           python - <<'PY'
           import json, os
           from pathlib import Path
-          matrix = json.loads(Path('runs/closure-source-public/matrix.json').read_text())
+          matrix_path = Path('runs/closure-source-public/matrix.json')
+          if not matrix_path.is_file() or not Path('runs/closure-source-public/suite-plan.json').is_file():
+              print('No frozen plan was produced; downstream outcomes cannot be reconstructed.')
+              raise SystemExit(0)
+          matrix = json.loads(matrix_path.read_text())
           if len(matrix['include']) != 10:
               raise ValueError('the fixed cohort must contain ten target rows')
+          package_path = Path('runs/closure-source-public/seed-package.json')
+          package = json.loads(package_path.read_text()) if package_path.is_file() else {'eligible': False}
+          if type(package.get('eligible')) is not bool:
+              raise ValueError('source eligibility must be an explicit verified result')
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
               output.write('matrix=' + json.dumps(matrix, separators=(',', ':')) + '\n')
+              output.write('seed_eligible=' + str(package['eligible']).lower() + '\n')
           PY
       - name: Publish only frozen source evidence and the verified experience package
         if: always()
@@ -89,6 +100,7 @@ jobs:
           retention-days: 3
   targets:
     needs: source
+    if: needs.source.outputs.seed_eligible == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 75
     strategy:
@@ -152,7 +164,7 @@ jobs:
           retention-days: 30
   aggregate:
     needs: [source, targets]
-    if: always() && needs.source.result == 'success'
+    if: always() && needs.source.outputs.matrix != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -165,6 +177,7 @@ jobs:
           name: closure-source-${{ github.run_id }}-${{ github.run_attempt }}
           path: runs/closure-combined
       - uses: actions/download-artifact@v4
+        if: needs.source.result == 'success' && needs.source.outputs.seed_eligible == 'true'
         with:
           pattern: closure-target-*-${{ github.run_id }}-${{ github.run_attempt }}
           merge-multiple: true

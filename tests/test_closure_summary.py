@@ -525,6 +525,47 @@ class ClosureSummaryTests(unittest.TestCase):
             self.assertEqual(result["by_arm"]["seeded"]["delivery_unknown_count"], 1)
             self.assertFalse(result["complete"])
 
+    def test_source_request_timeout_preserves_measured_time_and_unknown_response_usage(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data = CohortArtifacts(temporary)
+            data.all()
+            receipt = data.add("source-first", 42, "source", source=True, status="failed",
+                internal=None, external=None, tokens=(None, None), calls=0, seconds=300.949730128,
+                complete=False, infra=True, started=True)
+            receipt["model_calls"] = None
+            receipt["artifacts"]["evidence"] = receipt["artifacts"]["verification"] = None
+            ref = receipt["artifacts"]["summary"]
+            actual_summary = json.loads((data.root / ref["path"]).read_text())
+            actual_summary.update(observed_provider_requests=1, model_calls=None, usage=receipt["usage"])
+            receipt["artifacts"]["summary"] = data.write(ref["path"], actual_summary)
+            source_ref = data.sources[("source-first", 42)]["receipt"]
+            data.sources[("source-first", 42)]["receipt"] = data.write(source_ref["path"], receipt)
+            result = data.summarize()
+            self.assertEqual(result["expected_target_attempts"], 10)
+            sources = result["source_attempts"]
+            self.assertEqual(sources["actual_model_attempt_count"], 1)
+            source = sources["attempts"][0]
+            self.assertEqual(source["observed_provider_requests"], 1)
+            self.assertEqual(source["actual_seconds"], 300.949730128)
+            self.assertFalse(source["usage_complete"])
+            for field in ("delivery_success", "actual_model_calls", "actual_input_tokens", "actual_output_tokens"):
+                self.assertIsNone(source[field])
+
+    def test_provider_request_counter_is_bounded_and_cannot_contradict_start(self):
+        for count in (-1, True, 0, 10 ** 15 + 1):
+            with self.subTest(count=count), tempfile.TemporaryDirectory() as temporary:
+                data = CohortArtifacts(temporary)
+                data.all()
+                source_ref = data.sources[("source-first", 42)]["receipt"]
+                receipt = json.loads((data.root / source_ref["path"]).read_text())
+                ref = receipt["artifacts"]["summary"]
+                actual_summary = json.loads((data.root / ref["path"]).read_text())
+                actual_summary["observed_provider_requests"] = count
+                receipt["artifacts"]["summary"] = data.write(ref["path"], actual_summary)
+                data.sources[("source-first", 42)]["receipt"] = data.write(source_ref["path"], receipt)
+                with self.assertRaises(summary.SummaryError):
+                    data.summarize()
+
 
 if __name__ == "__main__":
     unittest.main()

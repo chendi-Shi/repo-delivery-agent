@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "kind": "closure_trial_receipt",
+  "fixture": false,
+  "instance_id": "more-itertools__first-factory-v1",
+  "seed": 42,
+  "arm": "source",
+  "role": "source",
+  "model": {
+    "name": "qwen3:4b-instruct",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0"
+  },
+  "common": {
+    "provider": "ollama_native",
+    "backend": "docker",
+    "tools_sha256": "0a633f42e304bf95f737e8e266f0509ddee8207d1de3c84fa4186b40861a8b2a",
+    "implementation_sha256": "8a775af07a01b15301ad2f5393a9315c593997abd72fecf4cb6b12e9b25f5d4b",
+    "budgets": {
+      "max_steps": 24,
+      "context_tokens": 24000,
+      "max_output_tokens": 1500,
+      "wall_seconds": 1800,
+      "request_timeout": 300,
+      "command_timeout": 90,
+      "cost_limit": 3.0,
+      "temperature": 0
+    }
+  },
+  "profile": "recent",
+  "knowledge": "none",
+  "task": {
+    "task_sha256": "19174109b222e1b9eb1b7b4c281013cd09062f25fa31aebd03829f9d57062be8",
+    "task_fingerprint": "6dc11188f1c10a8c29c0ced4d11d8297e377d2c431dcc31faa25ac42b782724b",
+    "repo": "more-itertools/more-itertools",
+    "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+    "inference_image_id": "sha256:ed3e8474eade01cefd02f1a56b45dc7362017509e5a05708009db5704793187a",
+    "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+    "public_checks_sha256": "b545f56c5d8eee655a1241765aa5ecfb56a28f7e5644ed54d505bd70f7fd90df"
+  },
+  "status": "failed",
+  "exit_status": null,
+  "submitted": false,
+  "internal_checks_passed": null,
+  "external_checks_passed": null,
+  "delivery_success": null,
+  "usage": {
+    "complete": false,
+    "input_tokens": null,
+    "output_tokens": null,
+    "calls_with_usage": 0,
+    "unknown_requests": 0
+  },
+  "model_calls": null,
+  "seconds": 300.949730128,
+  "infrastructure_failed": true,
+  "attempt_started": true,
+  "attempted_count": 1,
+  "knowledge_observed_reuse": false,
+  "artifacts": {
+    "summary": {
+      "path": "source-trial/summary.json",
+      "sha256": "d1193ca708896244c36dec631045fe110960e2119b467ea9619055445ddda81f"
+    },
+    "evidence": null,
+    "verification": null
+  }
+}

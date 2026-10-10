@@ -26,14 +26,22 @@ UPSTREAM_VERSION = "2.4.6"
 UPSTREAM_COMMIT = "04d809ceab9df28f9adaed044884180159172930"
 
 HISTORY_GUIDE = """
-History toolbox (interpreted by the agent harness, available through bash calls):
-delivery-history search 'literal query' [limit 1..8]
-delivery-history read e000001 [character-offset] [limit 1..4000]
-delivery-history note short_name 'fact, failed attempt, or constraint with source IDs'
-Keep at most 8 notes of 500 characters each. They are your notes, not verified facts.
-Tool output views may be shortened; read its source ID to recover complete evidence.
-Use one history command per bash call. Do not combine it with shell operators.
+History tools via bash; executable examples:
+delivery-history search 'error' 5
+delivery-history read e000001 0 2000
+Search: literal query; limit 1..8 (default 5). Read: returned ID; character offset >=0
+(default 0), limit 1..4000 (default 2000). Use real query terms and returned IDs.
+next_offset=null is EOF; stop paging that source. Shortened outputs retain source IDs.
+Notes take note, a short name and quoted text; at most 8 notes of 500 characters, unverified.
+Run each delivery-history command alone, without shell operators. Other environment
+commands remain available for repository work.
 """
+
+
+def compose_instance_template(task_template: str = "{{task}}", toolbox: Any = None) -> str:
+    """Keep the intact repository objective after generic tool reference data."""
+    return (HISTORY_GUIDE + (toolbox.guide() if toolbox is not None else "") +
+            "\nRepository requirement and public checks:\n" + task_template)
 
 
 class ContextBudgetExceeded(RuntimeError):
@@ -330,6 +338,75 @@ def repeated_failure_feedback(messages: list[dict[str, Any]]) -> tuple[int, int,
     return index, count, text
 
 
+def repeated_readonly_cycle_feedback(messages: list[dict[str, Any]]) -> tuple[int, int, int, str] | None:
+    """Detect a repeated suffix of 1..3 actual read-only toolbox executions.
+
+    Only paired bash actions and upstream execution metadata are evidence. Shell
+    commands are deliberately not classified as read-only. Raw output is hashed
+    in full, so a changed result, failed pairing, write, or new user input resets
+    the sequence. Counts come from persisted history, not process-local state.
+    """
+    allowed = {"delivery-history": {"read", "search"}, "delivery-skill": {"read", "list"},
+               "delivery-knowledge": {"read", "search"}}
+    signatures: list[bytes] = []
+    pending = None
+    latest = None
+    for index, message in enumerate(messages):
+        role = message.get("role")
+        if role == "assistant":
+            if pending is not None:
+                signatures.clear()
+            pending = None
+            calls = message.get("tool_calls") or []
+            if len(calls) == 1:
+                try:
+                    call = calls[0]
+                    function = call["function"]
+                    command = json.loads(function["arguments"])["command"]
+                    if function.get("name") == "bash" and isinstance(command, str):
+                        lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|<>()")
+                        lexer.whitespace_split, lexer.commenters = True, ""
+                        tokens = list(lexer)
+                        if (len(tokens) >= 2 and tokens[1] in allowed.get(tokens[0], set())
+                                and not any(token and set(token) <= set(";&|<>()") for token in tokens)):
+                            pending = (call["id"], command)
+                except (KeyError, TypeError, ValueError, AttributeError):
+                    pass
+            if pending is None:
+                signatures.clear()
+            continue
+        extra = message.get("extra")
+        if (role != "tool" or pending is None or message.get("tool_call_id") != pending[0]
+                or not isinstance(extra, dict) or type(extra.get("returncode")) is not int
+                or not isinstance(extra.get("raw_output"), str)
+                or extra.get("exception_info") == "action was not executed"
+                or extra.get("exception_info") is not None and not isinstance(extra["exception_info"], str)):
+            signatures.clear()
+            pending = None
+            continue
+        signatures.append(hashlib.sha256(json.dumps(
+            [pending[1], extra["returncode"], extra["raw_output"], extra.get("exception_info")],
+            ensure_ascii=False, separators=(",", ":")).encode("utf-8")).digest())
+        pending, latest = None, index
+    if latest != len(messages) - 1:
+        return None
+    for period in range(1, 4):
+        if len(signatures) < period * 2:
+            continue
+        repeated = period
+        while repeated < len(signatures) and signatures[-repeated - 1] == signatures[-repeated - 1 + period]:
+            repeated += 1
+        if repeated < period * 2:
+            continue
+        count = repeated // period
+        text = (f"\n\n[Execution feedback: the same {period}-action read-only tool cycle has repeated "
+                f"{count} times ({repeated} consecutive actions) with unchanged results. "
+                "These calls provide no new evidence. Check errors, EOF/next_offset and tool syntax; "
+                "choose a different relevant query, resource or repository inspection based on the results.]")
+        return latest, count, period, text
+    return None
+
+
 class ContextPolicy:
     def __init__(self, config: ContextConfig):
         self.config = config
@@ -349,8 +426,14 @@ class ContextPolicy:
                                            "use delivery-history read]\n" + content[-half:])
                     shortened.append(source)
         feedback = repeated_failure_feedback(messages)
+        cycle_feedback = repeated_readonly_cycle_feedback(messages)
         if feedback is not None:
             index, _, text = feedback
+            content = prepared[index].get("content")
+            if isinstance(content, str):
+                prepared[index]["content"] = content + text
+        elif cycle_feedback is not None:
+            index, _, _, text = cycle_feedback
             content = prepared[index].get("content")
             if isinstance(content, str):
                 prepared[index]["content"] = content + text
@@ -416,6 +499,8 @@ class ContextPolicy:
             "estimated_input_tokens": estimate_tokens(selected_view), "estimate_method": "utf8_bytes_plus_message_framing",
             "context_tokens": self.config.context_tokens, "reserve_tokens": self.config.reserve_tokens,
             "repeated_failure_count": feedback[1] if feedback is not None else 0,
+            "readonly_cycle_repetitions": cycle_feedback[1] if cycle_feedback is not None else 0,
+            "readonly_cycle_period": cycle_feedback[2] if cycle_feedback is not None else 0,
             "notes": notes or [],
         }
 
@@ -547,9 +632,7 @@ def make_agent_class(base_class: Any = None) -> Any:
             self.delivery_resume = resume
             self.delivery_recovery_binding = recovery_binding or {}
             kwargs["output_path"] = self.delivery_output / "trajectory.json"
-            kwargs["instance_template"] = kwargs.get("instance_template", "{{task}}") + HISTORY_GUIDE
-            if toolbox is not None:
-                kwargs["instance_template"] += toolbox.guide()
+            kwargs["instance_template"] = compose_instance_template(kwargs.get("instance_template", "{{task}}"), toolbox)
             try:
                 super().__init__(wrapped_model, recovery_env, **kwargs)
                 # Keep the optional protocol-double path usable for policy

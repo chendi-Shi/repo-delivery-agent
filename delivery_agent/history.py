@@ -96,8 +96,13 @@ class HistoryStore:
             raise ValueError(f"unknown source ID: {source_id}")
         evidence = row[0]
         end = min(len(evidence), offset + limit)
-        return {"source_id": source_id, "offset": offset, "total_chars": len(evidence),
-                "text": evidence[offset:end], "next_offset": end if end < len(evidence) else None}
+        result = {"source_id": source_id, "offset": offset, "total_chars": len(evidence),
+                  "text": evidence[offset:end], "next_offset": end if end < len(evidence) else None,
+                  "eof": end == len(evidence)}
+        if result["eof"]:
+            result["guidance"] = ("End of this history event; there is no further content. "
+                "Do not request a higher offset. Use a different relevant event or inspect repository evidence.")
+        return result
 
     def note(self, name: str, text: str) -> dict[str, str]:
         if not name or len(name) > 40 or any(char.isspace() for char in name):
@@ -137,10 +142,24 @@ class HistoryEnvironment:
         self.history = history
         self.config = getattr(environment, "config", None)
 
+    def command_help(self) -> str:
+        text = ("Examples (run separately):\ndelivery-history search 'error' 5\n"
+            "delivery-history note finding 'Recheck the failing test'\n"
+            "Search takes a quoted literal query and an optional integer result limit from 1 to 8. "
+            "Read takes an existing source_id from a search result, then an optional nonnegative "
+            "character offset and an integer character limit from 1 to 4000; defaults are 0 and 2000. ")
+        count = self.history.count()
+        if count:
+            text += f"Read example:\ndelivery-history read {self.history.source_id(1)} 0 2000\n"
+        return text + "Run exactly one command per call. Supply numbers directly; do not copy parameter descriptions."
+
+    def _error(self, message: str) -> dict[str, Any]:
+        return _result({"error": message, "guidance": self.command_help()}, 2)
+
     def execute(self, action: dict[str, Any], cwd: str = "", **kwargs: Any) -> dict[str, Any]:
         command = action.get("command", "")
         if not isinstance(command, str):
-            return _result({"error": "command must be a string"}, 2)
+            return self._error("command must be a string")
         try:
             lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|<>")
             lexer.whitespace_split = True
@@ -149,14 +168,14 @@ class HistoryEnvironment:
         except ValueError as exc:
             first_word = command.lstrip().split(maxsplit=1)[0] if command.strip() else ""
             if first_word == "delivery-history":
-                return _result({"error": f"history command parse error: {exc}"}, 2)
+                return self._error(f"history command parse error: {exc}")
             return self.environment.execute(action, cwd=cwd, **kwargs)
         if not tokens or tokens[0] != "delivery-history":
             return self.environment.execute(action, cwd=cwd, **kwargs)
         # Reject shell operators even when they are quoted. The toolbox is a
         # single command with positional arguments, never a shell expression.
         if any(token and all(character in ";&|<>" for character in token) for token in tokens):
-            return _result({"error": "history commands cannot contain shell operators"}, 2)
+            return self._error("history commands cannot contain shell operators")
         try:
             if len(tokens) >= 2 and tokens[1] == "search" and len(tokens) in (3, 4):
                 return _result(self.history.search(tokens[2], int(tokens[3]) if len(tokens) == 4 else 5))
@@ -165,10 +184,9 @@ class HistoryEnvironment:
                                                  int(tokens[4]) if len(tokens) == 5 else 2000))
             if len(tokens) == 4 and tokens[1] == "note":
                 return _result(self.history.note(tokens[2], tokens[3]))
-            return _result({"error": "usage: delivery-history search QUERY [LIMIT] | "
-                            "read SOURCE_ID [OFFSET] [LIMIT] | note KEY TEXT"}, 2)
+            return self._error("invalid history command or argument count")
         except (ValueError, TypeError) as exc:
-            return _result({"error": str(exc)}, 2)
+            return self._error(str(exc))
 
     def get_template_vars(self, **kwargs: Any) -> dict[str, Any]:
         return self.environment.get_template_vars(**kwargs)

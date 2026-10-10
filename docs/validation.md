@@ -4,13 +4,19 @@
 
 ## 新增 Docker 交付验证
 
+最新 [5ee0e9a 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017726472) 通过 Linux 271 项（32.067 秒）、Windows 271 项（84.719 秒），均无 skip；真实 Docker 与独立 verifier job 也通过。此前 a662b2b 的 Windows 267 项中有一项临时目录短路径别名错误，Linux 同批 267 项通过；该原始失败保留在 [CI 记录](../experiments/ci-closure-cohort-initial/validation.json)。修复统一了根目录与子路径的规范化，并加入真实 Windows 短路径回归。
+
 [21f1f5f 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38016237676) 实际通过 Linux 230 项（29.331 秒）、Windows 230 项（59.356 秒），均无 skip；Docker 运行与崩溃恢复、既有真实补丁的独立 verifier 同时通过。此前 276c6ce 的 CI 已通过两端各 223 项，Linux 32.632 秒、Windows 68.430 秒。下面的 196 项与 19 次模型尝试属于此前阶段，保留作为历史记录。
 
 第一个 [7B Docker 真实试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37916573901) 使用固定 Requests commit、原始公开问题和两条公开检查。模型实际请求 24 次，实测输入 46,374、输出 1,107 tokens，usage 完整；仓库运行 636.38 秒。24 条动作均为同一非法 Skill 资源读取，未修改源码，最终 LimitsExceeded。干净 checkout 验收：旧文本/表单兼容检查通过，二进制请求体检查仍报原始 UnicodeDecodeError。未提交，公开交付 0/1，official_resolved 为 null。
 
 完整产物保存在 [closure-proof-v1](../experiments/closure-proof-v1)，GitHub archive SHA256 已核验。原始顶层 summary 漏取 model_calls/usage，保留 null；实际数值来自同目录 hash 绑定的 evidence。新增动作审计让失败能被定位到具体调用；工具指引和真实执行元数据驱动的重复失败反馈已修复并通过协议测试，尚需后续模型结果验证其交付效果。该协议回归是 fixture，不加进模型尝试数。
 
-## 已完成的实现与运行时验证
+第二次 [7B Docker 试验](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38016237749) 已完成：24 次真实响应，实测输入/输出 53,817 / 732 tokens，用量完整；仓库运行 1,624.684 秒。模型先成功读取一次 Skill，随后 11 次空读取与 12 次非法历史搜索耗尽步数，没有读写仓库源码。空补丁，未提交，两套公开检查均保持一条通过、一条失败，交付 0/1，official_resolved=null。原始顶层 usage 缺失与第一轮属于同一历史导出缺陷，真实数值仍由 evidence 绑定。归档与逐动作原因见 [closure-proof-v2](../experiments/closure-proof-v2/analysis.md)。
+
+固定任务队列第一轮也已执行并完整归档：10 个目标中 8 个发起请求、2 个因来源未成功而在调用前阻塞；没有提交，缺少独立验收，10 个交付结果均保持未知。目标共记录 21 次发起请求，来源另有 1 次；未导出的 Token 用量没有被当作零。加强后的汇总器重新校验原始收据，完整性仍为 false。详见 [全量队列复核](../experiments/closure-cohort-v1/analysis.md)。后续先验证来源成功再启动目标，对历史失败仍保留原记录。
+
+## 此前阶段的实现与运行时验证
 
 本轮源码提交 [a81d8821478f68b476885d48b9847230df29162b](https://github.com/chendi-Shi/repo-delivery-agent/commit/a81d8821478f68b476885d48b9847230df29162b) 的 [CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37895794373) 已实际全部成功：
 
@@ -22,7 +28,7 @@
 
 覆盖上下文选择和完整工具轮次、原始历史回查、Skills 渐进披露、知识来源与 namespace/当前任务隔离、checkpoint 恢复、HTTP coordinator/worker、受限文件操作、真实 upstream 契约、patch 导出与干净应用，以及 predictions/attempts/官方报告绑定。合成模型和合成官方报告验证协议，不构成模型成绩。
 
-此前 [1acbab6 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37891137623) 已通过 Windows/Linux 各 191 项，分别为 61.935/29.947 秒；更早 [413e653 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889587406) 各 189 项，分别为 64.294/31.683 秒。初版 87 项本机回归属于更早的历史验证；当前以上面 196 项的固定提交记录为准。mini-swe-agent 固定 2.4.6，真实 DefaultAgent 与官方环境工厂的契约实际执行；缺少依赖而 skip 的测试不能计入通过。
+此前 [1acbab6 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37891137623) 已通过 Windows/Linux 各 191 项，分别为 61.935/29.947 秒；更早 [413e653 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889587406) 各 189 项，分别为 64.294/31.683 秒。初版 87 项本机回归属于更早的历史验证；本历史阶段以上面 196 项的固定提交记录为准，最新结果见本文开头。mini-swe-agent 固定 2.4.6，真实 DefaultAgent 与官方环境工厂的契约实际执行；缺少依赖而 skip 的测试不能计入通过。
 
 此前真实 Docker 集成和进程崩溃恢复已在 [18e6f2d 对应 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/37889201826) 通过，下载报告保存在 [docker-validation.json](../experiments/ci-container-v02/docker-validation.json) 与 [docker-recovery.json](../experiments/ci-container-v02/docker-recovery.json)。这两份归档对应此前提交；最新 a81d882 的 Docker job 和独立公开 verifier 也已成功。报告实际核对了持久会话、只读 Git 元数据、关闭网络、新文件 patch、干净应用、独立容器检查，以及进程崩溃后同容器接入、已完成动作不重执行、预算/历史连续和最终清理。
 
@@ -190,7 +196,7 @@ recent 补丁包含明确的大范围覆盖问题：`more_itertools/more.py` 从
 
 这验证了真实 embeddings、cosine/RRF 和隔离路径，不能由三篇语料估计总体检索准确率，也不能解释为编程交付提升。
 
-## 当前结果与证据边界
+## 历史模型结果与证据边界
 
 三轮和单案例已经实际运行模型、保留 19 次固定 CI 尝试，并完成公开 patch 的干净应用和独立容器检查。结果揭示包路径/导出、源码覆盖、行为契约、上下文预算与步数和时间限制问题；当前没有成功提交或模型官方 resolved 成绩。
 

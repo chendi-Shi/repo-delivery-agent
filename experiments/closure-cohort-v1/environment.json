@@ -1,0 +1,39 @@
+{
+  "model": {
+    "name": "qwen3:4b-instruct",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "size": 2497293803,
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "4.0B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 262144,
+      "embedding_length": 2560,
+      "runner": "ggml"
+    }
+  },
+  "hardware": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "total_memory_bytes": 8323964928,
+    "agent_container_cpus": 2,
+    "agent_container_memory": "1g"
+  },
+  "ollama_version": "0.40.2",
+  "ollama_archive_sha256": "726bee78706c281b0eeef00746efe51a044d71c592c3f0b195820707f31fdf04",
+  "image": {
+    "public_base_reference": "python:3.12-slim",
+    "public_base_digest": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+    "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+    "inference_image_id": "sha256:ed3e8474eade01cefd02f1a56b45dc7362017509e5a05708009db5704793187a",
+    "operator_dockerfile_sha256": "40f6bdea1e3a1c4e3742f2d190e74c09d91bfce9577e03fb18756f4dcc438d11",
+    "image_policy": "tools added outside the agent; inference image differs from portable public verifier base"
+  },
+  "official_resolved": null
+}

@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "kind": "closure_trial_receipt",
+  "fixture": false,
+  "instance_id": "more-itertools__split-after-keep-separator-v1",
+  "seed": 43,
+  "arm": "baseline",
+  "role": "holdout",
+  "model": {
+    "name": "qwen3:4b-instruct",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0"
+  },
+  "common": {
+    "provider": "ollama_native",
+    "backend": "docker",
+    "tools_sha256": "0a633f42e304bf95f737e8e266f0509ddee8207d1de3c84fa4186b40861a8b2a",
+    "implementation_sha256": "8a775af07a01b15301ad2f5393a9315c593997abd72fecf4cb6b12e9b25f5d4b",
+    "budgets": {
+      "max_steps": 24,
+      "context_tokens": 24000,
+      "max_output_tokens": 1500,
+      "wall_seconds": 1800,
+      "request_timeout": 300,
+      "command_timeout": 90,
+      "cost_limit": 3.0,
+      "temperature": 0
+    }
+  },
+  "profile": "baseline",
+  "knowledge": "none",
+  "task": {
+    "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+    "task_fingerprint": "ec13c75801df6c737e2f1571aaa548b108cb24478547eecf115aefb27d1c654c",
+    "repo": "more-itertools/more-itertools",
+    "base_commit": "81c21a8db1c922260cd673841257fb9b112c1318",
+    "inference_image_id": "sha256:ed3e8474eade01cefd02f1a56b45dc7362017509e5a05708009db5704793187a",
+    "public_base_image_id": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+    "public_checks_sha256": "95ae302033618ba770aa84e78f7e0e70870e532057619831f7f067c67ecfb40f"
+  },
+  "status": "failed",
+  "exit_status": null,
+  "submitted": false,
+  "internal_checks_passed": null,
+  "external_checks_passed": null,
+  "delivery_success": null,
+  "usage": {
+    "complete": false,
+    "input_tokens": null,
+    "output_tokens": null,
+    "calls_with_usage": 0,
+    "unknown_requests": 0
+  },
+  "model_calls": null,
+  "seconds": 491.810115077,
+  "infrastructure_failed": true,
+  "attempt_started": true,
+  "attempted_count": 1,
+  "knowledge_observed_reuse": false,
+  "artifacts": {
+    "summary": {
+      "path": "target-more-itertools__split-after-keep-separator-v1-43-baseline/summary.json",
+      "sha256": "948b171b5970a5b91a64ce39393161eaddaf597aa70d1f63678aec1a87907049"
+    },
+    "evidence": null,
+    "verification": null
+  }
+}

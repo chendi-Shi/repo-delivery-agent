@@ -4,7 +4,7 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
-源码提交 21f1f5f 的实际 CI 已通过 Windows/Linux 各 230 项、0 skip，真实 Docker 和独立 verifier 也通过。此前源码推理阶段保留的 19 次真实尝试全部未提交，有公开检查的任务交付为 0/10。新增的 7B Docker 试验也完整保留：24 次调用重复误用 Skill 工具，空补丁，公开验收失败。该故障促成了工具指引和重复调用反馈修复；后续效果须由真实运行验证，没有取得模型官方 resolved 分数。逐题 usage、补丁和 CI 来源见 [验证记录](validation.md) 与 [Docker 失败分析](../experiments/closure-proof-v1/analysis.md)。
+源码提交 5ee0e9a 的实际 CI 已通过 Windows/Linux 各 271 项、0 skip，真实 Docker 和独立 verifier 也通过。此前源码推理阶段保留的 19 次真实尝试全部未提交，有公开检查的任务交付为 0/10。两次新增 7B Docker 试验也完整保留：第一次重复误用 Skill 工具；修复后第二次能正确读取 Skill，但又陷入空读取与非法历史搜索交替的循环。两次均为 24 次调用、空补丁、公开验收失败，没有模型官方 resolved 分数。后续修复及效果分别记录，不能把工具调用成功当成交付成功。逐题 usage、补丁和 CI 来源见 [验证记录](validation.md)、[第一轮分析](../experiments/closure-proof-v1/analysis.md) 与 [第二轮分析](../experiments/closure-proof-v2/analysis.md)。
 
 ## 复用了什么，自主实现了什么
 

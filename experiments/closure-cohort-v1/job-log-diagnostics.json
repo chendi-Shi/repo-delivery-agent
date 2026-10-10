@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "kind": "public_ci_job_exception_diagnostics",
+  "run_id": 38017239837,
+  "source_commit": "a662b2bb25d5c0174ef4b49d7802e1ad7d2bde37",
+  "evidence_source": "Exception type and UTC timestamp extracted from the eight fetched target job logs",
+  "raw_logs_included": false,
+  "original_outcomes_modified": false,
+  "scope": "Eight started target trials only; diagnostics do not establish final independent verification outcomes",
+  "counts": {
+    "started_target_jobs": 8,
+    "TimeoutError": 6,
+    "ContextBudgetExceeded": 2
+  },
+  "target_jobs": [
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "baseline",
+      "job_id": 114111488765,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488765",
+      "exception_type": "ContextBudgetExceeded",
+      "observed_at_utc": "2026-10-10T02:43:57.0285140Z"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 42,
+      "arm": "retrieval",
+      "job_id": 114111488700,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488700",
+      "exception_type": "TimeoutError",
+      "observed_at_utc": "2026-10-10T02:58:09.1964344Z"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "baseline",
+      "job_id": 114111488896,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488896",
+      "exception_type": "ContextBudgetExceeded",
+      "observed_at_utc": "2026-10-10T02:44:02.8587581Z"
+    },
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "seed": 43,
+      "arm": "retrieval",
+      "job_id": 114111488815,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488815",
+      "exception_type": "TimeoutError",
+      "observed_at_utc": "2026-10-10T02:45:05.3847470Z"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 42,
+      "arm": "baseline",
+      "job_id": 114111488730,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488730",
+      "exception_type": "TimeoutError",
+      "observed_at_utc": "2026-10-10T02:44:57.9456935Z"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 42,
+      "arm": "retrieval",
+      "job_id": 114111488754,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488754",
+      "exception_type": "TimeoutError",
+      "observed_at_utc": "2026-10-10T02:48:41.3820145Z"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 43,
+      "arm": "baseline",
+      "job_id": 114111488726,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488726",
+      "exception_type": "TimeoutError",
+      "observed_at_utc": "2026-10-10T02:48:26.9935857Z"
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "seed": 43,
+      "arm": "retrieval",
+      "job_id": 114111488737,
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239837/job/114111488737",
+      "exception_type": "TimeoutError",
+      "observed_at_utc": "2026-10-10T02:45:02.4709841Z"
+    }
+  ],
+  "limitations": [
+    "The historical public summaries retain their original wrapper ValueError labels.",
+    "Exception classification does not establish OOM, model quality, executed action details or successful delivery.",
+    "This safe supplement contains no raw job logs, model prompts or response bodies."
+  ]
+}
