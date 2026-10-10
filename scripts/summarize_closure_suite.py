@@ -19,9 +19,11 @@ import itertools
 import json
 import math
 import re
+import shlex
 from pathlib import Path
 
 MAX_JSON_BYTES = 2 * 1024 * 1024
+MAX_AUDIT_BYTES = 8 * 1024 * 1024
 MAX_ROWS = 2048
 SHA = re.compile(r"[0-9a-f]{64}\Z")
 IMAGE = re.compile(r"sha256:[0-9a-f]{64}\Z")
@@ -101,7 +103,7 @@ def _read(path):
     return _object(value, "artifact must be a JSON object"), _sha(raw)
 
 
-def _reference(root, ref):
+def _artifact_path(root, ref):
     ref = _object(ref, "artifact reference must be an object")
     _check(set(ref) == {"path", "sha256"} and SHA.fullmatch(str(ref.get("sha256", ""))),
            "artifact reference must include SHA256")
@@ -118,6 +120,11 @@ def _reference(root, ref):
     path = root.joinpath(*parts)
     _check(path.resolve().is_relative_to(root) and not any(item.is_symlink() for item in
            [path, *list(path.parents)[:len(parts) - 1]]), "artifact path may not escape or traverse symlinks")
+    return path
+
+
+def _reference(root, ref):
+    path = _artifact_path(root, ref)
     value, digest = _read(path)
     _check(digest == ref["sha256"], "artifact SHA256 does not match its receipt")
     return value, {"path": ref["path"], "sha256": digest}
@@ -255,7 +262,115 @@ def _check_rows(rows, expected_sha):
     return all(row["passed"] for row in rows)
 
 
-def _receipt(value, key, target, arm, plan, root):
+def _observed_read(root, evidence_ref, evidence, plan, plan_sha256, source_attempts):
+    """Recheck a positive read claim from public audit and verified seed artifacts."""
+    _check(SHA.fullmatch(str(plan_sha256)), "observed source read requires the exact frozen plan digest")
+    package, package_hash = _read(Path(root) / "seed-package.json")
+    _check(package.get("schema") == 1 and package.get("kind") == "verified_closure_seed_package"
+           and package.get("fixture") is False and package.get("eligible") is True
+           and package.get("plan_sha256") == plan_sha256, "source read requires an eligible frozen seed package")
+    source, source_ref = _reference(root, package.get("source_receipt"))
+    matched = [row for row in source_attempts if row.get("receipt") == source_ref]
+    _check(len(matched) == 1 and matched[0].get("delivery_success") is True
+           and source.get("role") == "source" and source.get("knowledge") == "none"
+           and source.get("knowledge_observed_reuse") is False,
+           "seed source must be the independently delivered source in this cohort")
+    guard, guard_ref = _reference(root, package.get("guard"))
+    targets = guard.get("functional_targets")
+    _check(guard.get("schema") == 1 and guard.get("kind") == "source_seed_leakage_guard"
+           and guard.get("eligible") is True and guard.get("violations") == []
+           and guard.get("omitted_violations") == 0 and isinstance(targets, list)
+           and len(targets) == len(plan["targets"]), "source read requires its complete leakage guard")
+    _check(all(isinstance(row, dict) and row.get("target_feature_still_missing") is True
+               and type(row.get("returncode")) is int and row["returncode"] != 0 for row in targets)
+           and sorted(row.get("instance_id", "") for row in targets) ==
+               sorted(row["instance_id"] for row in plan["targets"]),
+           "source guard must preserve every predeclared target feature gap")
+    origin = _object(package.get("origin"), "seed package requires source identity")
+    record = _object(package.get("record"), "seed package requires verified source content")
+    required = ("source_id", "content_sha256", "task_id", "namespace_sha256", "verified", "source_ref", "verification_sha256")
+    _check(all(field in origin for field in required) and origin["verified"] is True and record.get("verified") is True
+           and record.get("task_id") == origin["task_id"] == source.get("instance_id")
+           and record.get("source_ref") == origin["source_ref"]
+           and isinstance(record.get("body"), str) and _sha(record["body"].encode()) == origin["content_sha256"]
+           and isinstance(plan.get("knowledge_namespace"), str)
+           and _sha(plan["knowledge_namespace"].encode()) == origin["namespace_sha256"],
+           "seed content and namespace differ from the frozen verified origin")
+    verification = _object(record.get("verification"), "seed content requires verification identity")
+    _check(_sha(json.dumps(verification, ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+                          allow_nan=False).encode()) == origin["verification_sha256"],
+           "seed verification differs from the audited origin")
+    source_evidence, _ = _reference(root, source["artifacts"]["evidence"])
+    _check(verification.get("kind") == "independent_public_checks" and verification.get("patch_valid") is True
+           and verification.get("run_status") == "submitted"
+           and SHA.fullmatch(str(verification.get("patch_sha256")))
+           and verification["patch_sha256"] == source_evidence.get("patch_sha256")
+           and package.get("source_task_sha256") == source["task"]["task_sha256"],
+           "seed verification differs from the delivered source task and patch")
+    _check(_check_rows(verification.get("checks"), source["task"]["public_checks_sha256"]),
+           "seed verification requires its actual passing source checks")
+    _check(record.get("repo") == source["task"]["repo"] and record.get("base_commit") == source["task"]["base_commit"],
+           "seed repository differs from its delivered source")
+    identity = _sha(json.dumps([record.get("source_type"), record.get("source_ref"), record.get("title")],
+                               separators=(",", ":")).encode())
+    _check(origin["source_id"] == "k" + _sha((origin["namespace_sha256"] + identity).encode())[:32],
+           "seed source ID differs from its source record")
+    audit_metadata = _object(evidence.get("action_audit"), "source read requires the model action audit")
+    _check(audit_metadata.get("available") is True, "source read requires an available action audit")
+    relative = evidence_ref["path"].rsplit("/", 1)
+    audit_ref = {"path": (relative[0] + "/" if len(relative) == 2 else "") + "action-audit.jsonl",
+                 "sha256": audit_metadata.get("public_audit_sha256")}
+    path = _artifact_path(root, audit_ref)
+    if not path.is_file():
+        raise MissingArtifact("declared action audit is missing")
+    _check(path.stat().st_size <= MAX_AUDIT_BYTES, "source read audit exceeds its byte bound")
+    raw = path.read_bytes()
+    _check(len(raw) <= MAX_AUDIT_BYTES and _sha(raw) == audit_ref["sha256"], "source read audit differs from its evidence digest")
+    try:
+        lines = raw.decode("utf-8").splitlines()
+        _check(len(lines) <= 10000, "source read audit exceeds its action bound")
+        rows = [json.loads(line, object_pairs_hook=_pairs,
+                           parse_constant=lambda _: (_ for _ in ()).throw(SummaryError("nonfinite audit number")))
+                for line in lines]
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise SummaryError("source read audit is not bounded UTF-8 JSONL") from exc
+    _check(len(rows) == audit_metadata.get("actions") and all(isinstance(row, dict) for row in rows),
+           "source read audit action count differs from its evidence")
+    def nonempty_slice(row):
+        # The real read implementation verifies the body hash and returns this
+        # character slice. A full hash-bound command plus the frozen body proves
+        # nonempty content even when the response preview contains only metadata.
+        command = row.get("command_preview")
+        if (not isinstance(command, str) or row.get("command_chars") != len(command)
+                or row.get("command_sha256") != _sha(command.encode())):
+            return False
+        try:
+            lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|<>()")
+            lexer.whitespace_split, lexer.commenters = True, ""
+            tokens = list(lexer)
+            if (not 3 <= len(tokens) <= 5 or tokens[:3] != ["delivery-knowledge", "read", origin["source_id"]]
+                    or any(set(token) <= set(";&|<>()") for token in tokens)):
+                return False
+            offset = int(tokens[3]) if len(tokens) > 3 else 0
+            limit = int(tokens[4]) if len(tokens) > 4 else 2000
+            return 0 <= offset < len(record["body"]) and 1 <= limit <= 4000
+        except ValueError:
+            return False
+    found = any(row.get("event") == "action" and row.get("outcome") == "completed"
+        and type(row.get("returncode")) is int and row["returncode"] == 0
+        and row.get("action_kind") == "delivery-knowledge/read" and row.get("knowledge_operation") == "read"
+        and row.get("knowledge_namespace_sha256") == origin["namespace_sha256"]
+        and isinstance(row.get("knowledge_records"), list)
+        and any(isinstance(item, dict) and all(type(item.get(field)) is type(origin[field])
+                and item[field] == origin[field] for field in required) for item in row["knowledge_records"])
+        and nonempty_slice(row)
+        for row in rows)
+    _check(found, "positive source read claim has no matching successful audited nonempty read")
+    return {"action_audit": audit_ref, "seed_package": {"path": "seed-package.json", "sha256": package_hash},
+            "source_receipt": source_ref, "source_guard": guard_ref}
+
+
+def _receipt(value, key, target, arm, plan, root, *, plan_sha256=None, source_attempts=()):
     _check(value.get("schema") == 1 and value.get("kind") == "closure_trial_receipt" and value.get("fixture") is False,
            "trial receipt must bind a real run, never a fixture")
     _check(_key(value) == key and value.get("role") == target["role"], "trial identity differs from frozen cohort")
@@ -378,13 +493,18 @@ def _receipt(value, key, target, arm, plan, root):
     observed = value.get("knowledge_observed_reuse", False)
     _boolean(observed)
     _check(not observed or arm["knowledge"] == "verified_source", "observed knowledge reuse requires a transfer arm")
+    read_evidence = {}
+    if observed:
+        _check(started and evidence is not None, "positive source read requires a started model trial and its evidence")
+        read_evidence = _observed_read(root, refs["evidence"], evidence, plan, plan_sha256, source_attempts)
     return {"instance_id": key[0], "seed": key[1], "arm": key[2], "role": target["role"], "status": status,
             "submitted": submitted, "infrastructure_failed": infra, "attempt_started": started, "attempted_count": attempted,
             "all_checks_passed": None if infra else _checks(internal, external),
             "delivery_success": delivery, "usage_complete": measured,
             "actual_input_tokens": input_tokens if measured else None,
             "actual_output_tokens": output_tokens if measured else None, "actual_model_calls": calls,
-            "actual_seconds": seconds, "knowledge_observed_reuse": observed, "artifacts": refs}
+            "actual_seconds": seconds, "knowledge_observed_read": observed, "knowledge_observed_reuse": observed,
+            "knowledge_read_evidence": read_evidence, "artifacts": refs}
 
 
 def _missing(key, target, *, reason="missing_trial"):
@@ -392,7 +512,8 @@ def _missing(key, target, *, reason="missing_trial"):
             "submitted": None, "infrastructure_failed": None, "attempt_started": None, "attempted_count": None,
             "all_checks_passed": None, "delivery_success": None, "usage_complete": False,
             "actual_input_tokens": None, "actual_output_tokens": None, "actual_model_calls": None,
-            "actual_seconds": None, "knowledge_observed_reuse": None, "artifacts": {}}
+            "actual_seconds": None, "knowledge_observed_read": None, "knowledge_observed_reuse": None,
+            "knowledge_read_evidence": {}, "artifacts": {}}
 
 
 def _total(rows, field):
@@ -427,7 +548,8 @@ def _arm_stats(rows):
             "token_usage_covered_attempts": sum(row["usage_complete"] for row in rows), **{"total_" + key: item for key, item in totals.items()},
             "actual_provider_tokens_per_delivery_success": tokens / success if success and not unknown and tokens is not None else None,
             "actual_seconds_per_delivery_success": totals["actual_seconds"] / success if success and not unknown and totals["actual_seconds"] is not None else None,
-            "knowledge_observed_reuse_count": sum(row["knowledge_observed_reuse"] is True for row in rows)}
+            "knowledge_observed_read_count": sum(row["knowledge_observed_read"] is True for row in rows),
+            "knowledge_observed_reuse_count": sum(row["knowledge_observed_read"] is True for row in rows)}
 
 
 def _paired(rows, reference, arm_map):
@@ -522,12 +644,14 @@ def summarize(plan_path, observations_path, output=None):
         _check(key in expected and key not in mapped, "trial must match a unique predeclared target/seed/arm")
         mapped[key] = row
     root, rows = Path(observations_path).resolve().parent, []
+    source_summary = _sources(sources, observations.get("source_attempts", []), root, plan)
     for key, target in sorted(expected.items()):
         row = _missing(key, target)
         try:
             if key in mapped:
                 value, ref = _reference(root, mapped[key]["receipt"])
-                row = _receipt(value, key, target, arms[key[2]], plan, root)
+                row = _receipt(value, key, target, arms[key[2]], plan, root,
+                               plan_sha256=plan_hash, source_attempts=source_summary["attempts"])
                 row["receipt"] = ref
         except MissingArtifact:
             row = _missing(key, target, reason="missing_artifact")
@@ -539,8 +663,9 @@ def summarize(plan_path, observations_path, output=None):
                    for name, arm in arms.items()},
         "by_role": {role: {name: _arm_stats([row for row in rows if row["role"] == role and row["arm"] == name]) for name in arms}
                     for role in sorted({target["role"] for target in targets.values()})},
-        "paired": _paired(rows, reference, arms), "source_attempts": _sources(sources, observations.get("source_attempts", []), root, plan),
+        "paired": _paired(rows, reference, arms), "source_attempts": source_summary,
         "target_attempts": rows, "official_resolved": None, "global_improvement_claim": False,
+        "knowledge_metric_scope": "Observed successful nonempty tool read, verified from the full audited command and hash-bound source body; no claim that the model used it or benefited. knowledge_observed_reuse fields are deprecated aliases for observed_read.",
         "limitations": ["The frozen cohort is small and predeclared; no significance test or general improvement claim.",
                         "Near-transfer and holdout roles are reported separately; source seed attempts are not target successes.",
                         "Actual provider usage only; any incomplete arm coverage makes its total token metric null.",
@@ -550,6 +675,7 @@ def summarize(plan_path, observations_path, output=None):
         path = Path(output)
         refs = [row["receipt"] for row in rows if "receipt" in row]
         refs.extend(ref for row in rows for ref in row["artifacts"].values() if ref is not None)
+        refs.extend(ref for row in rows for ref in row["knowledge_read_evidence"].values())
         refs.extend(row["receipt"] for row in result["source_attempts"]["attempts"] if "receipt" in row)
         refs.extend(ref for row in result["source_attempts"]["attempts"] for ref in row.get("artifacts", {}).values() if ref is not None)
         protected = {Path(plan_path).resolve(), Path(observations_path).resolve(),

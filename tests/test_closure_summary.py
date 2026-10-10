@@ -25,6 +25,7 @@ class CohortArtifacts:
                 "public_checks_sha256": hashlib.sha256(b'["public-check"]').hexdigest()}
         self.plan = {"schema": 1, "kind": "fixed_closure_cohort", "fixture": False,
             "frozen_before_execution": True, "suite_id": "summary-unit-contract", "common": common,
+            "knowledge_namespace": "summary-unit-knowledge",
             "model": {"name": "qwen3:4b-instruct", "digest": "2" * 64}, "reference_arm": "baseline",
             "seeds": [42, 43], "arms": [{"id": "baseline", "profile": "baseline", "knowledge": "none"},
                 {"id": "retrieval", "profile": "retrieval", "knowledge": "none"},
@@ -86,6 +87,7 @@ class CohortArtifacts:
                 "exit_status": receipt["exit_status"], "implementation_sha256": self.plan["common"]["implementation_sha256"],
                 "budgets": {**self.plan["common"]["budgets"], "seed": seed}, "seconds": seconds,
                 "model_calls": calls, "usage": copy.deepcopy(usage), "estimated_input_tokens": 99999999,
+                "patch_sha256": "e" * 64,
                 "internal_verification_status": "passed" if internal is True else "failed" if internal is False else None,
                 "internal_public_checks": [] if internal is None else [{"command": "public-check",
                     "returncode": 0 if internal else 1, "passed": internal}],
@@ -131,6 +133,52 @@ class CohortArtifacts:
 
     def replace_receipt(self, key, value):
         self.receipts[key]["receipt"] = self.write(self.receipts[key]["receipt"]["path"], value)
+
+    def observed_read(self, key=("target-last", 42, "seeded")):
+        """Build unit-only public artifacts for an independently checked source read."""
+        observations = self.save()
+        source_ref = self.sources[("source-first", 42)]["receipt"]
+        source = json.loads((self.root / source_ref["path"]).read_text())
+        record = {"title": "source-first: repository delivery", "source_type": "repository_run",
+            "source_ref": "run:" + "4" * 64, "repo": source["task"]["repo"],
+            "base_commit": source["task"]["base_commit"], "task_id": "source-first", "verified": True,
+            "body": "Unit-only source content, not model-performance evidence.",
+            "verification": {"kind": "independent_public_checks", "run_status": "submitted", "patch_valid": True,
+                "patch_sha256": "e" * 64, "checks": [{"command": "public-check", "returncode": 0, "passed": True}]}}
+        namespace_hash = hashlib.sha256(self.plan["knowledge_namespace"].encode()).hexdigest()
+        identity = hashlib.sha256(json.dumps([record["source_type"], record["source_ref"], record["title"]],
+                                             separators=(",", ":")).encode()).hexdigest()
+        origin = {"source_id": "k" + hashlib.sha256((namespace_hash + identity).encode()).hexdigest()[:32],
+            "content_sha256": hashlib.sha256(record["body"].encode()).hexdigest(), "task_id": "source-first",
+            "namespace_sha256": namespace_hash, "verified": True, "source_ref": record["source_ref"],
+            "verification_sha256": hashlib.sha256(json.dumps(record["verification"], ensure_ascii=False,
+                sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()}
+        guard = {"schema": 1, "kind": "source_seed_leakage_guard", "eligible": True, "violations": [],
+            "omitted_violations": 0, "functional_targets": [{"instance_id": row["instance_id"],
+                "returncode": 1, "target_feature_still_missing": True} for row in self.plan["targets"]]}
+        package = {"schema": 1, "kind": "verified_closure_seed_package", "fixture": False, "eligible": True,
+            "plan_sha256": observations["plan_sha256"], "source_receipt": source_ref,
+            "source_task_sha256": source["task"]["task_sha256"], "origin": origin, "record": record,
+            "guard": self.write("source-leakage-guard.json", guard)}
+        self.write("seed-package.json", package)
+        receipt = json.loads((self.root / self.receipts[key]["receipt"]["path"]).read_text())
+        evidence_ref = receipt["artifacts"]["evidence"]
+        evidence = json.loads((self.root / evidence_ref["path"]).read_text())
+        audit_path = str(Path(evidence_ref["path"]).with_name("action-audit.jsonl")).replace("\\", "/")
+        audit = {"event": "action", "outcome": "completed", "returncode": 0,
+            "action_kind": "delivery-knowledge/read", "knowledge_operation": "read",
+            "knowledge_namespace_sha256": namespace_hash, "knowledge_records": [origin]}
+        command = "delivery-knowledge read " + origin["source_id"]
+        audit.update(command_preview=command, command_chars=len(command),
+                     command_sha256=hashlib.sha256(command.encode()).hexdigest())
+        raw = (json.dumps(audit) + "\n").encode()
+        (self.root / audit_path).write_bytes(raw)
+        evidence["action_audit"] = {"available": True, "complete": True, "actions": 1,
+                                     "public_audit_sha256": hashlib.sha256(raw).hexdigest()}
+        receipt["artifacts"]["evidence"] = self.write(evidence_ref["path"], evidence)
+        receipt["knowledge_observed_reuse"] = True
+        self.replace_receipt(key, receipt)
+        return package, audit_path, audit, receipt
 
 
 class ClosureSummaryTests(unittest.TestCase):
@@ -392,6 +440,90 @@ class ClosureSummaryTests(unittest.TestCase):
                 self.assertFalse(result["complete"])
                 preserved = json.loads((data.root / row["receipt"]["path"]).read_text())
                 self.assertEqual(preserved["exit_status"], "Submitted")
+
+    def test_positive_source_read_binds_audit_seed_and_delivered_source_without_causal_claim(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data = CohortArtifacts(temporary)
+            data.all()
+            _, audit_path, _, _ = data.observed_read()
+            result = data.summarize()
+            stats = result["by_arm"]["seeded"]
+            self.assertEqual(stats["knowledge_observed_read_count"], 1)
+            self.assertEqual(stats["knowledge_observed_reuse_count"], 1)
+            row = next(row for row in result["target_attempts"] if row["knowledge_observed_read"])
+            self.assertEqual(set(row["knowledge_read_evidence"]),
+                             {"action_audit", "seed_package", "source_receipt", "source_guard"})
+            self.assertIn("no claim", result["knowledge_metric_scope"])
+            self.assertIn("deprecated aliases", result["knowledge_metric_scope"])
+            self.assertNotIn("Unit-only source content", json.dumps(result))
+            original = (data.root / audit_path).read_bytes()
+            with self.assertRaises(summary.SummaryError):
+                summary.summarize(data.plan_path, data.observations_path, data.root / audit_path)
+            self.assertEqual((data.root / audit_path).read_bytes(), original)
+
+    def test_positive_source_read_rejects_false_flag_tampered_origin_audit_or_source_chain(self):
+        for mode in ("search_only", "audit_hash", "audit_origin", "empty_read", "truncated_command", "origin_content", "origin_verification",
+                     "wrong_plan", "failed_source", "guard_gap", "source_patch"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temporary:
+                data = CohortArtifacts(temporary)
+                data.all()
+                package, audit_path, audit, receipt = data.observed_read()
+                if mode in {"search_only", "audit_origin", "empty_read", "truncated_command"}:
+                    if mode == "search_only":
+                        audit["action_kind"], audit["knowledge_operation"] = "delivery-knowledge/search", "search"
+                    elif mode == "audit_origin":
+                        audit["knowledge_records"][0]["task_id"] = "target-last"
+                    elif mode == "empty_read":
+                        command = audit["command_preview"] + " " + str(len(package["record"]["body"]))
+                        audit.update(command_preview=command, command_chars=len(command),
+                                     command_sha256=hashlib.sha256(command.encode()).hexdigest())
+                    else:
+                        audit["command_chars"] += 1
+                    raw = (json.dumps(audit) + "\n").encode()
+                    (data.root / audit_path).write_bytes(raw)
+                    ref = receipt["artifacts"]["evidence"]
+                    evidence = json.loads((data.root / ref["path"]).read_text())
+                    evidence["action_audit"]["public_audit_sha256"] = hashlib.sha256(raw).hexdigest()
+                    receipt["artifacts"]["evidence"] = data.write(ref["path"], evidence)
+                    data.replace_receipt(("target-last", 42, "seeded"), receipt)
+                elif mode == "audit_hash":
+                    (data.root / audit_path).write_bytes(b"{}\n")
+                elif mode == "origin_content":
+                    package["origin"]["content_sha256"] = "9" * 64
+                elif mode == "origin_verification":
+                    package["origin"]["verification_sha256"] = "9" * 64
+                elif mode == "wrong_plan":
+                    package["plan_sha256"] = "9" * 64
+                elif mode == "failed_source":
+                    data.add("source-first", 42, "source", source=True, status="stopped", internal=False, external=False)
+                    package["source_receipt"] = data.sources[("source-first", 42)]["receipt"]
+                elif mode == "guard_gap":
+                    ref = package["guard"]
+                    guard = json.loads((data.root / ref["path"]).read_text())
+                    guard["functional_targets"][0]["returncode"] = 0
+                    package["guard"] = data.write(ref["path"], guard)
+                else:
+                    package["record"]["verification"]["patch_sha256"] = "9" * 64
+                    package["origin"]["verification_sha256"] = hashlib.sha256(json.dumps(
+                        package["record"]["verification"], ensure_ascii=False, sort_keys=True,
+                        separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+                data.write("seed-package.json", package)
+                with self.assertRaises(summary.SummaryError):
+                    data.summarize()
+
+    def test_positive_flag_without_source_artifacts_stays_unknown_and_never_counts_a_read(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data = CohortArtifacts(temporary)
+            data.all()
+            key = ("target-last", 42, "seeded")
+            receipt = json.loads((data.root / data.receipts[key]["receipt"]["path"]).read_text())
+            receipt["knowledge_observed_reuse"] = True
+            data.replace_receipt(key, receipt)
+            result = data.summarize()
+            self.assertEqual(result["expected_target_attempts"], 10)
+            self.assertEqual(result["by_arm"]["seeded"]["knowledge_observed_read_count"], 0)
+            self.assertEqual(result["by_arm"]["seeded"]["delivery_unknown_count"], 1)
+            self.assertFalse(result["complete"])
 
 
 if __name__ == "__main__":

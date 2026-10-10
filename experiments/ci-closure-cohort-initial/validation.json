@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "kind": "github_actions_engineering_validation",
+  "model_performance_evidence": false,
+  "source_commit": "a662b2bb25d5c0174ef4b49d7802e1ad7d2bde37",
+  "run_id": 38017239810,
+  "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38017239810",
+  "observed_date_utc": "2026-10-10",
+  "provenance": "GitHub connector completed job statuses and decoded job logs",
+  "jobs": [
+    {
+      "job_id": 114110128184,
+      "name": "unit (ubuntu-latest)",
+      "conclusion": "success",
+      "tests": 267,
+      "seconds": 29.412,
+      "skipped": 0,
+      "log_result": "Ran 267 tests in 29.412s; OK"
+    },
+    {
+      "job_id": 114110128185,
+      "name": "unit (windows-latest)",
+      "conclusion": "failure",
+      "tests": 267,
+      "seconds": 67.137,
+      "skipped": 0,
+      "errors": 1,
+      "log_result": "Ran 267 tests in 67.137s; FAILED (errors=1)",
+      "failed_test": "test_source_guard_collects_added_root_and_test_python_files",
+      "failure": "collect_python_sources used a resolved child path relative to an unresolved Windows short-name temporary root"
+    },
+    {
+      "job_id": 114110128183,
+      "name": "docker-integration",
+      "conclusion": "success",
+      "scope": "Actual Docker execution and crash recovery fixture, not model delivery"
+    },
+    {
+      "job_id": 114110127968,
+      "name": "real-model-patch-verification",
+      "conclusion": "success",
+      "scope": "Independent verification pipeline for retained earlier patches; job success is not task success"
+    }
+  ]
+}

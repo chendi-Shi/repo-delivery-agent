@@ -848,9 +848,10 @@ def collect_python_sources(workspace):
             raise ValueError("source guard exceeds its repository budget")
     result = {}
     for path in sorted(files):
-        if path.is_symlink() or not path.resolve().is_relative_to(package.resolve()) or path.stat().st_size > 512 * 1024:
+        resolved = path.resolve()
+        if path.is_symlink() or not resolved.is_relative_to(package) or resolved.stat().st_size > 512 * 1024:
             raise ValueError("source guard input escaped its bounded package")
-        result[path.relative_to(workspace).as_posix()] = path.read_text(encoding="utf-8")
+        result[resolved.relative_to(package).as_posix()] = resolved.read_text(encoding="utf-8")
     if sum(len(value.encode()) for value in result.values()) > 4 * 1024 * 1024:
         raise ValueError("source guard exceeds its total byte budget")
     return result

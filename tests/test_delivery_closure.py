@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import os
 import tempfile
 import unittest
 from dataclasses import asdict, replace
@@ -137,6 +138,31 @@ class DeliveryClosureTests(unittest.TestCase):
                 (root / name).write_text("# bounded contract fixture\n")
             self.assertEqual(set(runner.collect_python_sources(root)),
                              {"more_itertools/more.py", "tests/test_added.py", "conftest.py"})
+
+    def test_source_guard_normalizes_workspace_aliases_before_relative_paths(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "more_itertools").mkdir()
+            source = "# public source under a canonical repository root\n"
+            (root / "more_itertools" / "more.py").write_text(source, encoding="utf-8")
+            aliases = [root, root / "more_itertools" / ".."]
+            if os.name == "nt":
+                import ctypes
+                get_short_path = ctypes.windll.kernel32.GetShortPathNameW
+                get_short_path.argtypes = [ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32]
+                get_short_path.restype = ctypes.c_uint32
+                size = get_short_path(str(root), None, 0)
+                self.assertGreater(size, 0)
+                buffer = ctypes.create_unicode_buffer(size)
+                written = get_short_path(str(root), buffer, size)
+                self.assertGreater(written, 0)
+                self.assertLess(written, size)
+                # Windows runners may expose TEMP through RUNNER~1 while
+                # resolve()/walk() return the expanded profile directory.
+                aliases.append(Path(buffer.value))
+            for alias in aliases:
+                with self.subTest(alias=str(alias)):
+                    self.assertEqual(runner.collect_python_sources(alias), {"more_itertools/more.py": source})
 
     def test_source_reuse_requires_completed_read_with_every_bound_identity(self):
         origin = {"source_id": "k" + "a" * 32, "content_sha256": "b" * 64, "task_id": "source-A",
