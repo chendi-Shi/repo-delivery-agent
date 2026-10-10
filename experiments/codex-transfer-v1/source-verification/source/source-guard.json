@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "kind": "source_seed_leakage_guard",
+  "manifest_sha256": "60cf2f2f78ae9720137a9abdc6aafdc6aa6a71e30e11fb05ca2db898e2ec5af6",
+  "verification_sha256": "4ffce9b739edaa4d1a8163db38f0774b01718b027cb281bcfbaa4e3ea37e966f",
+  "source_run_id": "more-itertools__first-factory-v1-baseline-codex-transfer-v1-source",
+  "source_evidence_sha256": "086af313df655036092b9d1450093d5c67f08dacc8e646f363c121a00e6b5ebb",
+  "source_patch_sha256": "769daf66d39ce8136611fc4fbd9303ce506f8fab7027cb37347c933b7df5aeb3",
+  "source_task_sha256": "19174109b222e1b9eb1b7b4c281013cd09062f25fa31aebd03829f9d57062be8",
+  "eligible": true,
+  "functional_targets": [
+    {
+      "instance_id": "more-itertools__last-factory-v1",
+      "task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "command_sha256": "98792b999a030298d4a1468ec85d4d7a29a2402d581f75428721c01658bca4a9",
+      "returncode": 1,
+      "output_sha256": "0af503bbdbd41522d34ac5fe460897ebcc1cd44d7fc287469ed5979fba423252",
+      "exception_types": [
+        "KeyError"
+      ],
+      "target_feature_still_missing": true
+    },
+    {
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "command_sha256": "20ee9fbb589adcc319ba989eb4c29012784ada19969d9320dc8aa0428f61c0ad",
+      "returncode": 1,
+      "output_sha256": "6853bdd034aa1821c1d850362e3f9e5d2a1a63e086ed9b8f443d527a2bc2d98a",
+      "exception_types": [
+        "KeyError"
+      ],
+      "target_feature_still_missing": true
+    }
+  ],
+  "targets": [
+    {
+      "path": "more_itertools/more.py",
+      "module": "more_itertools.more",
+      "function": "last",
+      "old_ast_sha256": "1cadae5b799e622f7239ac1ffc5784202ca955b7a89b7ad0b975501912986708",
+      "new_ast_sha256": "1cadae5b799e622f7239ac1ffc5784202ca955b7a89b7ad0b975501912986708"
+    },
+    {
+      "path": "more_itertools/more.py",
+      "module": "more_itertools.more",
+      "function": "split_after",
+      "old_ast_sha256": "48800527893a4ed4ce9a2179d6a77bc9155053069bce08ebf3d8260e3e0174ac",
+      "new_ast_sha256": "48800527893a4ed4ce9a2179d6a77bc9155053069bce08ebf3d8260e3e0174ac"
+    }
+  ],
+  "violations": [],
+  "omitted_violations": 0,
+  "source_success_verified_here": false,
+  "requires_independent_verified_source_run": true,
+  "requires_transfer_feature_failures": true,
+  "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+  "reason": "verified_source_without_target_solution"
+}

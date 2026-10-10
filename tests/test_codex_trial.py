@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import copy
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
@@ -9,6 +11,9 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from delivery_agent.repository import RepoTask
+from delivery_agent.knowledge import KnowledgeStore
+from delivery_agent.toolbox import ToolboxEnvironment
+from delivery_agent.upstream import ActionAuditEnvironment
 from scripts import run_codex_trial as runner
 
 
@@ -27,7 +32,8 @@ class CodexTrialTests(unittest.TestCase):
         self.usage = {'complete': False, 'input_tokens': 31, 'output_tokens': 7,
                       'calls_with_usage': 1, 'unknown_requests': 1}
 
-    def run_trial(self, public, *, audit, identity=True, setup_failure=False, export_failure=None, profile=None):
+    def run_trial(self, public, *, audit, identity=True, setup_failure=False, export_failure=None, profile=None,
+                  extra_args=(), inspect_config=None):
         private = public.parent / (public.name + '-private')
 
         def run(task, config, trial):
@@ -35,6 +41,10 @@ class CodexTrialTests(unittest.TestCase):
             self.assertEqual(config.profile, profile or 'recent')
             self.assertEqual(trial.name, self.task.instance_id + '-' + (profile or 'recent') + '-fixture')
             self.assertEqual(task, self.task)
+            if inspect_config is not None:
+                inspect_config(config)
+            else:
+                self.assertIsNone(config.knowledge_db)  # Historical default stays disabled.
             trial.mkdir(parents=True)
             (trial / 'model.patch').write_bytes(b'')
             if audit:
@@ -63,6 +73,7 @@ class CodexTrialTests(unittest.TestCase):
                     '--evidence', str(public), '--label', 'fixture']
             if profile is not None:
                 argv += ['--profile', profile]
+            argv += list(extra_args)
             if export_failure is not None:
                 with patch.object(runner, 'export_action_audit', side_effect=export_failure):
                     return runner.main(argv)
@@ -130,6 +141,191 @@ class CodexTrialTests(unittest.TestCase):
                 self.assertEqual(run['id'], self.task.instance_id + '-' + profile + '-fixture')
                 evidence = json.loads((public / run['evidence']).read_text(encoding='utf-8'))
                 self.assertEqual(evidence['profile'], profile)
+
+    def test_explicit_empty_knowledge_reaches_runtime_and_public_receipt(self):
+        paths = []
+
+        def inspect(config):
+            paths.append(Path(config.knowledge_db))
+            self.assertEqual(config.knowledge_namespace, 'fixture-namespace')
+            store = KnowledgeStore(config.knowledge_db, config.knowledge_namespace)
+            self.assertEqual(store.stats()['total'], 0)
+
+        for profile in ('baseline', 'retrieval'):
+            public = self.root / ('empty-' + profile)
+            self.assertEqual(self.run_trial(public, audit=True, profile=profile,
+                extra_args=['--knowledge-empty', '--knowledge-namespace', 'fixture-namespace'],
+                inspect_config=inspect), 0)
+            summary = json.loads((public / 'summary.json').read_text(encoding='utf-8'))
+            self.assertTrue(summary['knowledge_input']['tools_enabled'])
+            self.assertEqual(summary['knowledge_input']['mode'], 'empty')
+            self.assertEqual(summary['knowledge_input']['record_count'], 0)
+            self.assertNotIn(str(paths[-1]), (public / 'summary.json').read_text(encoding='utf-8'))
+        self.assertNotEqual(paths[0], paths[1])
+
+
+class CodexKnowledgeTrialTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+        self.namespace = 'test-codex-transfer'
+        self.target = SimpleNamespace(instance_id='target-task')
+        identity = {'run_id': 'source-baseline-fixture', 'task_sha256': 'a' * 64,
+                    'evidence_sha256': 'b' * 64, 'patch_sha256': 'c' * 64}
+        self.verification = {'schema': 1, 'kind': 'external_independent_public_checks',
+            'verification_backend': 'external_docker', **identity, 'run_sha256': runner.canonical_hash(identity),
+            'manifest_sha256': 'd' * 64, 'verification_sha256': 'e' * 64, 'guard_sha256': 'f' * 64,
+            'frozen_source_task_sha256': '1' * 64, 'patch_valid': True, 'run_status': 'submitted',
+            'internal_verification_status': 'deferred', 'resolved_image': 'sha256:' + '2' * 64,
+            'model_identity': {'kind': 'codex_cli'},
+            'checks': [{'command': 'python -m unittest', 'passed': True, 'returncode': 0, 'output_sha256': '3' * 64}],
+            'official_resolved': None, 'trust_boundary': 'trusted operator fixture'}
+        self.record = {'title': 'source delivery', 'body': 'Public task and actual source evidence.\nPatch excerpt.',
+            'source_type': 'repository_run', 'source_ref': 'run:' + self.verification['run_sha256'],
+            'repo': 'owner/repo', 'base_commit': 'a' * 40, 'task_id': 'source-task', 'verified': True,
+            'verification': self.verification}
+
+    def seed(self, name='seed.sqlite', *, record=None, ttl_days=None):
+        path = self.root / name
+        store = KnowledgeStore(path, self.namespace)
+        metadata = store.put(**(record or self.record), ttl_days=ttl_days)
+        store.close()
+        return path, metadata
+
+    def prepare(self, source, label):
+        public = self.root / (label + '-public')
+        public.mkdir()
+        private = self.root / (label + '-private')
+        opts = SimpleNamespace(knowledge_empty=source is None, knowledge_db=source,
+                               knowledge_namespace=self.namespace)
+        return runner.prepare_knowledge(opts, self.target, private, public), public
+
+    def test_completed_seed_copied_without_mutation_and_target_data_cannot_flow_back(self):
+        source, metadata = self.seed(ttl_days=2)
+        original = source.read_bytes()
+        first, public = self.prepare(source, 'first')
+        first_path, receipt, frozen = first
+        self.assertEqual(source.read_bytes(), original)
+        self.assertEqual(receipt['mode'], 'verified_seed')
+        self.assertEqual(receipt['record_count'], 1)
+        self.assertEqual(frozen[0]['expires_at'], metadata['expires_at'])
+        first_store = KnowledgeStore(first_path, self.namespace)
+        self.assertEqual(first_store.read(metadata['source_id'])['expires_at'], metadata['expires_at'])
+        first_store.put(title='Target response', body='must never flow to next target', source_type='repository_run',
+                        source_ref='run:' + '9' * 64, task_id='target-task')
+        second, _ = self.prepare(source, 'second')
+        self.assertNotEqual(first_path, second[0])
+        self.assertEqual(KnowledgeStore(second[0], self.namespace).stats()['total'], 1)
+        self.assertEqual(source.read_bytes(), original)
+        self.assertFalse(Path(str(source) + '-wal').exists())
+        package = json.loads((public / 'knowledge-input.json').read_text(encoding='utf-8'))
+        self.assertEqual(package['records'][0]['record']['body'], self.record['body'])
+        self.assertEqual(receipt['package_sha256'], runner.sha256((public / 'knowledge-input.json').read_bytes()))
+        self.assertEqual(frozen[0]['origin']['verification_sha256'], runner.canonical_hash(self.verification))
+        self.assertNotIn(str(source), (public / 'knowledge-input.json').read_text(encoding='utf-8'))
+
+    def test_bad_seed_provenance_and_current_task_fail_closed(self):
+        for index, change in enumerate(({'verified': False}, {'task_id': self.target.instance_id},
+                {'verification': {'kind': 'external_independent_public_checks'}},
+                {'verification': {**self.verification, 'internal_verification_status': 'passed'}},
+                {'verification': {**self.verification, 'guard_sha256': None}},
+                {'verification': {**self.verification, 'checks': []}},
+                {'verification': {**self.verification, 'patch_sha256': '8' * 64}},
+                {'source_ref': 'run:' + '9' * 64}, {'body': 'ghp_' + 'a' * 36},
+                {'body': 'C:\\Users\\PrivatePerson\\evidence.txt'},
+                {'verification': {**self.verification, 'trust_boundary': 'C:\\Users\\PrivatePerson\\evidence.txt'}})):
+            with self.subTest(change=change):
+                source, _ = self.seed('bad-' + str(index) + '.sqlite', record={**self.record, **change})
+                with self.assertRaises(ValueError):
+                    runner.load_seed_records(source, self.namespace, self.target.instance_id)
+        source, _ = self.seed('expired.sqlite', ttl_days=0)
+        with self.assertRaises(ValueError):
+            runner.load_seed_records(source, self.namespace, self.target.instance_id)
+
+    def test_hash_corruption_stale_database_and_live_wal_are_rejected(self):
+        for index, sql in enumerate(("UPDATE knowledge SET body='corrupt'", "UPDATE knowledge SET status='stale'",
+                                     "UPDATE knowledge SET source_id='k00000000000000000000000000000000'")):
+            source, _ = self.seed('corrupt-' + str(index) + '.sqlite')
+            db = sqlite3.connect(source)
+            with db:
+                db.execute(sql)
+            db.close()
+            with self.assertRaises(ValueError):
+                runner.load_seed_records(source, self.namespace, self.target.instance_id)
+        source, _ = self.seed('live.sqlite')
+        Path(str(source) + '-wal').write_bytes(b'uncheckpointed')
+        with self.assertRaisesRegex(ValueError, 'checkpointed'):
+            runner.load_seed_records(source, self.namespace, self.target.instance_id)
+
+    def actual_audit(self, source, commands):
+        prepared, public = self.prepare(source, 'audit')
+        private_db, _, frozen = prepared
+        store = KnowledgeStore(private_db, self.namespace)
+        # Actual KnowledgeStore -> ToolboxEnvironment -> ActionAuditEnvironment
+        # is exercised; shell text cannot mint knowledge provenance metadata.
+        env = ToolboxEnvironment(SimpleNamespace(execute=lambda *_args, **_kwargs:
+            {'output': 'shell text', 'returncode': 0, 'exception_info': ''}), knowledge=store,
+            task_id=self.target.instance_id)
+        raw_path, exported = self.root / 'raw-actions.jsonl', public / 'action-audit.jsonl'
+        wrapper = ActionAuditEnvironment(env, raw_path, call_number=lambda: 1)
+        for command in commands:
+            wrapper.execute({'command': command})
+        audit = runner.export_action_audit(raw_path, exported)
+        return exported, audit, frozen
+
+    def test_actual_search_and_empty_read_are_not_nonempty_reads(self):
+        source, metadata = self.seed()
+        source_id = metadata['source_id']
+        path, audit, frozen = self.actual_audit(source, [
+            "delivery-knowledge search 'source' 5", f'delivery-knowledge read {source_id} 9999 10',
+            f'delivery-knowledge read {source_id} -1 5', f'delivery-knowledge read {source_id} 2 3'])
+        observed = runner.observed_knowledge_reads(path, audit, frozen)
+        self.assertTrue(observed['knowledge_observed_read'])
+        self.assertEqual(observed['nonempty_read_count'], 1)
+        self.assertEqual(observed['reads'][0]['audit_line'], 4)
+        self.assertEqual(observed['reads'][0]['returned_chars'], 3)
+        self.assertEqual(observed['reads'][0]['slice_sha256'], runner.sha256(self.record['body'][2:5]))
+        self.assertEqual(audit['kind_counts'], {'delivery-knowledge/search': 1, 'delivery-knowledge/read': 3})
+
+    def test_metadata_only_truncated_failed_and_wrong_origin_reads_do_not_qualify(self):
+        source, metadata = self.seed()
+        path, audit, frozen = self.actual_audit(source, ['delivery-knowledge read ' + metadata['source_id']])
+        row = json.loads(path.read_text(encoding='utf-8').strip())
+        variants = []
+        for change in ({'command_preview': row['command_preview'][:-1]}, {'command_sha256': '0' * 64},
+                {'returncode': 2}, {'returncode': False}, {'outcome': 'error'},
+                {'action_kind': 'delivery-knowledge/search'}, {'knowledge_operation': 'search'},
+                {'knowledge_namespace_sha256': '0' * 64}):
+            variants.append({**row, **change})
+        for command in ('delivery-knowledge read ' + metadata['source_id'] + ' 9999 5',
+                        'delivery-knowledge read ' + metadata['source_id'] + ' 0 0',
+                        'delivery-knowledge read ' + metadata['source_id'] + '; echo spoof'):
+            variants.append({**row, 'command_preview': command, 'command_chars': len(command),
+                             'command_sha256': runner.sha256(command)})
+        bad_origin = copy.deepcopy(row)
+        bad_origin['knowledge_records'][0]['verification_sha256'] = '0' * 64
+        variants.append(bad_origin)
+        for variant in variants:
+            with self.subTest(variant=variant):
+                path.write_text(json.dumps(variant) + '\n', encoding='utf-8')
+                varied_audit = {**audit, 'public_audit_sha256': runner.sha256(path.read_bytes())}
+                self.assertFalse(runner.observed_knowledge_reads(path, varied_audit, frozen)['knowledge_observed_read'])
+
+    def test_incomplete_audit_does_not_turn_missing_reads_into_false_or_zero(self):
+        source, metadata = self.seed()
+        path, audit, frozen = self.actual_audit(source, ['delivery-knowledge read ' + metadata['source_id']])
+        incomplete = runner.observed_knowledge_reads(path, {**audit, 'complete': False}, frozen)
+        self.assertTrue(incomplete['knowledge_observed_read'])
+        self.assertIsNone(incomplete['nonempty_read_count'])
+        self.assertEqual(incomplete['observed_nonempty_read_count_lower_bound'], 1)
+        absent = runner.observed_knowledge_reads(path, {**audit, 'complete': False}, [])
+        self.assertIsNone(absent['knowledge_observed_read'])
+        self.assertIsNone(absent['nonempty_read_count'])
+        missing = runner.observed_knowledge_reads(path, {'available': False}, frozen)
+        self.assertIsNone(missing['knowledge_observed_read'])
+        with self.assertRaises(ValueError):
+            runner.observed_knowledge_reads(path, {**audit, 'public_audit_sha256': '0' * 64}, frozen)
 
 
 if __name__ == '__main__':

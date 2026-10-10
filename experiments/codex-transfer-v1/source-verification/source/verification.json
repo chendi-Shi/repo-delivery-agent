@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "kind": "independent_public_repository_verification",
+  "manifest_sha256": "60cf2f2f78ae9720137a9abdc6aafdc6aa6a71e30e11fb05ca2db898e2ec5af6",
+  "attempts": 1,
+  "verified_attempts": 1,
+  "submitted": 1,
+  "public_check_eligible_attempts": 1,
+  "public_check_eligible_verified_attempts": 1,
+  "no_public_checks_attempts": 0,
+  "public_delivery_denominator": 1,
+  "public_delivery_unknown_attempts": 0,
+  "public_delivery_rate": 1.0,
+  "public_delivery_failures": 0,
+  "delivery_successes": 1,
+  "delivery_rate_all_attempts": 1.0,
+  "by_profile": {
+    "baseline": {
+      "attempts": 1,
+      "verified_attempts": 1,
+      "submitted": 1,
+      "public_check_eligible_attempts": 1,
+      "public_check_eligible_verified_attempts": 1,
+      "no_public_checks_attempts": 0,
+      "public_delivery_denominator": 1,
+      "public_delivery_unknown_attempts": 0,
+      "public_delivery_rate": 1.0,
+      "public_delivery_failures": 0,
+      "delivery_successes": 1,
+      "delivery_rate_all_attempts": 1.0
+    }
+  },
+  "official_resolved": null,
+  "runs": [
+    {
+      "id": "more-itertools__first-factory-v1-baseline-codex-transfer-v1-source",
+      "instance_id": "more-itertools__first-factory-v1",
+      "profile": "baseline",
+      "model_name": "gpt-6-astra",
+      "model_digest": null,
+      "model_identity_status": "remote_alias_not_weight_pinned",
+      "provider": "codex_cli",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "model_status": "submitted",
+      "submitted": true,
+      "patch_sha256": "769daf66d39ce8136611fc4fbd9303ce506f8fab7027cb37347c933b7df5aeb3",
+      "task_sha256": "2f625383120c05cef7f7fb52d20a97a25c9373a61f5f4846f46a1db2390447b3",
+      "evidence_sha256": "086af313df655036092b9d1450093d5c67f08dacc8e646f363c121a00e6b5ebb",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c 'import ast, hashlib, json, unittest\nfrom pathlib import Path\nimport more_itertools as mi\nassert Path(mi.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test checkout source\"\nexpected = [tuple(x) for x in [[\"ChunkedTests\",\"test_even\"],[\"ChunkedTests\",\"test_negative\"],[\"ChunkedTests\",\"test_none\"],[\"ChunkedTests\",\"test_odd\"],[\"ChunkedTests\",\"test_strict_being_true\"],[\"ChunkedTests\",\"test_strict_being_true_with_size_none\"],[\"ChunkedTests\",\"test_strict_false\"],[\"FirstTests\",\"test_default\"],[\"FirstTests\",\"test_empty\"],[\"FirstTests\",\"test_many\"],[\"FirstTests\",\"test_one\"],[\"LastTests\",\"test_basic\"],[\"LastTests\",\"test_default\"],[\"LastTests\",\"test_empty\"],[\"LastTests\",\"test_reversed_is_none\"],[\"SplitAfterTest\",\"test_empty_collection\"],[\"SplitAfterTest\",\"test_ends_with_sep\"],[\"SplitAfterTest\",\"test_max_split\"],[\"SplitAfterTest\",\"test_no_sep\"],[\"SplitAfterTest\",\"test_starts_with_sep\"]]]\ntree = ast.parse(Path(\"tests/test_more.py\").read_text(encoding=\"utf-8\"))\nfor node in ast.walk(tree):\n    if hasattr(node, \"type_params\"):\n        node._fields = tuple(x for x in node._fields if x != \"type_params\")\nclasses = {c.name: c for c in tree.body if isinstance(c, ast.ClassDef)}\nrows = []\nfor cls, name in expected:\n    methods = {m.name: m for m in classes[cls].body if isinstance(m, ast.FunctionDef)}\n    rows.append((cls, name, ast.dump(methods[name], include_attributes=False)))\ndigest = hashlib.sha256(json.dumps(sorted(rows), ensure_ascii=True, separators=(\",\", \":\")).encode(\"utf-8\")).hexdigest()\nassert digest == \"2d3cb89c75b94ad611245c78e35854e6fb7fda9055751153922fd384a4dc5795\", \"original regression methods changed\"\nfrom tests.test_more import FirstTests, LastTests, SplitAfterTest, ChunkedTests\nloader = unittest.TestLoader()\nsuite = unittest.TestSuite(loader.loadTestsFromTestCase(c) for c in (FirstTests, LastTests, SplitAfterTest, ChunkedTests))\nassert suite.countTestCases() >= 20, \"upstream regression methods must remain intact\"\nresult = unittest.TextTestRunner(verbosity=2).run(suite)\nassert result.wasSuccessful()\nassert not any((type(t).__name__, t._testMethodName) in expected for t, reason in result.skipped), \"original regression cannot be skipped\"\nassert mi.first([None, 2]) is None\nassert mi.last(iter([1, 0])) == 0\nassert list(mi.split_after([1, 0, 2, 0], lambda x: x == 0)) == [[1, 0], [2, 0]]\nassert list(mi.chunked(range(5), 2)) == [[0, 1], [2, 3], [4]]\nprint(\"frozen upstream compatibility regressions passed\")\n'",
+          "returncode": 0,
+          "passed": true,
+          "output_sha256": "260f7c45431b1eb37cefa9caf3b13727c6c2fb8dc36f1ce26f1390748b4e5bf3",
+          "output_preview": "test_default (tests.test_more.FirstTests.test_default) ... ok\ntest_empty (tests.test_more.FirstTests.test_empty) ... ok\ntest_factory_empty (tests.test_more.FirstTests.test_factory_empty) ... ok\ntest_factory_exceptions (tests.test_more.FirstTests.test_factory_exceptions) ... ok\ntest_factory_keyword_only (tests.test_more.FirstTests.test_factory_keyword_only) ... ok\ntest_factory_none (tests.test_more.FirstTests.test_factory_none) ... ok\ntest_factory_nonempty (tests.test_more.FirstTests.test_factory_nonempty) ... ok\ntest_factory_single_pass (tests.test_more.FirstTests.test_factory_single_pass) ... ok\ntest_factory_source_exceptions (tests.test_more.FirstTests.test_factory_source_exceptions) ... ok\ntest_factory_validation_before_iteration (tests.test_more.FirstTests.test_factory_validation_before_iteration) ... ok\ntest_many (tests.test_more.FirstTests.test_many) ... ok\ntest_one (tests.test_more.FirstTests.test_one) ... ok\ntest_basic (tests.test_more.LastTests.test_basic) ... ok\ntest_default (tests.test_more.LastTests.test_default) ... ok\ntest_empty (tests.test_more.LastTests.test_empty) ... ok\ntest_reversed_is_none (tests.test_more.LastTests.test_reversed_is_none) ... ok\ntest_empty_collection (tests.test_more.SplitAfterTest.test_empty_collection) ... ok\ntest_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok\ntest_max_split (tests.test_more.SplitAfterTest.test_max_split) ... ok\ntest_no_sep (tests.test_more.SplitAfterTest.test_no_sep) ... ok\ntest_starts_with_sep (tests.test_more.SplitAfterTest.test_starts_with_sep) ... ok\ntest_even (tests.test_more.ChunkedTests.test_even)\nTest when ``n`` divides evenly into the length of the iterable. ... ok\ntest_negative (tests.test_more.ChunkedTests.test_negative)\nTest that a negative ``n`` raises a clear ``ValueError``, matching ... ok\ntest_none (tests.test_more.ChunkedTests.test_none)\nTest when ``n`` has the value ``None``. ... ok\ntest_odd (tests.test_more.ChunkedTests.test_odd)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true (tests.test_more.ChunkedTests.test_strict_being_true)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true_with_size_none (tests.test_more.ChunkedTests.test_strict_being_true_with_size_none)\nTest when ``n`` has value ``None`` and the keyword strict is True ... ok\ntest_strict_false (tests.test_more.ChunkedTests.test_strict_false)\nTest when ``n`` does not divide evenly into the length of the ... ok\n\n----------------------------------------------------------------------\nRan 28 tests in 0.005s\n\nOK\nfrozen upstream compatibility regressions passed\n"
+        },
+        {
+          "command": "python -c 'import inspect\nfrom more_itertools import first\np = inspect.signature(first).parameters[\"default_factory\"]\nassert p.kind == inspect.Parameter.KEYWORD_ONLY and p.default is None\ndef expect(kind, action):\n    try: action()\n    except kind: return\n    raise AssertionError(\"expected \" + kind.__name__)\ncalls = []\ndef factory():\n    calls.append(\"called\")\n    return {\"fresh\": True}\nassert first(iter([]), default_factory=factory) == {\"fresh\": True}\nassert calls == [\"called\"]\ncalls.clear()\nfor value in (None, False, 0, []):\n    assert first(iter([value, \"tail\"]), default_factory=factory) is value\nassert calls == []\nfor fallback in (None, False, 0):\n    assert first([], default_factory=lambda: fallback) is fallback\nassert first([], \"legacy\") == \"legacy\"\nassert first([], None, default_factory=None) is None\nexpect(ValueError, lambda: first([]))\npulled = []\ndef values():\n    for value in (3, 4, 5):\n        pulled.append(value)\n        yield value\nit = values()\nassert first(it, default_factory=factory) == 3\nassert pulled == [3] and list(it) == [4, 5]\nassert calls == []\nclass Untouched:\n    def __iter__(self): raise AssertionError(\"invalid options consumed input\")\nexpect(TypeError, lambda: first(Untouched(), default_factory=42))\nexpect(ValueError, lambda: first(Untouched(), None, default_factory=factory))\nexpect(TypeError, lambda: first([], None, factory))\ndef broken_factory():\n    calls.append(\"error\")\n    raise RuntimeError(\"factory failure\")\nexpect(RuntimeError, lambda: first([], default_factory=broken_factory))\nassert calls == [\"error\"]\ncalls.clear()\ndef broken_source():\n    raise RuntimeError(\"source failure\")\n    yield None\nexpect(RuntimeError, lambda: first(broken_source(), default_factory=factory))\nassert calls == []\nprint(\"first lazy-fallback contract passed\")\n'",
+          "returncode": 0,
+          "passed": true,
+          "output_sha256": "4aeeda623f1d31db8c0920b70f92260044c8e202ba0b505a33d7630f5b861fb0",
+          "output_preview": "first lazy-fallback contract passed\n"
+        }
+      ],
+      "public_check_eligible": true,
+      "delivery_success": true,
+      "public_delivery_status": "passed",
+      "official_resolved": null,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_status": "passed"
+    }
+  ],
+  "infrastructure_failures": []
+}
