@@ -113,6 +113,9 @@ def _budgets(budget, plan):
 def _trial(root, profile, task, frozen_sha, plan, expected_label):
     root = extended_path(root)
     summary, summary_raw = _json(root / "summary.json")
+    from scripts.recover_codex_export import validate_recovered_summary
+    original_summary_raw = summary_raw
+    summary, summary_raw = validate_recovered_summary(root, summary, summary_raw)
     manifest, manifest_raw = _json(root / "repository-ablation.json", 256 * 1024)
     runs = load_plan(root / "repository-ablation.json")
     require(len(runs) == 1 and runs[0]["task"] == task, "trial is not its planned frozen task")
@@ -148,11 +151,15 @@ def _trial(root, profile, task, frozen_sha, plan, expected_label):
     submitted = evidence["status"] == "submitted" and evidence["exit_status"] == "Submitted"
     require(summary.get("submitted") is submitted, "submission claim differs from upstream protocol")
     require(not submitted or calls > 0, "a submitted model delivery requires an observed CLI invocation")
-    refs = {"summary": {"path": "summary.json", "sha256": digest(summary_raw)},
+    summary_path = "recovered-summary.json" if "export_recovery" in summary else "summary.json"
+    refs = {"summary": {"path": summary_path, "sha256": digest(summary_raw)},
             "manifest": {"path": "repository-ablation.json", "sha256": digest(manifest_raw)},
             "task": {"path": entry["task"], "sha256": run["task_sha256"]},
             "evidence": {"path": entry["evidence"], "sha256": run["evidence_sha256"]},
             "patch": {"path": entry["patch"], "sha256": digest(run["patch"])}}
+    if "export_recovery" in summary:
+        refs["original_summary"] = {"path": "summary.json", "sha256": digest(original_summary_raw)}
+        refs["export_recovery"] = {"path": "export-recovery.json", "sha256": digest(_json(root / "export-recovery.json")[1])}
     return run, summary, entry, refs, {**_measurements(evidence), "submitted": submitted,
         "attempt_started": calls > 0, "status": evidence["status"], "exit_status": evidence["exit_status"],
         "model_identity": evidence["model_identity"], "implementation_sha256": evidence.get("implementation_sha256")}

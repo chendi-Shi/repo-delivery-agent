@@ -1,0 +1,56 @@
+{
+  "fixture": true,
+  "llm_calls": 0,
+  "method": "Send headers, wait for authentication rejection, send first body byte, release 401 response, wait up to 30ms for connection teardown, then send remaining valid padded JSON body and read status.",
+  "trials": [
+    {
+      "trial": 1,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": 401,
+      "complete_http_response": true,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 2,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": 401,
+      "complete_http_response": true,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 3,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": 401,
+      "complete_http_response": true,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 4,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": 401,
+      "complete_http_response": true,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 5,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": 401,
+      "complete_http_response": true,
+      "stored_jobs": 0
+    }
+  ],
+  "phase": "after_production_change",
+  "source_sha256": "29e43cceefba25829c43a0013e5fa391497bd0779c3c40f891dc693360a994f9",
+  "probe_sha256": "190ceb57687ee90d6d81ce91151a89be688c266f8287bf6b87a171d45beb95ba",
+  "passed": true
+}

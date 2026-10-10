@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "kind": "independent_public_repository_verification",
+  "manifest_sha256": "8c5e6b17cda36f8f300baedab1b9f5da691bdae5456c842fd66e055227b16108",
+  "attempts": 1,
+  "verified_attempts": 1,
+  "submitted": 1,
+  "public_check_eligible_attempts": 1,
+  "public_check_eligible_verified_attempts": 1,
+  "no_public_checks_attempts": 0,
+  "public_delivery_denominator": 1,
+  "public_delivery_unknown_attempts": 0,
+  "public_delivery_rate": 1.0,
+  "public_delivery_failures": 0,
+  "delivery_successes": 1,
+  "delivery_rate_all_attempts": 1.0,
+  "by_profile": {
+    "baseline": {
+      "attempts": 1,
+      "verified_attempts": 1,
+      "submitted": 1,
+      "public_check_eligible_attempts": 1,
+      "public_check_eligible_verified_attempts": 1,
+      "no_public_checks_attempts": 0,
+      "public_delivery_denominator": 1,
+      "public_delivery_unknown_attempts": 0,
+      "public_delivery_rate": 1.0,
+      "public_delivery_failures": 0,
+      "delivery_successes": 1,
+      "delivery_rate_all_attempts": 1.0
+    }
+  },
+  "official_resolved": null,
+  "runs": [
+    {
+      "id": "more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r3",
+      "instance_id": "more-itertools__split-after-keep-separator-v1",
+      "profile": "baseline",
+      "model_name": "gpt-6-astra",
+      "model_digest": null,
+      "model_identity_status": "remote_alias_not_weight_pinned",
+      "provider": "codex_cli",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "model_status": "submitted",
+      "submitted": true,
+      "patch_sha256": "a3d9e4ae6d74ef910530254458c4e4af863f556c0ff5cc48113d4651fe8e63ef",
+      "task_sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+      "evidence_sha256": "90a8a03d30d9348cc1e0ac273396f8855ffc3c3af837d71fe41cb55fd58bb419",
+      "patch_valid": true,
+      "public_checks": [
+        {
+          "command": "python -c 'import ast, hashlib, json, unittest\nfrom pathlib import Path\nimport more_itertools as mi\nassert Path(mi.__file__).resolve().parent.parent == Path.cwd().resolve(), \"must test checkout source\"\nexpected = [tuple(x) for x in [[\"ChunkedTests\",\"test_even\"],[\"ChunkedTests\",\"test_negative\"],[\"ChunkedTests\",\"test_none\"],[\"ChunkedTests\",\"test_odd\"],[\"ChunkedTests\",\"test_strict_being_true\"],[\"ChunkedTests\",\"test_strict_being_true_with_size_none\"],[\"ChunkedTests\",\"test_strict_false\"],[\"FirstTests\",\"test_default\"],[\"FirstTests\",\"test_empty\"],[\"FirstTests\",\"test_many\"],[\"FirstTests\",\"test_one\"],[\"LastTests\",\"test_basic\"],[\"LastTests\",\"test_default\"],[\"LastTests\",\"test_empty\"],[\"LastTests\",\"test_reversed_is_none\"],[\"SplitAfterTest\",\"test_empty_collection\"],[\"SplitAfterTest\",\"test_ends_with_sep\"],[\"SplitAfterTest\",\"test_max_split\"],[\"SplitAfterTest\",\"test_no_sep\"],[\"SplitAfterTest\",\"test_starts_with_sep\"]]]\ntree = ast.parse(Path(\"tests/test_more.py\").read_text(encoding=\"utf-8\"))\nfor node in ast.walk(tree):\n    if hasattr(node, \"type_params\"):\n        node._fields = tuple(x for x in node._fields if x != \"type_params\")\nclasses = {c.name: c for c in tree.body if isinstance(c, ast.ClassDef)}\nrows = []\nfor cls, name in expected:\n    methods = {m.name: m for m in classes[cls].body if isinstance(m, ast.FunctionDef)}\n    rows.append((cls, name, ast.dump(methods[name], include_attributes=False)))\ndigest = hashlib.sha256(json.dumps(sorted(rows), ensure_ascii=True, separators=(\",\", \":\")).encode(\"utf-8\")).hexdigest()\nassert digest == \"2d3cb89c75b94ad611245c78e35854e6fb7fda9055751153922fd384a4dc5795\", \"original regression methods changed\"\nfrom tests.test_more import FirstTests, LastTests, SplitAfterTest, ChunkedTests\nloader = unittest.TestLoader()\nsuite = unittest.TestSuite(loader.loadTestsFromTestCase(c) for c in (FirstTests, LastTests, SplitAfterTest, ChunkedTests))\nassert suite.countTestCases() >= 20, \"upstream regression methods must remain intact\"\nresult = unittest.TextTestRunner(verbosity=2).run(suite)\nassert result.wasSuccessful()\nassert not any((type(t).__name__, t._testMethodName) in expected for t, reason in result.skipped), \"original regression cannot be skipped\"\nassert mi.first([None, 2]) is None\nassert mi.last(iter([1, 0])) == 0\nassert list(mi.split_after([1, 0, 2, 0], lambda x: x == 0)) == [[1, 0], [2, 0]]\nassert list(mi.chunked(range(5), 2)) == [[0, 1], [2, 3], [4]]\nprint(\"frozen upstream compatibility regressions passed\")\n'",
+          "returncode": 0,
+          "passed": true,
+          "output_sha256": "7a971d30de5de2c9e7b7efdc38d7cf5de8b2a5573de9066a9b242fe4934eaf5e",
+          "output_preview": "test_default (tests.test_more.FirstTests.test_default) ... ok\ntest_empty (tests.test_more.FirstTests.test_empty) ... ok\ntest_many (tests.test_more.FirstTests.test_many) ... ok\ntest_one (tests.test_more.FirstTests.test_one) ... ok\ntest_basic (tests.test_more.LastTests.test_basic) ... ok\ntest_default (tests.test_more.LastTests.test_default) ... ok\ntest_empty (tests.test_more.LastTests.test_empty) ... ok\ntest_reversed_is_none (tests.test_more.LastTests.test_reversed_is_none) ... ok\ntest_drop_separator_chunks (tests.test_more.SplitAfterTest.test_drop_separator_chunks) ... ok\ntest_drop_separator_iterator_exception (tests.test_more.SplitAfterTest.test_drop_separator_iterator_exception) ... ok\ntest_drop_separator_maxsplit (tests.test_more.SplitAfterTest.test_drop_separator_maxsplit) ... ok\ntest_drop_separator_predicate_exception (tests.test_more.SplitAfterTest.test_drop_separator_predicate_exception) ... ok\ntest_empty_collection (tests.test_more.SplitAfterTest.test_empty_collection) ... ok\ntest_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok\ntest_keep_separator_keyword_only (tests.test_more.SplitAfterTest.test_keep_separator_keyword_only) ... ok\ntest_max_split (tests.test_more.SplitAfterTest.test_max_split) ... ok\ntest_no_sep (tests.test_more.SplitAfterTest.test_no_sep) ... ok\ntest_separator_option_laziness (tests.test_more.SplitAfterTest.test_separator_option_laziness) ... ok\ntest_starts_with_sep (tests.test_more.SplitAfterTest.test_starts_with_sep) ... ok\ntest_zero_maxsplit_bypasses_predicate (tests.test_more.SplitAfterTest.test_zero_maxsplit_bypasses_predicate) ... ok\ntest_even (tests.test_more.ChunkedTests.test_even)\nTest when ``n`` divides evenly into the length of the iterable. ... ok\ntest_negative (tests.test_more.ChunkedTests.test_negative)\nTest that a negative ``n`` raises a clear ``ValueError``, matching ... ok\ntest_none (tests.test_more.ChunkedTests.test_none)\nTest when ``n`` has the value ``None``. ... ok\ntest_odd (tests.test_more.ChunkedTests.test_odd)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true (tests.test_more.ChunkedTests.test_strict_being_true)\nTest when ``n`` does not divide evenly into the length of the ... ok\ntest_strict_being_true_with_size_none (tests.test_more.ChunkedTests.test_strict_being_true_with_size_none)\nTest when ``n`` has value ``None`` and the keyword strict is True ... ok\ntest_strict_false (tests.test_more.ChunkedTests.test_strict_false)\nTest when ``n`` does not divide evenly into the length of the ... ok\n\n----------------------------------------------------------------------\nRan 27 tests in 0.004s\n\nOK\nfrozen upstream compatibility regressions passed\n"
+        },
+        {
+          "command": "python -c 'import inspect\nfrom more_itertools import split_after\np = inspect.signature(split_after).parameters[\"keep_separator\"]\nassert p.kind == inspect.Parameter.KEYWORD_ONLY and p.default is True\nzero = lambda x: x == 0\ndef groups(items, **options):\n    return list(split_after(items, zero, keep_separator=False, **options))\nassert groups([]) == []\nassert groups([1, 2]) == [[1, 2]]\nassert groups([0]) == [[]]\nassert groups([0, 0]) == [[], []]\nassert groups([0, 1, 0, 0, 2, 0]) == [[], [1], [], [2]]\nassert groups([1, 0, 2]) == [[1], [2]]\nassert groups([1, 0, 2, 0], maxsplit=1) == [[1], [2, 0]]\nassert groups([1, 0, 2, 0], maxsplit=0) == [[1, 0, 2, 0]]\nassert groups([], maxsplit=0) == []\nassert groups([0, 0, 2, 0], maxsplit=2) == [[], [], [2, 0]]\nassert list(split_after([1, 0, 2, 0], zero, keep_separator=True)) == [[1, 0], [2, 0]]\npulled, tested = [], []\ndef values():\n    for value in [1, 0, 2, 0]:\n        pulled.append(value)\n        yield value\ndef predicate(value):\n    tested.append(value)\n    return value == 0\nchunks = split_after(values(), predicate, maxsplit=1, keep_separator=False)\nassert pulled == [] and tested == [], \"creation must be lazy\"\nassert next(chunks) == [1]\nassert pulled == [1, 0] and tested == [1, 0], \"must stop at the yielded boundary\"\nassert list(chunks) == [[2, 0]]\nassert pulled == [1, 0, 2, 0] and tested == [1, 0], \"unsplit tail bypasses predicate\"\ntested.clear()\nassert list(split_after(iter([0, 1]), predicate, maxsplit=0, keep_separator=False)) == [[0, 1]]\nassert tested == []\ntry: list(split_after([], zero, -1, False))\nexcept TypeError: pass\nelse: raise AssertionError(\"keep_separator must be keyword-only\")\ndef failing_predicate(value): raise RuntimeError(\"predicate failure\")\ntry: next(split_after(iter([1]), failing_predicate, keep_separator=False))\nexcept RuntimeError: pass\nelse: raise AssertionError(\"predicate exceptions must propagate\")\nprint(\"split_after delimiter contract passed\")\n'",
+          "returncode": 0,
+          "passed": true,
+          "output_sha256": "0cb11b0a0b49a0300326b825526105f4a7ff7f007abb5ea5fd7280a1d65d03be",
+          "output_preview": "split_after delimiter contract passed\n"
+        }
+      ],
+      "public_check_eligible": true,
+      "delivery_success": true,
+      "public_delivery_status": "passed",
+      "official_resolved": null,
+      "resolved_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_status": "passed"
+    }
+  ],
+  "infrastructure_failures": []
+}

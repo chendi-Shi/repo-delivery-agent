@@ -16,6 +16,8 @@ from .scheduler import JobStore, SchedulerError, canonical
 
 # An 8 MiB patch may expand sixfold in escaped JSON. Complete traces stay local.
 MAX_REQUEST_BYTES = 64 * 1024 * 1024
+REJECTED_BODY_DRAIN_BYTES = 64 * 1024
+REJECTED_BODY_DRAIN_SECONDS = 0.25
 
 
 class Coordinator(ThreadingHTTPServer):
@@ -106,6 +108,37 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
         expected = "Bearer " + self.server._token
         if not hmac.compare_digest(value.encode("utf-8"), expected.encode("utf-8")):
             raise SchedulerError("Authentication required", 401)
+
+    def _drain_rejected_body(self):
+        """Bounded transport cleanup after 401, never parsing or dispatching data.
+
+        Closing while a finite POST body is still arriving can reset the socket
+        before Windows clients receive the already-written HTTP response. Only
+        unambiguous small bodies get a short grace period; unknown/large framing
+        is closed immediately, without trusting its declared size.
+        """
+        self.close_connection = True
+        if self.headers.get("Transfer-Encoding") is not None:
+            return
+        lengths = self.headers.get_all("Content-Length", [])
+        if (len(lengths) != 1 or len(lengths[0]) > 10
+                or not lengths[0].isascii() or not lengths[0].isdecimal()):
+            return
+        remaining = int(lengths[0])
+        if not 0 < remaining <= REJECTED_BODY_DRAIN_BYTES:
+            return
+        deadline = time.monotonic() + REJECTED_BODY_DRAIN_SECONDS
+        while remaining:
+            timeout = deadline - time.monotonic()
+            if timeout <= 0:
+                return
+            self.connection.settimeout(timeout)
+            # rfile also operates on decrypted TLS records; never unwrap or
+            # read raw socket bytes here. The connection is never reused.
+            chunk = self.rfile.read1(min(remaining, 4096))
+            if not chunk:
+                return
+            remaining -= len(chunk)
 
     def _body(self):
         if self.headers.get("Transfer-Encoding"):
@@ -201,6 +234,9 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
         except SchedulerError as exc:
             try:
                 self._reply(exc.status, {"error": str(exc)})
+                self.wfile.flush()
+                if exc.status == 401:
+                    self._drain_rejected_body()
             except OSError:
                 pass
         except (TimeoutError, socket.timeout):

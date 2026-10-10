@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "kind": "github_actions_scheduler_and_engineering_validation",
+  "source_commit": "8dff3533cc152f00e09cce8192737ae7e10d961f",
+  "fixture": true,
+  "llm_calls": 0,
+  "scheduler_load_status": "failure",
+  "regular_ci_status": "success",
+  "runs": [
+    {
+      "id": 38030559552,
+      "name": "scheduler load and fault validation",
+      "head_sha": "8dff3533cc152f00e09cce8192737ae7e10d961f",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559552"
+    },
+    {
+      "id": 38030559473,
+      "name": "tests",
+      "head_sha": "8dff3533cc152f00e09cce8192737ae7e10d961f",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559473"
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 38030559552,
+      "job_id": 114150421235,
+      "name": "bounded-load (windows-latest)",
+      "conclusion": "failure",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559552/job/114150421235",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "unittest_seconds": 9.854,
+      "first_log_timestamp_utc": "2026-10-10T06:20:02.8093456Z",
+      "last_log_timestamp_utc": "2026-10-10T06:21:53.1678675Z",
+      "observed_log_span_seconds": 110.358
+    },
+    {
+      "run_id": 38030559552,
+      "job_id": 114150421293,
+      "name": "bounded-load (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559552/job/114150421293",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "unittest_seconds": 5.014,
+      "first_log_timestamp_utc": "2026-10-10T06:20:02.8711780Z",
+      "last_log_timestamp_utc": "2026-10-10T06:20:27.0170089Z",
+      "observed_log_span_seconds": 24.146
+    },
+    {
+      "run_id": 38030559473,
+      "job_id": 114150420786,
+      "name": "unit (windows-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559473/job/114150420786",
+      "checkout_sha_confirmed": true,
+      "tests": 368,
+      "skipped": 0,
+      "failures": 0,
+      "unittest_seconds": 119.924,
+      "first_log_timestamp_utc": "2026-10-10T06:20:02.9660331Z",
+      "last_log_timestamp_utc": "2026-10-10T06:24:04.6054748Z",
+      "observed_log_span_seconds": 241.639
+    },
+    {
+      "run_id": 38030559473,
+      "job_id": 114150420789,
+      "name": "unit (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559473/job/114150420789",
+      "checkout_sha_confirmed": true,
+      "tests": 368,
+      "skipped": 0,
+      "failures": 0,
+      "unittest_seconds": 39.052,
+      "first_log_timestamp_utc": "2026-10-10T06:20:02.5485283Z",
+      "last_log_timestamp_utc": "2026-10-10T06:21:11.5598496Z",
+      "observed_log_span_seconds": 69.011
+    },
+    {
+      "run_id": 38030559473,
+      "job_id": 114150420846,
+      "name": "real-model-patch-verification",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559473/job/114150420846",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T06:20:03.7581386Z",
+      "last_log_timestamp_utc": "2026-10-10T06:20:22.9349577Z",
+      "observed_log_span_seconds": 19.176
+    },
+    {
+      "run_id": 38030559473,
+      "job_id": 114150420863,
+      "name": "docker-integration",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559473/job/114150420863",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T06:20:02.9074282Z",
+      "last_log_timestamp_utc": "2026-10-10T06:20:51.8943325Z",
+      "observed_log_span_seconds": 48.987
+    }
+  ],
+  "scheduler_artifacts": [
+    {
+      "platform": "ubuntu-latest",
+      "artifact_id": 11662027775,
+      "zip_bytes": 121446,
+      "zip_sha256": "f839e8764787d0c1bd9f3bdd2fc2348a478ead8541ada54412a3ae3facfb0d07",
+      "report": "ubuntu/report.json",
+      "readback_manifest": "ubuntu/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "original_report_sha256": "555966d7a2e3c3fd4446eaf44deee873781d1b4cac5d27c4b5a2cb7f59317f91",
+      "original_jobs_sha256": "1df2907375bbd7220a7414e2b26135950b0fdc96ee4acbdbc92ddb8e688568a0"
+    },
+    {
+      "platform": "windows-latest",
+      "artifact_id": 11662117698,
+      "zip_bytes": 122845,
+      "zip_sha256": "c827db37772c5b9c08b3b121b541919058eacda58cad0076fb6358bfb6c92105",
+      "report": "windows/report.json",
+      "readback_manifest": "windows/report.jobs.manifest.json",
+      "report_status": "failed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": false,
+      "load_latency_and_throughput_recomputed": true,
+      "original_report_sha256": "84062a9d8616906fab6270f9cbb8a47b2cadbdad7164323f349258488ace321d",
+      "original_jobs_sha256": "f0433c437893a95060a573b10b30a5069e0034aebd203d0ad41971b890c84168"
+    }
+  ],
+  "scheduler_failure": {
+    "job_id": 114150421235,
+    "stage": "full_readback",
+    "error_type": "RuntimeError",
+    "strict_readback_errors": [
+      "unexpected_attempt_outcomes:load-000388",
+      "unexpected_attempt_outcomes:load-000528",
+      "unexpected_attempt_outcomes:load-000563"
+    ],
+    "load_worker_acknowledged_jobs": 999,
+    "load_planned_jobs": 1000,
+    "worker_acknowledgements_match_plan": false,
+    "idempotent_completion_responses": 6,
+    "cause_of_expiry_or_missing_ack": "Not established from retained report/readback; per-worker HTTP/commit receipts were not exported.",
+    "raw_logs_included": false
+  },
+  "other_regular_jobs": {
+    "docker_fixture_smoke_passed": true,
+    "docker_fixture_recovery_passed": true,
+    "retained_patch_verification": {
+      "attempts": 6,
+      "submitted": 0,
+      "public_delivery_denominator": 3,
+      "no_public_checks_attempts": 3,
+      "delivery_successes": 0,
+      "public_delivery_rate": 0,
+      "delivery_rate_all_attempts": null
+    }
+  },
+  "notes": [
+    "Both original artifact ZIPs matched their GitHub metadata digest and size; the failed Windows report is retained unchanged.",
+    "The existing strict readback consumer reproduced Linux pass and Windows failure. All 1005 records were present on both hosts, but this alone does not establish a passed run.",
+    "Windows had three unplanned lease expirations followed by successful generation-2 completion, and only 999 worker success acknowledgements for 1000 load jobs. No duplicate accepted commits or missing jobs were found in reported HTTP/DB audits.",
+    "The three fault exercises passed in both reports; the full Windows run still failed its strict conditions.",
+    "Unittest counts/durations and checkout SHAs come from actual six-job logs. Standard CI passed on both systems with 368 tests each and zero skips.",
+    "Each load report describes one local host with eight OS processes and fixture executors, not multiple physical machines or model delivery performance.",
+    "Original ZIPs remain under ignored runs/scheduler-load-ci-clock-fixed-downloads. Temporary storage URLs, credentials, lease tokens, and raw job logs are not published.",
+    "This directory is a new receipt for 8dff353; it does not overwrite the earlier 5fc6d0d Windows unit-test failure or either previous load report."
+  ]
+}

@@ -1,0 +1,95 @@
+"""Controlled loopback sockets; scheduler fixture only, no provider calls."""
+from __future__ import annotations
+
+import http.client
+import json
+import socket
+import sys
+import tempfile
+import threading
+import time
+from pathlib import Path
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parent.parent / "repo-delivery-agent"
+sys.path.insert(0, str(ROOT))
+from delivery_agent.scheduler import JobStore, canonical
+from delivery_agent.scheduler_server import Coordinator, CoordinatorHandler
+
+
+def trial(index):
+    with tempfile.TemporaryDirectory() as temporary:
+        store = JobStore(Path(temporary) / "jobs.sqlite")
+        rejection_ready = threading.Event()
+        body_sent = threading.Event()
+        response_sent = threading.Event()
+        connection_closed = threading.Event()
+        original_reply = CoordinatorHandler._reply
+        expected = "fixture-auth-" + "a" * 40
+
+        class ObservedCoordinator(Coordinator):
+            def process_request_thread(self, request, address):
+                try:
+                    super().process_request_thread(request, address)
+                finally:
+                    connection_closed.set()
+
+        def gated_reply(handler, status, value):
+            if status == 401:
+                rejection_ready.set()
+                if not body_sent.wait(2):
+                    raise AssertionError("Client did not send the controlled body")
+            result = original_reply(handler, status, value)
+            if status == 401:
+                response_sent.set()
+            return result
+
+        server = ObservedCoordinator(("127.0.0.1", 0), store, expected, request_timeout=2)
+        thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .01}, daemon=True)
+        with patch.object(CoordinatorHandler, "_reply", gated_reply):
+            thread.start()
+            body = canonical({"job_id": "not-authorized", "max_attempts": 1,
+                "payload": {"task": {"instance_id": "fixture", "repo": "example/project",
+                    "base_commit": "a" * 40, "problem_statement": "Trusted transport fixture",
+                    "image": "python:3.12-slim", "public_checks": []},
+                    "config": {"model": "fixture", "profile": "baseline"}}}).encode()
+            body += b" " * (32768 - len(body))
+            result = {"trial": index, "fixture": True, "llm_calls": 0, "body_bytes": len(body)}
+            try:
+                with socket.create_connection(server.server_address, timeout=3) as client:
+                    client.settimeout(3)
+                    headers = ("POST /v1/jobs HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer "
+                        + "wrong-fixture-" + "b" * 40 + "\r\nContent-Type: application/json\r\nContent-Length: "
+                        + str(len(body)) + "\r\nConnection: close\r\n\r\n").encode()
+                    client.sendall(headers)
+                    if not rejection_ready.wait(2):
+                        raise AssertionError("Server did not reject headers before body")
+                    client.sendall(body[:1])
+                    body_sent.set()
+                    if not response_sent.wait(2):
+                        raise AssertionError("Server did not send the rejection response")
+                    connection_closed.wait(.03)
+                    try:
+                        client.sendall(body[1:])
+                        response = http.client.HTTPResponse(client)
+                        response.begin()
+                        response.read()
+                        result.update(status=response.status, complete_http_response=True)
+                    except (OSError, http.client.HTTPException) as exc:
+                        result.update(status=None, complete_http_response=False,
+                            error_type=type(exc).__name__, winerror=getattr(exc, "winerror", None))
+            finally:
+                body_sent.set()
+                server.shutdown()
+                server.server_close()
+                thread.join(3)
+            result["stored_jobs"] = len(store.list_jobs())
+            return result
+
+
+if __name__ == "__main__":
+    results = [trial(i + 1) for i in range(5)]
+    output = {"fixture": True, "llm_calls": 0,
+        "method": "Send headers, wait for authentication rejection, send first body byte, release 401 response, wait up to 30ms for connection teardown, then send remaining valid padded JSON body and read status.",
+        "trials": results}
+    print(json.dumps(output, indent=2))

@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "kind": "controlled_real_socket_rejection_regression",
+  "fixture": true,
+  "llm_calls": 0,
+  "platform": "Windows",
+  "python": "3.14.7",
+  "ci_trigger": {
+    "commit": "1b7dfd92f568529a85ad67976c78eadc84747773",
+    "run_id": 38031594481,
+    "job_id": 114153500313,
+    "test": "test_scheduler.HTTPIntegrationTests.test_authentication_required_for_reads_and_writes",
+    "error_type": "ConnectionAbortedError",
+    "winerror": 10053
+  },
+  "before": {
+    "trials": 5,
+    "complete_401_responses": 0,
+    "winerror_10053": 5,
+    "stored_jobs": 0
+  },
+  "after": {
+    "trials": 5,
+    "complete_401_responses": 5,
+    "stored_jobs": 0
+  },
+  "regression_tests": {
+    "file": "tests/test_scheduler_http_rejection.py",
+    "tests": 4,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 0.844,
+    "coverage": [
+      "real segmented plaintext request",
+      "real segmented TLS request using public self-signed test fixture",
+      "immediate 401 and absolute deadline under continuous slow body",
+      "no reads for ambiguous or oversized framing"
+    ]
+  },
+  "implementation": {
+    "maximum_drain_bytes": 65536,
+    "absolute_drain_seconds": 0.25,
+    "authentication_before_body": true,
+    "reply_and_flush_before_drain": true,
+    "only_http_401": "Only early authentication rejection uses cleanup; 413 oversized-body handling unchanged.",
+    "body_parsed_or_dispatched": false,
+    "tls": "Use existing decrypted rfile, no raw socket reads or TLS unwrap."
+  },
+  "artifacts": [
+    {
+      "file": "before.json",
+      "original_basename": "scheduler-rejection-before.json",
+      "bytes": 1852,
+      "sha256": "e3f912acfed3e8ba07060896a6dbbb6c1a18fd62ece78b913e0f237ace4fce2a"
+    },
+    {
+      "file": "after.json",
+      "original_basename": "scheduler-rejection-after.json",
+      "bytes": 1475,
+      "sha256": "ae038121cbab9f8dbc904b4854465c204519aeeb8f140317d447917807e255c9"
+    },
+    {
+      "file": "probe.py.txt",
+      "original_basename": "probe_scheduler_rejected_body.py",
+      "bytes": 4547,
+      "sha256": "190ceb57687ee90d6d81ce91151a89be688c266f8287bf6b87a171d45beb95ba"
+    }
+  ],
+  "interpretation": "Controlled local reproduction matches the historical CI exception and isolates one segmented-body/early-close path. It does not rule out other causes of transport aborts. The prior Windows CI remains a failure; new remote validation is required.",
+  "existing_scheduler_suite": {
+    "file": "tests/test_scheduler.py",
+    "tests": 32,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 26.105,
+    "includes_original_authentication_and_oversize_tests": true
+  },
+  "source_files_sha256": {
+    "delivery_agent/scheduler_server.py": "29e43cceefba25829c43a0013e5fa391497bd0779c3c40f891dc693360a994f9",
+    "tests/test_scheduler_http_rejection.py": "82d2e50b57ddc60f52d26c236e801793cc2da5c16e0028dedba387b2b43279a9"
+  }
+}

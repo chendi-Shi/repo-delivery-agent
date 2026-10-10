@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "source_commit": "ca963a68072b3cf1d2fefef04a26a4e26af547bd",
+  "run_id": 38031411821,
+  "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031411821",
+  "conclusion": "failure",
+  "lease_seconds": 5,
+  "fixture": true,
+  "llm_calls": 0,
+  "jobs": [
+    {
+      "job_id": 114152960523,
+      "name": "bounded-load (windows-latest)",
+      "conclusion": "failure",
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031411821/job/114152960523",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "unittest_seconds": 9.315
+    },
+    {
+      "job_id": 114152960732,
+      "name": "bounded-load (ubuntu-latest)",
+      "conclusion": "success",
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031411821/job/114152960732",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "unittest_seconds": 5.592
+    }
+  ],
+  "artifacts": [
+    {
+      "platform": "ubuntu",
+      "status": "passed",
+      "stage": "completed",
+      "artifact_id": 11662545528,
+      "zip_sha256": "55678fefb1499c367fe5d53655cbace8dd402022345b92bf1d0e72773928df78",
+      "zip_bytes": 121683,
+      "original_zip_retained_local_path": "runs/scheduler-load-ca963a6-downloads/ubuntu-original.zip",
+      "report_file": "ubuntu-report.json",
+      "report_sha256": "86a69223ac45f04a792687bf66175abac7b22f7dfd0581157a183af015f95946",
+      "jobs_bytes": 1075454,
+      "jobs_sha256": "2d4525a5f233ebb8c2aef32da3617bbc380de9eabc9abcafbedc33c74bf85caf",
+      "jobs_location": "unchanged original report.jobs.json entry in retained ZIP; no duplicate text parts published",
+      "strict_consumer_matches_original": true,
+      "verification": {
+        "accepted_successful_attempts": 1003,
+        "duplicate_accepted_jobs": 0,
+        "errors": [],
+        "missing_jobs": 0,
+        "observed_jobs": 1005,
+        "passed": true,
+        "planned_jobs": 1005,
+        "states": {
+          "cancelled": 2,
+          "succeeded": 1003
+        }
+      },
+      "load": {
+        "acknowledged_jobs": 1000,
+        "acknowledgements_match_plan": true,
+        "active_lease_window_seconds": 3.2675373554229736,
+        "claim_to_commit": {
+          "max_seconds": 0.3372957706451416,
+          "p50_seconds": 0.009581565856933594,
+          "p95_seconds": 0.04752850532531738,
+          "samples": 1000
+        },
+        "complete": true,
+        "duplicate_job_acknowledgements": 0,
+        "idempotent_completion_responses": 0,
+        "latency_scope": "Coordinator wall timestamps; submit latency includes queueing and worker startup. Nearest-rank percentiles.",
+        "observed_worker_processes": 8,
+        "planned_jobs": 1000,
+        "requested_worker_processes": 8,
+        "submit_to_commit": {
+          "max_seconds": 4.063011884689331,
+          "p50_seconds": 3.5756795406341553,
+          "p95_seconds": 3.912193775177002,
+          "samples": 1000
+        },
+        "successful_jobs": 1000,
+        "throughput_jobs_per_second": 306.0408776476108,
+        "throughput_scope": "First load lease start to last load commit; includes first-action barrier, excludes enqueue/startup/readback/idle shutdown."
+      }
+    },
+    {
+      "platform": "windows",
+      "status": "failed",
+      "stage": "full_readback",
+      "artifact_id": 11662144137,
+      "zip_sha256": "306462ceebbb6dba1dc9d59a034c4df7ac5c154b1cc8734b2b858fc5e70c1c59",
+      "zip_bytes": 122687,
+      "original_zip_retained_local_path": "runs/scheduler-load-ca963a6-downloads/windows-original.zip",
+      "report_file": "windows-report.json",
+      "report_sha256": "e18c2cacceaddeffaa7b5ff43d4d807e5c237bb285b893f4adae5c547c6ad551",
+      "jobs_bytes": 1111704,
+      "jobs_sha256": "a06d270e37df41c083c6b8b3afa02235423610a82440c7209396b6c71164d13c",
+      "jobs_location": "unchanged original report.jobs.json entry in retained ZIP; no duplicate text parts published",
+      "strict_consumer_matches_original": true,
+      "verification": {
+        "accepted_successful_attempts": 1002,
+        "duplicate_accepted_jobs": 0,
+        "errors": [
+          "unexpected_attempt_outcomes:load-000247",
+          "unexpected_attempt_outcomes:load-000251",
+          "unexpected_attempt_outcomes:load-000252",
+          "unexpected_attempt_outcomes:load-000255",
+          "wrong_state:load-000256",
+          "unexpected_attempt_outcomes:load-000256",
+          "result_binding:load-000256",
+          "result_digest:load-000256",
+          "fixture_patch:load-000256",
+          "unexpected_attempt_outcomes:load-000271",
+          "unexpected_attempt_outcomes:load-000274"
+        ],
+        "missing_jobs": 0,
+        "observed_jobs": 1005,
+        "passed": false,
+        "planned_jobs": 1005,
+        "states": {
+          "cancelled": 2,
+          "failed": 1,
+          "succeeded": 1002
+        }
+      },
+      "load": {
+        "acknowledged_jobs": 995,
+        "acknowledgements_match_plan": false,
+        "active_lease_window_seconds": 62.68995428085327,
+        "claim_to_commit": {
+          "max_seconds": 4.669844627380371,
+          "p50_seconds": 0.04490160942077637,
+          "p95_seconds": 0.5161972045898438,
+          "samples": 999
+        },
+        "complete": false,
+        "duplicate_job_acknowledgements": 0,
+        "idempotent_completion_responses": 9,
+        "latency_scope": "Coordinator wall timestamps; submit latency includes queueing and worker startup. Nearest-rank percentiles.",
+        "observed_worker_processes": 8,
+        "planned_jobs": 1000,
+        "requested_worker_processes": 8,
+        "submit_to_commit": {
+          "max_seconds": 70.97082424163818,
+          "p50_seconds": 65.82894682884216,
+          "p95_seconds": 69.86863374710083,
+          "samples": 999
+        },
+        "successful_jobs": 999,
+        "throughput_jobs_per_second": null,
+        "throughput_scope": "First load lease start to last load commit; includes first-action barrier, excludes enqueue/startup/readback/idle shutdown."
+      }
+    }
+  ],
+  "interpretation": "Additional independently triggered 5-second-lease run is retained as failure. New 30-second configuration results must not overwrite it or be interpreted as evidence that this 5-second configuration passed."
+}

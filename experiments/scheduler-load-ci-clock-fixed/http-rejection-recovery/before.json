@@ -1,0 +1,66 @@
+{
+  "fixture": true,
+  "llm_calls": 0,
+  "method": "Send headers, wait for authentication rejection, send first body byte, release 401 response, wait up to 30ms for connection teardown, then send remaining valid padded JSON body and read status.",
+  "trials": [
+    {
+      "trial": 1,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": null,
+      "complete_http_response": false,
+      "error_type": "ConnectionAbortedError",
+      "winerror": 10053,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 2,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": null,
+      "complete_http_response": false,
+      "error_type": "ConnectionAbortedError",
+      "winerror": 10053,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 3,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": null,
+      "complete_http_response": false,
+      "error_type": "ConnectionAbortedError",
+      "winerror": 10053,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 4,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": null,
+      "complete_http_response": false,
+      "error_type": "ConnectionAbortedError",
+      "winerror": 10053,
+      "stored_jobs": 0
+    },
+    {
+      "trial": 5,
+      "fixture": true,
+      "llm_calls": 0,
+      "body_bytes": 32768,
+      "status": null,
+      "complete_http_response": false,
+      "error_type": "ConnectionAbortedError",
+      "winerror": 10053,
+      "stored_jobs": 0
+    }
+  ],
+  "phase": "before_production_change",
+  "source_sha256": "e4f3dbd59a215fc649e5097caea19c9cf1b3fc0549cf982b0ef372ae8b5e903e",
+  "probe_sha256": "190ceb57687ee90d6d81ce91151a89be688c266f8287bf6b87a171d45beb95ba",
+  "passed": false
+}

@@ -1,0 +1,156 @@
+{
+  "configuration": {
+    "additional_fault_jobs": 5,
+    "fixture_delay_seconds": 0.005,
+    "lease_seconds": 5.0,
+    "load_jobs": 1000,
+    "storage": "SQLite WAL",
+    "timeout_scope": "Global execution deadline including parent HTTP; excludes bounded process cleanup and read-only final audit.",
+    "timeout_seconds": 300.0,
+    "transport": "authenticated loopback HTTP",
+    "workers": 8
+  },
+  "database_audit": {
+    "accepted_successful_attempts": 1003,
+    "duplicate_accepted_job_ids": [],
+    "missing_job_ids": [],
+    "read_only_after_process_shutdown": true,
+    "states": {
+      "cancelled": 2,
+      "succeeded": 1003
+    },
+    "stored_jobs": 1005,
+    "unexpected_job_ids": [],
+    "wrong_state_job_ids": []
+  },
+  "elapsed_seconds": 14.608500393,
+  "faults": {
+    "cancellation": {
+      "executor_observed_cancellation": true,
+      "late_completion_http_status": 409,
+      "passed": true,
+      "queued_and_running": true
+    },
+    "coordinator_restart": {
+      "force_kill": {
+        "method": "Popen.kill",
+        "pid": 2386,
+        "returncode": -9
+      },
+      "live_worker_continued": true,
+      "passed": true,
+      "preserved_states": [
+        "succeeded",
+        "leased",
+        "queued"
+      ],
+      "replacement_pid": 6648,
+      "restart_seconds": 0.10111464800000647,
+      "same_database": true,
+      "same_http_origin": true
+    },
+    "killed_worker": {
+      "conflicting_completion_http_status": 409,
+      "exact_repeat_idempotent": true,
+      "force_kill": {
+        "method": "Popen.kill",
+        "pid": 6614,
+        "returncode": -9
+      },
+      "new_generation": 2,
+      "old_generation": 1,
+      "passed": true,
+      "replacement_acknowledged": true,
+      "stale_completion_http_status": 409,
+      "stale_probe_new_generation_state": "leased",
+      "stale_probe_preserved_live_replacement": true
+    }
+  },
+  "fixture": true,
+  "kind": "real_http_scheduler_load_and_fault_validation",
+  "limits": [
+    "One local host, separate OS processes, no cross-machine/network-partition proof.",
+    "Fixture executor does not invoke a model, clone repositories, run Docker, or prove code delivery quality.",
+    "Lease expiry permits repeated execution; verification checks accepted commits, not exactly-once execution.",
+    "Finite workload and measured host only; no unbounded production capacity claim."
+  ],
+  "llm_calls": 0,
+  "load": {
+    "acknowledged_jobs": 1000,
+    "acknowledgements_match_plan": true,
+    "active_lease_window_seconds": 3.2675373554229736,
+    "claim_to_commit": {
+      "max_seconds": 0.3372957706451416,
+      "p50_seconds": 0.009581565856933594,
+      "p95_seconds": 0.04752850532531738,
+      "samples": 1000
+    },
+    "complete": true,
+    "duplicate_job_acknowledgements": 0,
+    "idempotent_completion_responses": 0,
+    "latency_scope": "Coordinator wall timestamps; submit latency includes queueing and worker startup. Nearest-rank percentiles.",
+    "observed_worker_processes": 8,
+    "planned_jobs": 1000,
+    "requested_worker_processes": 8,
+    "submit_to_commit": {
+      "max_seconds": 4.063011884689331,
+      "p50_seconds": 3.5756795406341553,
+      "p95_seconds": 3.912193775177002,
+      "samples": 1000
+    },
+    "successful_jobs": 1000,
+    "throughput_jobs_per_second": 306.0408776476108,
+    "throughput_scope": "First load lease start to last load commit; includes first-action barrier, excludes enqueue/startup/readback/idle shutdown."
+  },
+  "load_worker_pids": [
+    3389,
+    3390,
+    3391,
+    3392,
+    3393,
+    3394,
+    3395,
+    3396
+  ],
+  "observed_jobs": 1005,
+  "physical_hosts": 1,
+  "planned_jobs": 1005,
+  "provenance": {
+    "github_run_attempt": "1",
+    "github_run_id": "38031411821",
+    "logical_cpu_count": 2,
+    "machine": "x86_64",
+    "platform": "Linux",
+    "python": "3.12.15",
+    "source_commit": "ca963a68072b3cf1d2fefef04a26a4e26af547bd",
+    "source_files_clean": true,
+    "source_files_sha256": {
+      "delivery_agent/repository.py": "e84e20df0a04ddb389ac67aad5c56b4a90ea2a8cd72a6b21732059d01729f8e1",
+      "delivery_agent/scheduler.py": "75e4437ee79fa047a35735c49f71291c6d7fdf0a1835b526fa09aca46cb7c022",
+      "delivery_agent/scheduler_server.py": "e4f3dbd59a215fc649e5097caea19c9cf1b3fc0549cf982b0ef372ae8b5e903e",
+      "delivery_agent/scheduler_worker.py": "458d5e446d46b7d31a7df6360aa8c81b8220c52a7af735fc67758f0095eae24a",
+      "scripts/scheduler_load.py": "ce0726dfacf63ae8d5c1bc1a378ed3c36161a2a056e1b516cb4fd6118aea7ec8"
+    }
+  },
+  "readback_artifact": {
+    "path": "report.jobs.json",
+    "sha256": "2d4525a5f233ebb8c2aef32da3617bbc380de9eabc9abcafbedc33c74bf85caf"
+  },
+  "schema": 1,
+  "stage": "completed",
+  "status": "passed",
+  "unverified_planned_jobs": 0,
+  "verification": {
+    "accepted_successful_attempts": 1003,
+    "duplicate_accepted_jobs": 0,
+    "errors": [],
+    "missing_jobs": 0,
+    "observed_jobs": 1005,
+    "passed": true,
+    "planned_jobs": 1005,
+    "states": {
+      "cancelled": 2,
+      "succeeded": 1003
+    }
+  }
+}

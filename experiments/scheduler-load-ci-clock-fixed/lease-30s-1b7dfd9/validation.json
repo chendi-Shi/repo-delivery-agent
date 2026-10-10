@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "kind": "github_actions_scheduler_and_engineering_validation",
+  "source_commit": "1b7dfd92f568529a85ad67976c78eadc84747773",
+  "fixture": true,
+  "llm_calls": 0,
+  "lease_seconds": 30,
+  "scheduler_load_status": "passed",
+  "regular_ci_status": "failure",
+  "runs": [
+    {
+      "id": 38031594571,
+      "name": "scheduler load and fault validation",
+      "head_sha": "1b7dfd92f568529a85ad67976c78eadc84747773",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594571"
+    },
+    {
+      "id": 38031594481,
+      "name": "tests",
+      "head_sha": "1b7dfd92f568529a85ad67976c78eadc84747773",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594481"
+    }
+  ],
+  "jobs": [
+    {
+      "run_id": 38031594571,
+      "job_id": 114153500718,
+      "name": "bounded-load (windows-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594571/job/114153500718",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 8.758,
+      "first_log_timestamp_utc": "2026-10-10T06:37:46.2851552Z",
+      "last_log_timestamp_utc": "2026-10-10T06:39:38.5610280Z",
+      "observed_log_span_seconds": 112.276
+    },
+    {
+      "run_id": 38031594571,
+      "job_id": 114153500826,
+      "name": "bounded-load (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594571/job/114153500826",
+      "checkout_sha_confirmed": true,
+      "tests": 9,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 5.533,
+      "first_log_timestamp_utc": "2026-10-10T06:37:46.8446917Z",
+      "last_log_timestamp_utc": "2026-10-10T06:38:43.1062789Z",
+      "observed_log_span_seconds": 56.262
+    },
+    {
+      "run_id": 38031594481,
+      "job_id": 114153500226,
+      "name": "docker-integration",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594481/job/114153500226",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "errors": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T06:37:46.0217208Z",
+      "last_log_timestamp_utc": "2026-10-10T06:38:38.4613074Z",
+      "observed_log_span_seconds": 52.44
+    },
+    {
+      "run_id": 38031594481,
+      "job_id": 114153500310,
+      "name": "unit (ubuntu-latest)",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594481/job/114153500310",
+      "checkout_sha_confirmed": true,
+      "tests": 375,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "unittest_seconds": 42.175,
+      "first_log_timestamp_utc": "2026-10-10T06:37:47.0626605Z",
+      "last_log_timestamp_utc": "2026-10-10T06:39:13.5892307Z",
+      "observed_log_span_seconds": 86.527
+    },
+    {
+      "run_id": 38031594481,
+      "job_id": 114153500313,
+      "name": "unit (windows-latest)",
+      "conclusion": "failure",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594481/job/114153500313",
+      "checkout_sha_confirmed": true,
+      "tests": 375,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 1,
+      "unittest_seconds": 84.252,
+      "first_log_timestamp_utc": "2026-10-10T06:37:46.4172806Z",
+      "last_log_timestamp_utc": "2026-10-10T06:41:07.3995830Z",
+      "observed_log_span_seconds": 200.982
+    },
+    {
+      "run_id": 38031594481,
+      "job_id": 114153500325,
+      "name": "real-model-patch-verification",
+      "conclusion": "success",
+      "job_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38031594481/job/114153500325",
+      "checkout_sha_confirmed": true,
+      "tests": null,
+      "skipped": null,
+      "failures": null,
+      "errors": null,
+      "unittest_seconds": null,
+      "first_log_timestamp_utc": "2026-10-10T06:37:46.5120979Z",
+      "last_log_timestamp_utc": "2026-10-10T06:38:02.4389448Z",
+      "observed_log_span_seconds": 15.926
+    }
+  ],
+  "scheduler_artifacts": [
+    {
+      "platform": "ubuntu-latest",
+      "artifact_id": 11662385893,
+      "zip_bytes": 121640,
+      "zip_sha256": "ba9fae6ea045a0787af4444c71c13438dcc37c5ae7743d2e12c230fc4898587e",
+      "report": "ubuntu/report.json",
+      "readback_manifest": "ubuntu/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "original_report_sha256": "f17f3ecadefe9a79cbdc9ee84c05ccb1372ddb32edf3b128c3347e8bc0ef85b9",
+      "original_jobs_sha256": "679e7d86796b224b72e3f86d9ba5d05097c73b9bcc1e320382e04b0c24544ed2"
+    },
+    {
+      "platform": "windows-latest",
+      "artifact_id": 11662615698,
+      "zip_bytes": 122658,
+      "zip_sha256": "4d7332079af436abbb91503dcf06df8c8113734c22189c5cb7370f37a37047fc",
+      "report": "windows/report.json",
+      "readback_manifest": "windows/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "original_report_sha256": "8cf39ec479449c13aff0e8f1eb6ac14572352cd38d5002e51adb1545ad088962",
+      "original_jobs_sha256": "6941ab9abc57cc2b468cdddaca8ad38c92455be132f6007318c19b0c891cf488"
+    }
+  ],
+  "regular_ci_failure": {
+    "job_id": 114153500313,
+    "test": "test_scheduler.HTTPIntegrationTests.test_authentication_required_for_reads_and_writes",
+    "test_location": "tests/test_scheduler.py:356",
+    "operation": "wrong-token POST submit while urllib reads the HTTP response status",
+    "error_type": "ConnectionAbortedError",
+    "winerror": 10053,
+    "expected": "SchedulerError with HTTP status 401",
+    "observed": "Transport closed before the client obtained an HTTP status",
+    "cause": "Not established by this CI log; unread rejected POST body and connection-close race are under independent investigation.",
+    "raw_logs_included": false
+  },
+  "other_regular_jobs": {
+    "docker_fixture_smoke_passed": true,
+    "docker_fixture_recovery_passed": true,
+    "retained_patch_verification": {
+      "attempts": 6,
+      "submitted": 0,
+      "public_delivery_denominator": 3,
+      "no_public_checks_attempts": 3,
+      "delivery_successes": 0,
+      "public_delivery_rate": 0,
+      "delivery_rate_all_attempts": null
+    }
+  },
+  "notes": [
+    "Each original ZIP was size/SHA checked against GitHub metadata; original reports and byte-exact readback parts are retained.",
+    "Both strict load reports passed with 1000 single-attempt ordinary successes, 1000 worker success acknowledgements, 8 worker processes, and 1005 total records. HTTP and SQLite audits found no missing or duplicate accepted jobs.",
+    "This explicitly changes the load lease from 5 to 30 seconds. The two earlier 5-second Windows failures remain separate evidence and are not retroactively passed.",
+    "Windows recorded one idempotent completion response; no duplicate accepted attempt was observed.",
+    "Standard Windows CI failed a separate unauthorized-POST HTTP rejection test, despite the independent load success. The new result does not establish fully green CI.",
+    "This is one host per job with fixture payloads and zero model calls; no cross-machine or model-success claims."
+  ]
+}

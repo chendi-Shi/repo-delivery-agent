@@ -1,0 +1,33 @@
+{
+  "source_commit": "1b7dfd92f568529a85ad67976c78eadc84747773",
+  "artifacts": [
+    {
+      "platform": "ubuntu-latest",
+      "artifact_id": 11662385893,
+      "zip_bytes": 121640,
+      "zip_sha256": "ba9fae6ea045a0787af4444c71c13438dcc37c5ae7743d2e12c230fc4898587e",
+      "report": "ubuntu/report.json",
+      "readback_manifest": "ubuntu/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "original_report_sha256": "f17f3ecadefe9a79cbdc9ee84c05ccb1372ddb32edf3b128c3347e8bc0ef85b9",
+      "original_jobs_sha256": "679e7d86796b224b72e3f86d9ba5d05097c73b9bcc1e320382e04b0c24544ed2"
+    },
+    {
+      "platform": "windows-latest",
+      "artifact_id": 11662615698,
+      "zip_bytes": 122658,
+      "zip_sha256": "4d7332079af436abbb91503dcf06df8c8113734c22189c5cb7370f37a37047fc",
+      "report": "windows/report.json",
+      "readback_manifest": "windows/report.jobs.manifest.json",
+      "report_status": "passed",
+      "strict_readback_reverified": true,
+      "strict_readback_passed": true,
+      "load_latency_and_throughput_recomputed": true,
+      "original_report_sha256": "8cf39ec479449c13aff0e8f1eb6ac14572352cd38d5002e51adb1545ad088962",
+      "original_jobs_sha256": "6941ab9abc57cc2b468cdddaca8ad38c92455be132f6007318c19b0c891cf488"
+    }
+  ]
+}
