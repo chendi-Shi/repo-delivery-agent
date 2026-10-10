@@ -6,7 +6,9 @@
 
 详细说明见 [做了什么、怎么做、问题与修复](docs/implementation-walkthrough.md)。真实模型、语义检索和评分证据见 [experiments](experiments)，各阶段验证见 [验证记录](docs/validation.md)。实现功能、协议测试、真实模型提交、独立检查和官方 resolved 分别记录。
 
-固定源任务、十项目标对照、真实读取审计和结果口径见 [真实交付与知识复用实验](docs/delivery-closure.md)。
+已完成来源验收、真实知识入库、目标读取与独立交付对照：[Codex 知识复用完整案例](docs/verified-transfer-case.md)。冻结的 10 次目标尝试为 **4 次正式交付成功、6 次失败、0 项未知**；另行预登记的 split 补充尝试为 **2/2 成功**，单列统计。last 三组的补丁检查全部通过，但空知识 retrieval 两轮均未正式提交；因此本轮支持知识复用链路已打通，不能证明提高了代码正确率或节省 tokens。原有 Ollama 队列及失败见 [历史交付实验](docs/delivery-closure.md)。
+
+调度已完成真实 HTTP、SQLite、**8 个独立 worker 进程 / 1000 个普通任务 + 5 个故障任务**的双平台验收。30 秒租约配置下，普通任务均只领取一代，1000 次确认完整，worker 崩溃重领、旧代提交拒绝、取消和 coordinator 重启均通过。这是单机多进程、零 LLM 调用的调度验证；5 秒租约在 Windows 负载下的失败也保留，见 [调度验证](docs/distributed.md)。
 
 **已完成一个真实需求的完整交付：** Codex 第四轮在冻结的 Requests 仓库上自主修改源码和测试，20 次调用、254.041 秒后提交；独立 Docker 公开检查通过，固定官方 SWE-bench harness 判定 `psf__requests-2931` 为 `resolved=true`。原始补丁、公开验收和官方报告的 SHA256 一致。详见 [真实交付案例与失败修复](docs/real-delivery-case.md) 和 [闭环收据](experiments/codex-cli-proof-v4/closure.json)。这是单题 smoke；前三轮 Codex 未提交的失败仍完整保留，不能据此推导总体成功率或知识库收益。
 

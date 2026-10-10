@@ -143,6 +143,10 @@ class JobStore:
                     started REAL NOT NULL, ended REAL, outcome TEXT, result TEXT, result_digest TEXT,
                     PRIMARY KEY(job_id, generation));
                 CREATE INDEX IF NOT EXISTS jobs_queue ON jobs(state, created, job_id);
+                CREATE TABLE IF NOT EXISTS claim_requests (
+                    worker_id TEXT NOT NULL, request_id TEXT NOT NULL,
+                    job_id TEXT NOT NULL, generation INTEGER NOT NULL,
+                    PRIMARY KEY(worker_id, request_id));
             """)
 
     def _connect(self):
@@ -199,13 +203,30 @@ class JobStore:
                        " VALUES(?,?,?,'queued',?,?,?)", (job_id, payload, digest, max_attempts, now, now))
         return {"job_id": job_id, "state": "queued", "idempotent": False}
 
-    def claim(self, worker_id):
+    def claim(self, worker_id, *, request_id=None):
         worker_id = identifier(worker_id, "worker_id")
+        if request_id is not None:
+            request_id = identifier(request_id, "request_id")
         with self._transaction() as db:
             now = self.clock()
             self._recover(db, now)
             if not db.execute("SELECT 1 FROM workers WHERE worker_id=?", (worker_id,)).fetchone():
                 raise SchedulerError("Register worker before claiming", 409)
+            if request_id is not None:
+                receipt = db.execute("SELECT job_id,generation FROM claim_requests WHERE worker_id=? AND request_id=?",
+                                     (worker_id, request_id)).fetchone()
+                if receipt is not None:
+                    previous = db.execute("SELECT * FROM jobs WHERE job_id=?", (receipt["job_id"],)).fetchone()
+                    # Recover only this uncertain acquisition. A prior completed,
+                    # cancelled or expired request must never start a new execution.
+                    if (previous is None or previous["state"] != "leased"
+                            or previous["worker_id"] != worker_id
+                            or previous["generation"] != receipt["generation"]):
+                        return None
+                    until = now + self.lease_seconds
+                    db.execute("UPDATE jobs SET lease_until=?,updated=? WHERE job_id=?", (until, now, previous["job_id"]))
+                    db.execute("UPDATE workers SET last_seen=? WHERE worker_id=?", (now, worker_id))
+                    return self._claim_reply(previous, until)
             # One live execution per process identity; horizontal scale uses unique IDs.
             if db.execute("SELECT 1 FROM jobs WHERE state='leased' AND worker_id=?", (worker_id,)).fetchone():
                 return None
@@ -221,10 +242,18 @@ class JobStore:
                        (generation, worker_id, token, until, now, row["job_id"]))
             db.execute("INSERT INTO attempts(job_id,generation,worker_id,started) VALUES(?,?,?,?)",
                        (row["job_id"], generation, worker_id, now))
-            return {"job_id": row["job_id"], "payload": json.loads(row["payload"]),
-                    "payload_digest": row["payload_digest"], "generation": generation,
-                    "lease_token": token, "lease_until": until, "lease_seconds": self.lease_seconds,
-                    "attempt": row["attempts"] + 1}
+            if request_id is not None:
+                db.execute("INSERT INTO claim_requests(worker_id,request_id,job_id,generation) VALUES(?,?,?,?)",
+                           (worker_id, request_id, row["job_id"], generation))
+            current = dict(row)
+            current.update(generation=generation, lease_token=token, attempts=row["attempts"] + 1)
+            return self._claim_reply(current, until)
+
+    def _claim_reply(self, row, until):
+        return {"job_id": row["job_id"], "payload": json.loads(row["payload"]),
+                "payload_digest": row["payload_digest"], "generation": row["generation"],
+                "lease_token": row["lease_token"], "lease_until": until, "lease_seconds": self.lease_seconds,
+                "attempt": row["attempts"]}
 
     def _lease(self, db, job_id, worker_id, token, generation, now):
         identifier(job_id, "job_id")

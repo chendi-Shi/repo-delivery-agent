@@ -69,6 +69,7 @@ worker 可通过本地 `--skills paths...`、`--knowledge-db path`、`--knowledg
 
 - SQLite `BEGIN IMMEDIATE` 在一个事务中完成 claim 和 attempt 创建，防止两个 worker 同时领取同一代任务。
 - 每次领取增加 generation，并生成新的随机 lease token。心跳、结果提交同时校验 job、worker、generation 和 token。
+- HTTP client 为一次逻辑领取生成 `request_id`，遇到传输结果未知时沿用它。coordinator 在分配事务中持久化该编号；同一次领取仍有效时返回原任务、原 generation/token 并续租，不新增 attempt。编号绑定 worker，已完成、已取消或已过期的旧编号只能返回空结果，不能领取下一个任务。拿到明确响应后，下次领取使用新编号；因此完成响应未知也不会触发同一代任务重新执行。新表随已有数据库启动时创建，旧版省略 request_id 的调用仍可用。
 - 租约过期后，下次 claim/read/list 会回收任务；未超出上限时重新排队，否则标记失败。coordinator 重启不会丢失任务、attempt 记录或已接受结果。
 - 旧 worker 的结果即使在新 worker 完成之前返回，也会被拒绝。已接受的相同 generation、相同结果 hash 提交可安全重试；相同租约提交不同结果会冲突。
 - 不承诺模型调用 exactly-once：机器断电或网络分区可能导致任务重新执行。承诺的是当前租约的受控提交，以及相同结果的提交幂等。
@@ -84,6 +85,26 @@ coordinator 的数据库应位于本机持久磁盘，不能让多个 coordinato
 结果中记录 worker hostname、本地运行配置 digest，以及交付层记录的实际镜像 ID、本地模型 digest（若 provider 支持）。查询任务可以取回补丁及 manifest，而不用访问 worker 的磁盘；完整证据保留在 worker 输出目录，可按 digest 独立核对。Artifact digest 证明内容身份，不代替 provider 行为或评分事实。
 
 ## 实际验证
+
+新增的 `scripts/scheduler_load.py` 在每个平台启动一个真实 HTTP coordinator、SQLite 数据库和 8 个独立 worker 进程，提交 1000 个普通任务及 5 个故障任务。executor 是可信测试替身，LLM 调用数为 0；每个 CI job 只有一台宿主，不能把数字描述为物理多机规模或模型交付吞吐量。
+
+验收逐一查询全部 1005 个已知 job ID，并在进程停止后只读核对 SQLite。普通任务必须全部只领取一代、成功确认恰好 1000 次；缺失、额外任务、重复接受结果均为 0。故障过程包括杀死 worker 后等租约过期并重领，在新一代仍持有租约时拒绝旧代提交，重复结果幂等而不同结果冲突，队列中与运行中取消，以及杀死并重启 coordinator 后恢复原数据库和 URL。最终预期为 1003 个成功、2 个取消。
+
+```bash
+python scripts/scheduler_load.py --jobs 1000 --workers 8 \
+  --lease-seconds 30 --timeout-seconds 300 --output runs/load-new/report.json
+```
+
+输出目录必须新建。报告包含实际参数、平台、进程、源码身份、各故障阶段、完整任务 readback 的 SHA256 和调度延迟。归档中的大 readback 按原始 UTF-8 字节分片，manifest 保留片段及重组后的 hash，避免截断日志造成只检查部分任务。
+
+验证暴露了四个不同问题，分别处理：
+
+1. 租约时间曾在获得 SQLite 写锁前计算。真实锁等待回归证明它可能让新租约在事务提交前已过期，也可能错误接受过期心跳/结果。现在在 `BEGIN IMMEDIATE` 获得锁后取时间；[修复前后证据](../experiments/scheduler-lease-clock)保留。
+2. 5 秒租约在 Windows 1000 任务负载下仍不足。两次失败分别出现重新领取/缺少确认和一个最终失败任务；完整失败未删。负载配置改为 30 秒后，Linux/Windows 均通过原有严格单代与确认断言。这里是配置调整，不能声称 5 秒负载已经可靠；小规模心跳测试仍验证任务超过初始租约时续租。[负载及历史失败](../experiments/scheduler-load-ci-clock-fixed)包含各次参数与原始报告。
+3. Windows 全量测试暴露错误令牌 POST 偶发连接中断，预期的 401 未送达。分段发送真实请求体可复现：修复前 5/5 为 WinError 10053，修复后 5/5 收到完整 401，均未创建任务。现在先返回并 flush 401，再只对无歧义、最多 64 KiB 的请求体做最多 250 毫秒的传输清理；不解析、不分派，TLS 使用已解密的流。超限、重复 Content-Length 或 Transfer-Encoding 不走清理。[复现证据与方法](../experiments/scheduler-load-ci-clock-fixed/http-rejection-recovery)和真实 HTTP/TLS、慢请求、歧义长度回归一起保留。
+4. 随后 30 秒租约再次负载测试，Windows 一个任务仍发生了重新领取，尽管 1000 个任务最终成功且确认完整，严格单代验收仍失败。受控 HTTP 故障复现证明：领取事务提交后丢失响应，旧 client 重试无法取回已分配的任务，只能等租约过期。现在用上文的持久化领取编号恢复同一次分配；继续延长租约无法解决这个协议缺口。原始失败与修复后的验收分别保留，不用后一次成功覆盖前一次失败。
+
+以下两 worker 集成是额外的长任务续租检查。
 
 `tests/test_scheduler.py` 除事务边界测试外，还真正启动两个 Python worker 子进程，通过 loopback HTTP 执行 register、claim、heartbeat 和 complete。六个任务运行时间长于初始租约，验证心跳续租且每个任务仅领取一代。另有独立进程领取后退出的恢复测试、运行中取消观察测试、旧 token 拒绝和重复提交幂等测试。
 

@@ -1,0 +1,259 @@
+{
+  "schema": 1,
+  "kind": "independently_checked_separate_codex_supplement",
+  "fixture": false,
+  "included_in_original_comparison": false,
+  "original_target_denominator": 10,
+  "planned_trials": 2,
+  "supplement_plan": {
+    "path": "supplement-plan.json",
+    "sha256": "69f4f0a6641f38ab38eee388439ca27a9a5d2a5edd95eb615e2ef9522ddc11e9"
+  },
+  "original_plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "verification_batch": {
+    "batch": "split",
+    "schema": 1,
+    "source_commit": "620980cbb2f306ec05f66e4693dcd2389aae94bc",
+    "run_id": 38032072691,
+    "artifact_id": 11663175385,
+    "artifact_name": "codex-transfer-verification-38032072691-1",
+    "sha256": "79c1779a8851c7e48832bd38dde6400e50e328de761e43472a5040b8fb8eeea5",
+    "archive_bytes": 20596,
+    "github_digest_verified": true,
+    "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38032072691",
+    "download_provenance_sha256": "571434d98c20d247b9135dcb0481cfd4c914cf0e5d978e2ece556b3db6e4dd75",
+    "request": {
+      "path": "requests/split-and-supplement.json",
+      "sha256": "f9ad015c0e5f7ab3e21f9354ee3293e6eb243b60e9a38e504a0f54bf907cabda"
+    },
+    "index": {
+      "path": "verification-split/summary.json",
+      "sha256": "85f000f913385ff900702a4d0a1a9839c94abebc7b5db2aa72025ce60c3ec86e"
+    },
+    "labels": [
+      "split-baseline-empty-r1",
+      "split-retrieval-empty-r1",
+      "split-baseline-empty-r2",
+      "split-retrieval-empty-r2",
+      "split-baseline-empty-r3",
+      "split-retrieval-empty-r3"
+    ]
+  },
+  "rows": [
+    {
+      "label": "split-baseline-empty-r3",
+      "task_group": "split",
+      "arm": "baseline-empty",
+      "repetition": 3,
+      "profile": "baseline",
+      "knowledge": {
+        "knowledge_observed_read": false,
+        "nonempty_read_count": 0,
+        "observed_nonempty_read_count_lower_bound": 0,
+        "reads": [],
+        "audit_complete": true,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "a3d37dc7b6361763db36cd356be17dd1bc807f82d607f3cd6d17a51a6b46350c",
+        "action_audit_sha256": "d6a21a04a0258fa1866aabffbc92d4d82e9dd1a47280145ace8c13143473f380"
+      },
+      "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "included_in_original_comparison": false,
+      "model_calls": 15,
+      "seconds": 185.0326994000061,
+      "input_tokens": 247355,
+      "output_tokens": 2644,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "submitted": true,
+      "attempt_started": true,
+      "status": "submitted",
+      "exit_status": "Submitted",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "7470124e4aabebd816c43dd94d499298a1d93352bdf340258445a398f0a23ec8",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": true,
+      "knowledge_observed_read": false,
+      "verification_sha256": "81f835105da37a6b011ddf60f065071230de56636a5474db2b41ab652348de84",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "public_checks_passed": true,
+      "artifact_root": "targets/split-baseline-empty-r3",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "4a08098f7c1dab2d122d0883bce7cc714b5c426e192a8846c42ab2aa0568749b"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "8c5e6b17cda36f8f300baedab1b9f5da691bdae5456c842fd66e055227b16108"
+        },
+        "task": {
+          "path": "model-runs/trial/task.json",
+          "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7"
+        },
+        "evidence": {
+          "path": "model-runs/trial/evidence.json",
+          "sha256": "90a8a03d30d9348cc1e0ac273396f8855ffc3c3af837d71fe41cb55fd58bb419"
+        },
+        "patch": {
+          "path": "model-runs/trial/model.patch",
+          "sha256": "a3d9e4ae6d74ef910530254458c4e4af863f556c0ff5cc48113d4651fe8e63ef"
+        }
+      },
+      "source_commit": "ca963a68072b3cf1d2fefef04a26a4e26af547bd",
+      "source_tracked_tree_clean": true,
+      "verification_artifact": {
+        "path": "verification-split/split-baseline-empty-r3/verification.json",
+        "sha256": "81f835105da37a6b011ddf60f065071230de56636a5474db2b41ab652348de84"
+      }
+    },
+    {
+      "label": "split-retrieval-empty-r3",
+      "task_group": "split",
+      "arm": "retrieval-empty",
+      "repetition": 3,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": false,
+        "nonempty_read_count": 0,
+        "observed_nonempty_read_count_lower_bound": 0,
+        "reads": [],
+        "audit_complete": true,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "5f98e8b2dab4c168814badf534abe250c4f41134a450141ce9ba03852ccf6f04",
+        "action_audit_sha256": "b3a38931901f53263ba3a450d4ae0a9888957c7d5f91a7c867955fa6edddcd84"
+      },
+      "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "included_in_original_comparison": false,
+      "model_calls": 18,
+      "seconds": 224.25882030000503,
+      "input_tokens": 296690,
+      "output_tokens": 2676,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "submitted": true,
+      "attempt_started": true,
+      "status": "submitted",
+      "exit_status": "Submitted",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "7470124e4aabebd816c43dd94d499298a1d93352bdf340258445a398f0a23ec8",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": true,
+      "knowledge_observed_read": false,
+      "verification_sha256": "265344d7ff0633347cb572c1e52ce228fdd1662b7568d2c5cc92b3a77f1ceb63",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "public_checks_passed": true,
+      "artifact_root": "targets/split-retrieval-empty-r3",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "e9470fbeaeb5ee1b089e03125d1139603bf279fa2643e0789cc7263cbb258e39"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "3ab6a15534e6a14afc133a8a83b34954d28158e104b89681b57da70ba0da8b56"
+        },
+        "task": {
+          "path": "model-runs/trial/task.json",
+          "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7"
+        },
+        "evidence": {
+          "path": "model-runs/trial/evidence.json",
+          "sha256": "7c196ca35667ebef61dd029dd588123b184efae30158e814c3329cb6ca4c9a46"
+        },
+        "patch": {
+          "path": "model-runs/trial/model.patch",
+          "sha256": "e074250f2765768fc413009c93853aadf8e0e690cf5b44345192fa4411501506"
+        }
+      },
+      "source_commit": "ca963a68072b3cf1d2fefef04a26a4e26af547bd",
+      "source_tracked_tree_clean": true,
+      "verification_artifact": {
+        "path": "verification-split/split-retrieval-empty-r3/verification.json",
+        "sha256": "265344d7ff0633347cb572c1e52ce228fdd1662b7568d2c5cc92b3a77f1ceb63"
+      }
+    }
+  ],
+  "targets": {
+    "planned_trials": 2,
+    "successes": 2,
+    "failures": 0,
+    "unknown": 0,
+    "success_rate_all_planned": 1.0,
+    "attempts_confirmed": 2,
+    "attempts_unknown": 0,
+    "observed_source_reads": 0,
+    "source_read_unknown": 0,
+    "usage_incomplete_or_unknown_trials": 0,
+    "all_attempt_measurements": {
+      "input_tokens": {
+        "known_subtotal": 544045,
+        "known_trials": 2,
+        "unknown_trials": 0
+      },
+      "output_tokens": {
+        "known_subtotal": 5320,
+        "known_trials": 2,
+        "unknown_trials": 0
+      },
+      "model_calls": {
+        "known_subtotal": 33,
+        "known_trials": 2,
+        "unknown_trials": 0
+      },
+      "seconds": {
+        "known_subtotal": 409.2915197000111,
+        "known_trials": 2,
+        "unknown_trials": 0
+      }
+    }
+  },
+  "cost_scope": {
+    "token_total_complete": true,
+    "reported_tokens_known_subtotal": 549365,
+    "true_total_tokens": 549365,
+    "unknown_usage_requests": 0,
+    "unknown_usage_trial_count": 0,
+    "monetary_cost": null,
+    "monetary_cost_source": "chatgpt_plan_unpriced",
+    "interpretation": "Incomplete usage is a reported lower bound, never a complete zero-cost request. Source and diagnostic costs are separate."
+  },
+  "provider_diagnostic": {
+    "path": "provider-availability-probe.json",
+    "sha256": "38fa9d5c3c0a5b5a084019620bc073d2635b4e6b6c4f2869b5925e1b71494114",
+    "model_calls": 1,
+    "usage": {
+      "input_tokens": 8837,
+      "cached_input_tokens": 6912,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 16,
+      "reasoning_output_tokens": 0
+    },
+    "seconds": 10.620837700000266,
+    "excluded_from_task_results": true
+  },
+  "complete": true,
+  "limits": [
+    "Selected engineering follow-up after provider availability returned; not randomized replication.",
+    "Does not replace or erase the four original one-call protocol failures.",
+    "Both knowledge databases are empty; these trials make no knowledge-benefit comparison.",
+    "Provider protocol-error root cause is unconfirmed; dollar cost and official score remain unknown."
+  ]
+}

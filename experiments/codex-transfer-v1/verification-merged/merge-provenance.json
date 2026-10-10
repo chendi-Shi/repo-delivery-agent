@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "kind": "immutable_original_ten_verifier_merge",
+  "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "planned_original_targets": 10,
+  "additional_trials_merged": 0,
+  "source_batches": [
+    {
+      "batch": "last",
+      "schema": 1,
+      "source_commit": "8dff3533cc152f00e09cce8192737ae7e10d961f",
+      "run_id": 38030559481,
+      "artifact_id": 11660959712,
+      "artifact_name": "codex-transfer-verification-38030559481-1",
+      "sha256": "066fbef3dc139372117990292963b1762887927a9a971915c4883ed270556c36",
+      "archive_bytes": 20674,
+      "github_digest_verified": true,
+      "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38030559481",
+      "download_provenance_sha256": "2952a347e68993419738702e94b703c5f4392e75001b197a9e78f283b8170383",
+      "request": {
+        "path": "requests/last.json",
+        "sha256": "3e0dc0a7082507b059cc74108001c513e3513648d2f7ee4c8da241c4981d2f43"
+      },
+      "index": {
+        "path": "verification-last/summary.json",
+        "sha256": "3f3df1f5f1db6226620398dc97f67cfc28029d8b5265d1e10631937df9925581"
+      },
+      "labels": [
+        "last-baseline-empty-r1",
+        "last-retrieval-empty-r1",
+        "last-retrieval-verified-r1",
+        "last-baseline-empty-r2",
+        "last-retrieval-empty-r2",
+        "last-retrieval-verified-r2"
+      ]
+    },
+    {
+      "batch": "split",
+      "schema": 1,
+      "source_commit": "620980cbb2f306ec05f66e4693dcd2389aae94bc",
+      "run_id": 38032072691,
+      "artifact_id": 11663175385,
+      "artifact_name": "codex-transfer-verification-38032072691-1",
+      "sha256": "79c1779a8851c7e48832bd38dde6400e50e328de761e43472a5040b8fb8eeea5",
+      "archive_bytes": 20596,
+      "github_digest_verified": true,
+      "run_url": "https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38032072691",
+      "download_provenance_sha256": "571434d98c20d247b9135dcb0481cfd4c914cf0e5d978e2ece556b3db6e4dd75",
+      "request": {
+        "path": "requests/split-and-supplement.json",
+        "sha256": "f9ad015c0e5f7ab3e21f9354ee3293e6eb243b60e9a38e504a0f54bf907cabda"
+      },
+      "index": {
+        "path": "verification-split/summary.json",
+        "sha256": "85f000f913385ff900702a4d0a1a9839c94abebc7b5db2aa72025ce60c3ec86e"
+      },
+      "labels": [
+        "split-baseline-empty-r1",
+        "split-retrieval-empty-r1",
+        "split-baseline-empty-r2",
+        "split-retrieval-empty-r2",
+        "split-baseline-empty-r3",
+        "split-retrieval-empty-r3"
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "label": "last-baseline-empty-r1",
+      "path": "last-baseline-empty-r1/verification.json",
+      "sha256": "2d0c1d656e5d9138bb1229176f4affb08654f78bf2ef812b9fbf058e64bd14ed",
+      "bytes": 9885,
+      "source_path": "verification-last/last-baseline-empty-r1/verification.json",
+      "source_batch": "last"
+    },
+    {
+      "label": "last-baseline-empty-r2",
+      "path": "last-baseline-empty-r2/verification.json",
+      "sha256": "7db84f54dfff7598814c64b297b07ec4f6aa33a5f84e1cb8b12480804ac0e71f",
+      "bytes": 9885,
+      "source_path": "verification-last/last-baseline-empty-r2/verification.json",
+      "source_batch": "last"
+    },
+    {
+      "label": "last-retrieval-empty-r1",
+      "path": "last-retrieval-empty-r1/verification.json",
+      "sha256": "75cf2808da16a4dd9d66ecbf47b1841a3e6773c0c1e8aa9e94458d22a9702d19",
+      "bytes": 9889,
+      "source_path": "verification-last/last-retrieval-empty-r1/verification.json",
+      "source_batch": "last"
+    },
+    {
+      "label": "last-retrieval-empty-r2",
+      "path": "last-retrieval-empty-r2/verification.json",
+      "sha256": "16d5e2ee5b805f2c106d8afb9bd946f42b8e22c8786855bd96ea8d0e8e097f3f",
+      "bytes": 9889,
+      "source_path": "verification-last/last-retrieval-empty-r2/verification.json",
+      "source_batch": "last"
+    },
+    {
+      "label": "last-retrieval-verified-r1",
+      "path": "last-retrieval-verified-r1/verification.json",
+      "sha256": "8402a831ae727fd2d03406a7a75d181030bba14354e02230d6313953698683ec",
+      "bytes": 9892,
+      "source_path": "verification-last/last-retrieval-verified-r1/verification.json",
+      "source_batch": "last"
+    },
+    {
+      "label": "last-retrieval-verified-r2",
+      "path": "last-retrieval-verified-r2/verification.json",
+      "sha256": "a88477308e8d8e0e1ffb8a453d1d7a563b77ebdea5bbf305fa8d0b7f368892c9",
+      "bytes": 9892,
+      "source_path": "verification-last/last-retrieval-verified-r2/verification.json",
+      "source_batch": "last"
+    },
+    {
+      "label": "split-baseline-empty-r1",
+      "path": "split-baseline-empty-r1/verification.json",
+      "sha256": "3181fab9e8026db647481b0ad6c25fbb59d3ddb766d2ab9013f7d35d04df91ec",
+      "bytes": 9586,
+      "source_path": "verification-split/split-baseline-empty-r1/verification.json",
+      "source_batch": "split"
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "path": "split-baseline-empty-r2/verification.json",
+      "sha256": "5b7167a89e36a9ee25a45a21d974ca7b8a2b4df0d83e06eb57004f6911b65223",
+      "bytes": 9586,
+      "source_path": "verification-split/split-baseline-empty-r2/verification.json",
+      "source_batch": "split"
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "path": "split-retrieval-empty-r1/verification.json",
+      "sha256": "21c6418cc5d3060a6b4a2164e646568ff84863dab574db89300859591bab075b",
+      "bytes": 9590,
+      "source_path": "verification-split/split-retrieval-empty-r1/verification.json",
+      "source_batch": "split"
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "path": "split-retrieval-empty-r2/verification.json",
+      "sha256": "24a4b6556a7483d829b675c7a6976f0bb83ba7c82d87164efb5a9b2e4186fa46",
+      "bytes": 9590,
+      "source_path": "verification-split/split-retrieval-empty-r2/verification.json",
+      "source_batch": "split"
+    }
+  ],
+  "excluded_supplemental_labels": [
+    "split-baseline-empty-r3",
+    "split-retrieval-empty-r3"
+  ],
+  "trust_boundary": "Archive digests are pinned to the recorded verified download provenance; this offline script rechecks extracted report bytes, historical requests and trial bindings, not GitHub authentication."
+}

@@ -15,6 +15,8 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -e ".[agent]"
       - run: python -m unittest discover -s tests -v
+      - name: Recompute and check original and supplemental transfer evidence
+        run: python scripts/finalize_codex_transfer.py --root experiments/codex-transfer-v1 --check
   docker-integration:
     runs-on: ubuntu-latest
     steps:

@@ -1,0 +1,1626 @@
+{
+  "schema": 1,
+  "kind": "independently_checked_codex_knowledge_transfer_summary",
+  "fixture": false,
+  "plan_sha256": "52df9e5a3cf71adf4bbeaf7b0c54a80f2d73af6b145387b6104d5dcdb475a450",
+  "planned_target_trials": 10,
+  "rows": [
+    {
+      "label": "last-baseline-empty-r1",
+      "task_group": "last",
+      "arm": "baseline-empty",
+      "repetition": 1,
+      "profile": "baseline",
+      "knowledge": {
+        "knowledge_observed_read": false,
+        "nonempty_read_count": 0,
+        "observed_nonempty_read_count_lower_bound": 0,
+        "reads": [],
+        "audit_complete": true,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "843bc5b2e9e4eb996df0aabfbbdde40c68a0af294ee2bf46ef625e318f791d20",
+        "action_audit_sha256": "9609b12e4235b63defa501ab5f92ada9d9897e80c06640d86ef581a4f8f2febd"
+      },
+      "frozen_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": true,
+      "submitted": true,
+      "attempt_started": true,
+      "knowledge_observed_read": false,
+      "input_tokens": 360796,
+      "output_tokens": 2385,
+      "model_calls": 20,
+      "seconds": 311.0624514999945,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "status": "submitted",
+      "exit_status": "Submitted",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "cfc7b73b172d549124930678ad19fa8ac44be2ea02bf79c647085bb1ab022192",
+      "artifact_root": "targets/last-baseline-empty-r1",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "83ad6b91b5635d07fdb9b05917301bd5cbb633436e885d6d09567b8a41353f14"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "572ebc0a2ad9326f6779a653033ca5aef6c175798d576268a49b7fb1995d8242"
+        },
+        "task": {
+          "path": "model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r1/task.json",
+          "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302"
+        },
+        "evidence": {
+          "path": "model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r1/evidence.json",
+          "sha256": "cb761adfb72baf5158092db80c5284fd0408aa6aa3a1a631d2ef0c7e7ef45b3a"
+        },
+        "patch": {
+          "path": "model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r1/model.patch",
+          "sha256": "bbb2774bf9459a198403631d846c74608379f85903ee42896def61bb342eef63"
+        }
+      },
+      "verification_sha256": "2d0c1d656e5d9138bb1229176f4affb08654f78bf2ef812b9fbf058e64bd14ed",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "last-baseline-empty-r1/verification.json",
+        "sha256": "2d0c1d656e5d9138bb1229176f4affb08654f78bf2ef812b9fbf058e64bd14ed"
+      },
+      "public_checks_passed": true,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": true
+    },
+    {
+      "label": "last-baseline-empty-r2",
+      "task_group": "last",
+      "arm": "baseline-empty",
+      "repetition": 2,
+      "profile": "baseline",
+      "knowledge": {
+        "knowledge_observed_read": false,
+        "nonempty_read_count": 0,
+        "observed_nonempty_read_count_lower_bound": 0,
+        "reads": [],
+        "audit_complete": true,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "4743bab0a7360b2f43a4d75a3b898a57ca20a3ee26122ca7d5b514e32412a3fc",
+        "action_audit_sha256": "2c82fcb3ca5c25acff133519519c331ee33a31c208d5915b9d0da6252683b5da"
+      },
+      "frozen_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": true,
+      "submitted": true,
+      "attempt_started": true,
+      "knowledge_observed_read": false,
+      "input_tokens": 360697,
+      "output_tokens": 2524,
+      "model_calls": 21,
+      "seconds": 285.4379440000048,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "status": "submitted",
+      "exit_status": "Submitted",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "cfc7b73b172d549124930678ad19fa8ac44be2ea02bf79c647085bb1ab022192",
+      "artifact_root": "targets/last-baseline-empty-r2",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "f14cd3034eb119bef9bcc5feadce382db049f670192f9a5f82e39da585e37b84"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "56e2abbce7d18d3faa9169b1bf6b64f4353c878f70779b4945cd11b8cfc7c5d0"
+        },
+        "task": {
+          "path": "model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r2/task.json",
+          "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302"
+        },
+        "evidence": {
+          "path": "model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r2/evidence.json",
+          "sha256": "85bb6ef7fea311fdd13e17e4c748eb7f6ff36be76c6e1c269271936e6e6f2952"
+        },
+        "patch": {
+          "path": "model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r2/model.patch",
+          "sha256": "1378b7ccdb5ce4273149e4f4c2c8db07de5218dfd43f8b1c1c7900d43863ea17"
+        }
+      },
+      "verification_sha256": "7db84f54dfff7598814c64b297b07ec4f6aa33a5f84e1cb8b12480804ac0e71f",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "last-baseline-empty-r2/verification.json",
+        "sha256": "7db84f54dfff7598814c64b297b07ec4f6aa33a5f84e1cb8b12480804ac0e71f"
+      },
+      "public_checks_passed": true,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": true
+    },
+    {
+      "label": "last-retrieval-empty-r1",
+      "task_group": "last",
+      "arm": "retrieval-empty",
+      "repetition": 1,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": false,
+        "nonempty_read_count": 0,
+        "observed_nonempty_read_count_lower_bound": 0,
+        "reads": [],
+        "audit_complete": true,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "12fb40755d21ea0fcdc36fc1e2457bbcd4fb22b49c6681dbf4f9e66a9d415aa3",
+        "action_audit_sha256": "be1ad8e2108883a06fb73e857a03b5fc6c7a014326aa5d9099de0affd1dc888b"
+      },
+      "frozen_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": false,
+      "submitted": false,
+      "attempt_started": true,
+      "knowledge_observed_read": false,
+      "input_tokens": 416716,
+      "output_tokens": 2754,
+      "model_calls": 24,
+      "seconds": 364.42360200000985,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "status": "stopped",
+      "exit_status": "LimitsExceeded",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "cfc7b73b172d549124930678ad19fa8ac44be2ea02bf79c647085bb1ab022192",
+      "artifact_root": "targets/last-retrieval-empty-r1",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "a82c27c8b3568c96ebb4263d357e38386b06e3e3744a74217a58a8385b3725b8"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "33423dec2a3e3b0dc10c9e272255edb84b99fe1523f4012ee53356a44c981d95"
+        },
+        "task": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r1/task.json",
+          "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302"
+        },
+        "evidence": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r1/evidence.json",
+          "sha256": "660eb7f63782007fee21d18bde3be7e9aeda1e6fddde2f098c48bc2b3ba88487"
+        },
+        "patch": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r1/model.patch",
+          "sha256": "4e297aeb7e78cac52013d3cc3cb2ea96e73b3d42d5f477998e2a529aa69a8e42"
+        }
+      },
+      "verification_sha256": "75cf2808da16a4dd9d66ecbf47b1841a3e6773c0c1e8aa9e94458d22a9702d19",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "last-retrieval-empty-r1/verification.json",
+        "sha256": "75cf2808da16a4dd9d66ecbf47b1841a3e6773c0c1e8aa9e94458d22a9702d19"
+      },
+      "public_checks_passed": true,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": true
+    },
+    {
+      "label": "last-retrieval-empty-r2",
+      "task_group": "last",
+      "arm": "retrieval-empty",
+      "repetition": 2,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": false,
+        "nonempty_read_count": 0,
+        "observed_nonempty_read_count_lower_bound": 0,
+        "reads": [],
+        "audit_complete": true,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "ef81dad3a9d610532be503403d0c77ef32df22abb9dc7881107754f917552fa2",
+        "action_audit_sha256": "28544662fbfb356abd8bd38e76eee63cbb8bb1a55f125eb1400ccdef2ce76233"
+      },
+      "frozen_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": false,
+      "submitted": false,
+      "attempt_started": true,
+      "knowledge_observed_read": false,
+      "input_tokens": 415767,
+      "output_tokens": 2658,
+      "model_calls": 24,
+      "seconds": 435.7219008000102,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "status": "stopped",
+      "exit_status": "LimitsExceeded",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "cfc7b73b172d549124930678ad19fa8ac44be2ea02bf79c647085bb1ab022192",
+      "artifact_root": "targets/last-retrieval-empty-r2",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "404bc4461eed3acc951fc9e5c7a8da2a3b8097cd369bc999d997d981748a1d8a"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "dbbb5443b3bac962f8763c95a78aaca50532b96a0bc8a7273494d3b38d284149"
+        },
+        "task": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r2/task.json",
+          "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302"
+        },
+        "evidence": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r2/evidence.json",
+          "sha256": "8201b7608dbdec5dec143b34b7f04dcee8cb942de7ae8e8bfce1530ad275ca7e"
+        },
+        "patch": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r2/model.patch",
+          "sha256": "282883a6566de3442b8935ac3a59d1748dfb440cc1779f94850ed4a236df3622"
+        }
+      },
+      "verification_sha256": "16d5e2ee5b805f2c106d8afb9bd946f42b8e22c8786855bd96ea8d0e8e097f3f",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "last-retrieval-empty-r2/verification.json",
+        "sha256": "16d5e2ee5b805f2c106d8afb9bd946f42b8e22c8786855bd96ea8d0e8e097f3f"
+      },
+      "public_checks_passed": true,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": true
+    },
+    {
+      "label": "last-retrieval-verified-r1",
+      "task_group": "last",
+      "arm": "retrieval-verified",
+      "repetition": 1,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": true,
+        "nonempty_read_count": 1,
+        "observed_nonempty_read_count_lower_bound": 1,
+        "reads": [
+          {
+            "audit_line": 2,
+            "call": 2,
+            "ordinal": 1,
+            "source_id": "kc1d0a7049efc326aae781cfe11526ed9",
+            "content_sha256": "62d1e7546bf6231d9fdf9c3251e4a8864a0dc04f5ff0cc833e0956b9f1591740",
+            "verification_sha256": "a601a0fd655e8c5e85e3ce683cc1b8a4a35b217c64dd7f57abcb8bdaf0d1f25b",
+            "command_sha256": "4f78c1f5a48c0c95333e840ee0c71e310111db74d75752d3810227efc8911ae5",
+            "offset": 0,
+            "limit": 4000,
+            "returned_chars": 4000,
+            "slice_sha256": "fc2fabde7fff5f6d29d3c472e983414ecc183912c10594651cabfb9ae320397a"
+          }
+        ],
+        "audit_complete": true,
+        "source_database_sha256": "5d859b3fb8e580bd2952e4fb39bb32050a572f6c52efa377de899dc8ea04ebf5",
+        "input_sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+        "observation_sha256": "44793e01553aad165fa48c69c8c269239c9ebad8b784745bc6f52f08e3bd2d43",
+        "action_audit_sha256": "4fe1de73e7a2b1a79965b99ea9cb398e4d9d626ae2328ad4c2e0b1ac2ad768c4"
+      },
+      "frozen_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": true,
+      "submitted": true,
+      "attempt_started": true,
+      "knowledge_observed_read": true,
+      "input_tokens": 478892,
+      "output_tokens": 2910,
+      "model_calls": 23,
+      "seconds": 308.72533260000637,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "status": "submitted",
+      "exit_status": "Submitted",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "cfc7b73b172d549124930678ad19fa8ac44be2ea02bf79c647085bb1ab022192",
+      "artifact_root": "targets/last-retrieval-verified-r1",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "2d1091a1a9949088d3f1a52d02b1c1e13c47b1db9b9e7aadb10638fe474f15b4"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "7dddb8eaddf22887297ecddd433b78e6f0d732311bdf8eef2cbfe63ab1886a2e"
+        },
+        "task": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r1/task.json",
+          "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302"
+        },
+        "evidence": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r1/evidence.json",
+          "sha256": "a6383ec18ae3ea2a9952690fb8f8740d714423606c53afedb1e15c2b3425e354"
+        },
+        "patch": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r1/model.patch",
+          "sha256": "32d30723751d1597ec01122b0579b36daf7aefb7e377820b7cf450f34f11166b"
+        }
+      },
+      "verification_sha256": "8402a831ae727fd2d03406a7a75d181030bba14354e02230d6313953698683ec",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "last-retrieval-verified-r1/verification.json",
+        "sha256": "8402a831ae727fd2d03406a7a75d181030bba14354e02230d6313953698683ec"
+      },
+      "public_checks_passed": true,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": true
+    },
+    {
+      "label": "last-retrieval-verified-r2",
+      "task_group": "last",
+      "arm": "retrieval-verified",
+      "repetition": 2,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": true,
+        "nonempty_read_count": 1,
+        "observed_nonempty_read_count_lower_bound": 1,
+        "reads": [
+          {
+            "audit_line": 2,
+            "call": 2,
+            "ordinal": 1,
+            "source_id": "kc1d0a7049efc326aae781cfe11526ed9",
+            "content_sha256": "62d1e7546bf6231d9fdf9c3251e4a8864a0dc04f5ff0cc833e0956b9f1591740",
+            "verification_sha256": "a601a0fd655e8c5e85e3ce683cc1b8a4a35b217c64dd7f57abcb8bdaf0d1f25b",
+            "command_sha256": "4f78c1f5a48c0c95333e840ee0c71e310111db74d75752d3810227efc8911ae5",
+            "offset": 0,
+            "limit": 4000,
+            "returned_chars": 4000,
+            "slice_sha256": "fc2fabde7fff5f6d29d3c472e983414ecc183912c10594651cabfb9ae320397a"
+          }
+        ],
+        "audit_complete": true,
+        "source_database_sha256": "5d859b3fb8e580bd2952e4fb39bb32050a572f6c52efa377de899dc8ea04ebf5",
+        "input_sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+        "observation_sha256": "b711f9c9ee5881beea62f5ff20553447d940849587b3106cd1c34493230c2788",
+        "action_audit_sha256": "8ed86430bbae30a3716d84000b8ce6e08443a45e1b7092029b7813d1311126bc"
+      },
+      "frozen_task_sha256": "9c3ee97e9acf8ae2912327f5f228bcff4cf62d0255e3ecdb34189aecbf808052",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": true,
+      "submitted": true,
+      "attempt_started": true,
+      "knowledge_observed_read": true,
+      "input_tokens": 379702,
+      "output_tokens": 2506,
+      "model_calls": 20,
+      "seconds": 382.34929729999567,
+      "usage_complete": true,
+      "unknown_usage_requests": 0,
+      "status": "submitted",
+      "exit_status": "Submitted",
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "cfc7b73b172d549124930678ad19fa8ac44be2ea02bf79c647085bb1ab022192",
+      "artifact_root": "targets/last-retrieval-verified-r2",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "78dfc5e6ab499478b4882f739ca976808aeb263ce476c3bba5fed775cea5e353"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "6ee0e8b27486bf92af222ec8ffab6ab3defaeb9f145f0cd054a58e85c420688d"
+        },
+        "task": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r2/task.json",
+          "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302"
+        },
+        "evidence": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r2/evidence.json",
+          "sha256": "20bfe9d133067ef1ebc9ce928f551abf2ad1a6dd83f25f5a8e6ca823e583d9b4"
+        },
+        "patch": {
+          "path": "model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r2/model.patch",
+          "sha256": "788521493931dadc3ae9e999a04a484ce6c75c5cf860d660c48235e9058043ba"
+        }
+      },
+      "verification_sha256": "a88477308e8d8e0e1ffb8a453d1d7a563b77ebdea5bbf305fa8d0b7f368892c9",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "last-retrieval-verified-r2/verification.json",
+        "sha256": "a88477308e8d8e0e1ffb8a453d1d7a563b77ebdea5bbf305fa8d0b7f368892c9"
+      },
+      "public_checks_passed": true,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": true
+    },
+    {
+      "label": "split-baseline-empty-r1",
+      "task_group": "split",
+      "arm": "baseline-empty",
+      "repetition": 1,
+      "profile": "baseline",
+      "knowledge": {
+        "knowledge_observed_read": null,
+        "nonempty_read_count": null,
+        "reads": [],
+        "audit_complete": false,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "bfb87a5ecfa224d782a30b8ad6aab608dcd3b0b92ed15b8f2ac442f4bf951ed5",
+        "action_audit_sha256": null
+      },
+      "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": false,
+      "submitted": false,
+      "attempt_started": true,
+      "knowledge_observed_read": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "model_calls": 1,
+      "seconds": 67.44201119999343,
+      "usage_complete": false,
+      "unknown_usage_requests": 1,
+      "status": "failed",
+      "exit_status": null,
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "fdd1291f58624580735ad23330c601b7feb515a5b5333b7bb24387077d5076a8",
+      "artifact_root": "targets/split-baseline-empty-r1",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "346e952e109dd8933b7c81c034e03454d8e38b4a22ea4f00d4899f2349862422"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "b996e806b2ed011164f13b060bfb36864aa95e87b251ae4955e9e71313e697ad"
+        },
+        "task": {
+          "path": "model-runs/trial/task.json",
+          "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7"
+        },
+        "evidence": {
+          "path": "model-runs/trial/evidence.json",
+          "sha256": "76cbe5447cebaef9cf407d2d4508830ad82891be4a2abfe061ba994c19d4d09a"
+        },
+        "patch": {
+          "path": "model-runs/trial/model.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "verification_sha256": "3181fab9e8026db647481b0ad6c25fbb59d3ddb766d2ab9013f7d35d04df91ec",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "split-baseline-empty-r1/verification.json",
+        "sha256": "3181fab9e8026db647481b0ad6c25fbb59d3ddb766d2ab9013f7d35d04df91ec"
+      },
+      "public_checks_passed": false,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": false
+    },
+    {
+      "label": "split-baseline-empty-r2",
+      "task_group": "split",
+      "arm": "baseline-empty",
+      "repetition": 2,
+      "profile": "baseline",
+      "knowledge": {
+        "knowledge_observed_read": null,
+        "nonempty_read_count": null,
+        "reads": [],
+        "audit_complete": false,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "bfb87a5ecfa224d782a30b8ad6aab608dcd3b0b92ed15b8f2ac442f4bf951ed5",
+        "action_audit_sha256": null
+      },
+      "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": false,
+      "submitted": false,
+      "attempt_started": true,
+      "knowledge_observed_read": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "model_calls": 1,
+      "seconds": 66.18736830000125,
+      "usage_complete": false,
+      "unknown_usage_requests": 1,
+      "status": "failed",
+      "exit_status": null,
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "fdd1291f58624580735ad23330c601b7feb515a5b5333b7bb24387077d5076a8",
+      "artifact_root": "targets/split-baseline-empty-r2",
+      "artifacts": {
+        "summary": {
+          "path": "recovered-summary.json",
+          "sha256": "f8c8d273b5e6b8e3f4586f0501aa147156f4b45013c6cf16934806874742ca9d"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "cbc355d1c821f6231a8413f63e77502168baa34eb6d560fb232f7ff3e4143b84"
+        },
+        "task": {
+          "path": "model-runs/trial/task.json",
+          "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7"
+        },
+        "evidence": {
+          "path": "model-runs/trial/evidence.json",
+          "sha256": "d116287276bb8eab51a2e2e4f480e04478e29126cafe680eb210ed27503ea1d2"
+        },
+        "patch": {
+          "path": "model-runs/trial/model.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "original_summary": {
+          "path": "summary.json",
+          "sha256": "f8ba237c3d66c2b6e762a6a9b77b052858e5417854ae0adb6f93fd6323c2691a"
+        },
+        "export_recovery": {
+          "path": "export-recovery.json",
+          "sha256": "d3e02407d626ea082e3af027e0235363adcbe83bbba66d0c2ecae954cd52be52"
+        }
+      },
+      "verification_sha256": "5b7167a89e36a9ee25a45a21d974ca7b8a2b4df0d83e06eb57004f6911b65223",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "split-baseline-empty-r2/verification.json",
+        "sha256": "5b7167a89e36a9ee25a45a21d974ca7b8a2b4df0d83e06eb57004f6911b65223"
+      },
+      "public_checks_passed": false,
+      "source_commit": "8dff3533cc152f00e09cce8192737ae7e10d961f",
+      "source_tracked_tree_clean": false
+    },
+    {
+      "label": "split-retrieval-empty-r1",
+      "task_group": "split",
+      "arm": "retrieval-empty",
+      "repetition": 1,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": null,
+        "nonempty_read_count": null,
+        "reads": [],
+        "audit_complete": false,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "bfb87a5ecfa224d782a30b8ad6aab608dcd3b0b92ed15b8f2ac442f4bf951ed5",
+        "action_audit_sha256": null
+      },
+      "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": false,
+      "submitted": false,
+      "attempt_started": true,
+      "knowledge_observed_read": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "model_calls": 1,
+      "seconds": 69.79336879999028,
+      "usage_complete": false,
+      "unknown_usage_requests": 1,
+      "status": "failed",
+      "exit_status": null,
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "fdd1291f58624580735ad23330c601b7feb515a5b5333b7bb24387077d5076a8",
+      "artifact_root": "targets/split-retrieval-empty-r1",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "e92a03ee47ca92cecc4e47df43b47e23930d90b13b23cc81bb913fc1022f1c33"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "df9cb8e6a92dbd9049fc2e066dce81fb6e89f7e2621933f0af24218458886ed6"
+        },
+        "task": {
+          "path": "model-runs/trial/task.json",
+          "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7"
+        },
+        "evidence": {
+          "path": "model-runs/trial/evidence.json",
+          "sha256": "33688d43a0b8ba18646312ac65869201f02cee4c4fd60e4d1395332ea86ef93c"
+        },
+        "patch": {
+          "path": "model-runs/trial/model.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "verification_sha256": "21c6418cc5d3060a6b4a2164e646568ff84863dab574db89300859591bab075b",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "split-retrieval-empty-r1/verification.json",
+        "sha256": "21c6418cc5d3060a6b4a2164e646568ff84863dab574db89300859591bab075b"
+      },
+      "public_checks_passed": false,
+      "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+      "source_tracked_tree_clean": false
+    },
+    {
+      "label": "split-retrieval-empty-r2",
+      "task_group": "split",
+      "arm": "retrieval-empty",
+      "repetition": 2,
+      "profile": "retrieval",
+      "knowledge": {
+        "knowledge_observed_read": null,
+        "nonempty_read_count": null,
+        "reads": [],
+        "audit_complete": false,
+        "source_database_sha256": null,
+        "input_sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "observation_sha256": "bfb87a5ecfa224d782a30b8ad6aab608dcd3b0b92ed15b8f2ac442f4bf951ed5",
+        "action_audit_sha256": null
+      },
+      "frozen_task_sha256": "3d446fbc785e59d1a65b1e92eccc73e53a555d7a3e43e13d32cdb345a2bfecbb",
+      "evidence_status": "validated",
+      "verification_status": "validated",
+      "delivery_success": false,
+      "submitted": false,
+      "attempt_started": true,
+      "knowledge_observed_read": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "model_calls": 1,
+      "seconds": 65.24533579999115,
+      "usage_complete": false,
+      "unknown_usage_requests": 1,
+      "status": "failed",
+      "exit_status": null,
+      "model_identity": {
+        "kind": "codex_cli",
+        "model": "gpt-6-astra",
+        "cli_version": "codex-cli 0.154.0",
+        "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+        "weight_digest_available": false,
+        "reasoning_effort": "low"
+      },
+      "implementation_sha256": "fdd1291f58624580735ad23330c601b7feb515a5b5333b7bb24387077d5076a8",
+      "artifact_root": "targets/split-retrieval-empty-r2",
+      "artifacts": {
+        "summary": {
+          "path": "summary.json",
+          "sha256": "2e461179cd4cb98738e176a56d4eda192447196522a180d113bbe284d5f58790"
+        },
+        "manifest": {
+          "path": "repository-ablation.json",
+          "sha256": "e1e945ac8d40ec58f8e5999e9f2ba1d3a8b4b70042e94e73b32816fc620a9ffa"
+        },
+        "task": {
+          "path": "model-runs/trial/task.json",
+          "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7"
+        },
+        "evidence": {
+          "path": "model-runs/trial/evidence.json",
+          "sha256": "a529d57c2205c2fd3078066dff1c57e5ac2eaec0d8ff59007934c84d71c399b2"
+        },
+        "patch": {
+          "path": "model-runs/trial/model.patch",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "verification_sha256": "24a4b6556a7483d829b675c7a6976f0bb83ba7c82d87164efb5a9b2e4186fa46",
+      "verification_image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "verification_artifact": {
+        "relative_to": "verification_root",
+        "path": "split-retrieval-empty-r2/verification.json",
+        "sha256": "24a4b6556a7483d829b675c7a6976f0bb83ba7c82d87164efb5a9b2e4186fa46"
+      },
+      "public_checks_passed": false,
+      "source_commit": "8dff3533cc152f00e09cce8192737ae7e10d961f",
+      "source_tracked_tree_clean": false
+    }
+  ],
+  "groups": {
+    "last/baseline-empty": {
+      "planned_trials": 2,
+      "successes": 2,
+      "failures": 0,
+      "unknown": 0,
+      "success_rate_all_planned": 1.0,
+      "attempts_confirmed": 2,
+      "attempts_unknown": 0,
+      "observed_source_reads": 0,
+      "source_read_unknown": 0,
+      "usage_incomplete_or_unknown_trials": 0,
+      "all_attempt_measurements": {
+        "input_tokens": {
+          "known_subtotal": 721493,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "output_tokens": {
+          "known_subtotal": 4909,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "model_calls": {
+          "known_subtotal": 41,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "seconds": {
+          "known_subtotal": 596.5003954999993,
+          "known_trials": 2,
+          "unknown_trials": 0
+        }
+      }
+    },
+    "last/retrieval-empty": {
+      "planned_trials": 2,
+      "successes": 0,
+      "failures": 2,
+      "unknown": 0,
+      "success_rate_all_planned": 0.0,
+      "attempts_confirmed": 2,
+      "attempts_unknown": 0,
+      "observed_source_reads": 0,
+      "source_read_unknown": 0,
+      "usage_incomplete_or_unknown_trials": 0,
+      "all_attempt_measurements": {
+        "input_tokens": {
+          "known_subtotal": 832483,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "output_tokens": {
+          "known_subtotal": 5412,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "model_calls": {
+          "known_subtotal": 48,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "seconds": {
+          "known_subtotal": 800.14550280002,
+          "known_trials": 2,
+          "unknown_trials": 0
+        }
+      }
+    },
+    "last/retrieval-verified": {
+      "planned_trials": 2,
+      "successes": 2,
+      "failures": 0,
+      "unknown": 0,
+      "success_rate_all_planned": 1.0,
+      "attempts_confirmed": 2,
+      "attempts_unknown": 0,
+      "observed_source_reads": 2,
+      "source_read_unknown": 0,
+      "usage_incomplete_or_unknown_trials": 0,
+      "all_attempt_measurements": {
+        "input_tokens": {
+          "known_subtotal": 858594,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "output_tokens": {
+          "known_subtotal": 5416,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "model_calls": {
+          "known_subtotal": 43,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "seconds": {
+          "known_subtotal": 691.074629900002,
+          "known_trials": 2,
+          "unknown_trials": 0
+        }
+      }
+    },
+    "split/baseline-empty": {
+      "planned_trials": 2,
+      "successes": 0,
+      "failures": 2,
+      "unknown": 0,
+      "success_rate_all_planned": 0.0,
+      "attempts_confirmed": 2,
+      "attempts_unknown": 0,
+      "observed_source_reads": 0,
+      "source_read_unknown": 2,
+      "usage_incomplete_or_unknown_trials": 2,
+      "all_attempt_measurements": {
+        "input_tokens": {
+          "known_subtotal": 0,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "output_tokens": {
+          "known_subtotal": 0,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "model_calls": {
+          "known_subtotal": 2,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "seconds": {
+          "known_subtotal": 133.62937949999468,
+          "known_trials": 2,
+          "unknown_trials": 0
+        }
+      }
+    },
+    "split/retrieval-empty": {
+      "planned_trials": 2,
+      "successes": 0,
+      "failures": 2,
+      "unknown": 0,
+      "success_rate_all_planned": 0.0,
+      "attempts_confirmed": 2,
+      "attempts_unknown": 0,
+      "observed_source_reads": 0,
+      "source_read_unknown": 2,
+      "usage_incomplete_or_unknown_trials": 2,
+      "all_attempt_measurements": {
+        "input_tokens": {
+          "known_subtotal": 0,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "output_tokens": {
+          "known_subtotal": 0,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "model_calls": {
+          "known_subtotal": 2,
+          "known_trials": 2,
+          "unknown_trials": 0
+        },
+        "seconds": {
+          "known_subtotal": 135.03870459998143,
+          "known_trials": 2,
+          "unknown_trials": 0
+        }
+      }
+    }
+  },
+  "setup_retry_history": {
+    "receipt": {
+      "path": "retry-receipt.json",
+      "sha256": "ff5fb823b219e1df20784f1d58d98c68bf925598220a11c73c7f21df9ef7192e"
+    },
+    "evidence_status": "validated",
+    "inventory_correction": {
+      "path": "retry-receipt-correction.json",
+      "sha256": "df481d87843ff3c5775d697ff77ebb690e8337fe0daabcf2c755d5457d00037d",
+      "original_receipt_sha256": "ff5fb823b219e1df20784f1d58d98c68bf925598220a11c73c7f21df9ef7192e",
+      "original_receipt_file_count": 21,
+      "additional_task_exports": 10,
+      "complete_preserved_file_count": 31
+    },
+    "preserved_directory": "setup-failures-attempt1",
+    "original_source_commit": "8542cf055840e54a00b814b98a978cc623091bbc",
+    "preserved_artifacts": [
+      {
+        "path": "setup-failures-attempt1/execution.json",
+        "sha256": "9283f353265f53c54ead672f0a9bc692cb090be94d3de307f44a277d4b7950ce",
+        "bytes": 5577
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-baseline-empty-r1/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-baseline-empty-r1/summary.json",
+        "sha256": "c5f910d352d4536254a02a6ff0407ded90df338a257fc395ce7a5db5f0c45605",
+        "bytes": 2138
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-baseline-empty-r2/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-baseline-empty-r2/summary.json",
+        "sha256": "65ef790031fe6d809c90aec50adb46ba0f11ba307612584ffa91aa9a3e923944",
+        "bytes": 2139
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-empty-r1/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-empty-r1/summary.json",
+        "sha256": "b627dbc37277c7228959c8102d9c0510718ae486a81517ba4527d181c8632e96",
+        "bytes": 2141
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-empty-r2/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-empty-r2/summary.json",
+        "sha256": "e8ba993a760951a3a02a1d118af021734bf001828b8cab8ac5c54f5e3f710f09",
+        "bytes": 2141
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-verified-r1/knowledge-input.json",
+        "sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+        "bytes": 17561
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-verified-r1/summary.json",
+        "sha256": "b7e48f257f8a1384d924c0f8d1199922b2264b49a5f340ce43b0a7e3b42870a6",
+        "bytes": 2767
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-verified-r2/knowledge-input.json",
+        "sha256": "35c38fe6f38a24126d5048db39db0bc5afe3d52e2eb673c2bd3c6300c320cbd4",
+        "bytes": 17561
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-verified-r2/summary.json",
+        "sha256": "d496fa0e177c3e60b9b23019a094565d495e3d7f0e1b7e884acf91619ff6da7c",
+        "bytes": 2767
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-baseline-empty-r1/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-baseline-empty-r1/summary.json",
+        "sha256": "340c392d9a532941066d7c2427bb04993a1e7a1b951f4c18f4f6a11c9e6b1dd7",
+        "bytes": 2141
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-baseline-empty-r2/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-baseline-empty-r2/summary.json",
+        "sha256": "36afb861e8777dae1eb59bd3d6a46f1d82aa2ef53198466a9ec0462b3db83edd",
+        "bytes": 2141
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-retrieval-empty-r1/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-retrieval-empty-r1/summary.json",
+        "sha256": "baafffe2962a90fc65b99ac509ec167eba4e5d98b5a636c4bd7cce3fd05cc512",
+        "bytes": 2143
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-retrieval-empty-r2/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-retrieval-empty-r2/summary.json",
+        "sha256": "fcea7b05ad5d65c2294d9d3eabe39cf6d16d2dbb95fb4637946f2f2502b97628",
+        "bytes": 2142
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-baseline-empty-r1/model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r1/task.json",
+        "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+        "bytes": 6570
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-baseline-empty-r2/model-runs/more-itertools__last-factory-v1-baseline-last-baseline-empty-r2/task.json",
+        "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+        "bytes": 6570
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-empty-r1/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r1/task.json",
+        "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+        "bytes": 6570
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-empty-r2/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-empty-r2/task.json",
+        "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+        "bytes": 6570
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-verified-r1/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r1/task.json",
+        "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+        "bytes": 6570
+      },
+      {
+        "path": "setup-failures-attempt1/targets/last-retrieval-verified-r2/model-runs/more-itertools__last-factory-v1-retrieval-last-retrieval-verified-r2/task.json",
+        "sha256": "2cfd7a18cf20cabba12e5ecc77b740e7ae2a14859dec13264ecb903c3c8d1302",
+        "bytes": 6570
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-baseline-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r1/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-baseline-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r2/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-retrieval-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt1/targets/split-retrieval-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r2/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      }
+    ],
+    "launcher_failures": 10,
+    "model_calls": 0,
+    "model_attempts": 0,
+    "setup_rows": [
+      {
+        "label": "last-baseline-empty-r1",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 2.780016999997315,
+        "launcher_elapsed_seconds": 7.365343800003757,
+        "error_type": "RuntimeError",
+        "summary_sha256": "c5f910d352d4536254a02a6ff0407ded90df338a257fc395ce7a5db5f0c45605"
+      },
+      {
+        "label": "last-baseline-empty-r2",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 2.6447910999995656,
+        "launcher_elapsed_seconds": 7.310250800001086,
+        "error_type": "RuntimeError",
+        "summary_sha256": "65ef790031fe6d809c90aec50adb46ba0f11ba307612584ffa91aa9a3e923944"
+      },
+      {
+        "label": "last-retrieval-empty-r1",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 2.4550962000066647,
+        "launcher_elapsed_seconds": 7.1219845000014175,
+        "error_type": "RuntimeError",
+        "summary_sha256": "b627dbc37277c7228959c8102d9c0510718ae486a81517ba4527d181c8632e96"
+      },
+      {
+        "label": "last-retrieval-empty-r2",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 2.5298975000041537,
+        "launcher_elapsed_seconds": 9.752084899999318,
+        "error_type": "RuntimeError",
+        "summary_sha256": "e8ba993a760951a3a02a1d118af021734bf001828b8cab8ac5c54f5e3f710f09"
+      },
+      {
+        "label": "last-retrieval-verified-r1",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 0.21293590001005214,
+        "launcher_elapsed_seconds": 4.807500599999912,
+        "error_type": "RuntimeError",
+        "summary_sha256": "b7e48f257f8a1384d924c0f8d1199922b2264b49a5f340ce43b0a7e3b42870a6"
+      },
+      {
+        "label": "last-retrieval-verified-r2",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 0.19247989999712445,
+        "launcher_elapsed_seconds": 6.706523400003789,
+        "error_type": "RuntimeError",
+        "summary_sha256": "d496fa0e177c3e60b9b23019a094565d495e3d7f0e1b7e884acf91619ff6da7c"
+      },
+      {
+        "label": "split-baseline-empty-r1",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 0.23100569999951404,
+        "launcher_elapsed_seconds": 4.626191399991512,
+        "error_type": "RuntimeError",
+        "summary_sha256": "340c392d9a532941066d7c2427bb04993a1e7a1b951f4c18f4f6a11c9e6b1dd7"
+      },
+      {
+        "label": "split-baseline-empty-r2",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 0.18693380001059268,
+        "launcher_elapsed_seconds": 3.983374499992351,
+        "error_type": "RuntimeError",
+        "summary_sha256": "36afb861e8777dae1eb59bd3d6a46f1d82aa2ef53198466a9ec0462b3db83edd"
+      },
+      {
+        "label": "split-retrieval-empty-r1",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 0.20406849999562837,
+        "launcher_elapsed_seconds": 4.794879699999001,
+        "error_type": "RuntimeError",
+        "summary_sha256": "baafffe2962a90fc65b99ac509ec167eba4e5d98b5a636c4bd7cce3fd05cc512"
+      },
+      {
+        "label": "split-retrieval-empty-r2",
+        "model_calls": 0,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 0.2049871999915922,
+        "launcher_elapsed_seconds": 4.255323999997927,
+        "error_type": "RuntimeError",
+        "summary_sha256": "fcea7b05ad5d65c2294d9d3eabe39cf6d16d2dbb95fb4637946f2f2502b97628"
+      }
+    ],
+    "excluded_from_model_attempt_denominator": true,
+    "trial_seconds_sum": 11.642212800012203,
+    "launcher_seconds_sum": 60.72345759999007,
+    "time_scope": "Summed setup durations overlap under two concurrent launchers; they are not wall-clock batch latency.",
+    "interpretation": "All ten original setup failures are preserved; recorded zero model attempts are checked against their original summaries."
+  },
+  "additional_setup_retry_history": {
+    "receipt": {
+      "path": "retry-receipt-attempt2.json",
+      "sha256": "80a3cfbcb924e08e03579310b9ca5f3cf01ec5635e505a9ab0b7ec1909808846"
+    },
+    "evidence_status": "validated",
+    "preserved_directory": "setup-failures-attempt2",
+    "preserved_artifacts": [
+      {
+        "path": "setup-failures-attempt2/checkpoint-path-diagnosis.json",
+        "sha256": "04c2f8c9ed9e101404ce73569471db96b5a08568d68ba413d01c8003cd1e5048",
+        "bytes": 366
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r1/model.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r1/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r1/summary.json",
+        "sha256": "0177145c54ab10a019dec2c7454d37ceb09abadf713c83a693f65881dae64e63",
+        "bytes": 2471
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r2/model.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-baseline-split-baseline-empty-r2/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-baseline-empty-r2/summary.json",
+        "sha256": "f87ea100b5be3d4d187aff0206dab5c56d421eedb082ef52032a5dc1d0fb18c2",
+        "bytes": 2472
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1/model.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r1/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r1/summary.json",
+        "sha256": "0e6ee5b83aed0aa4e6af2e97e27f45601b40b621cf503439c8285f3eb863c6b2",
+        "bytes": 2473
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/knowledge-input.json",
+        "sha256": "c0c4a74aa3d5ba6c26f34147f3a68d0fdb18eaa23809d2d917723ad651bd66ba",
+        "bytes": 413
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r2/model.patch",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/model-runs/more-itertools__split-after-keep-separator-v1-retrieval-split-retrieval-empty-r2/task.json",
+        "sha256": "07335c337ecd648207a8833b9127649d09d17a98563d282ca04e275aac92b7c7",
+        "bytes": 6191
+      },
+      {
+        "path": "setup-failures-attempt2/targets/split-retrieval-empty-r2/summary.json",
+        "sha256": "b8b8543ab267ad29fe193aa7f5dac5dae7cf46c4f72dacf15e081ebe612cfb86",
+        "bytes": 2475
+      }
+    ],
+    "original_execution": {
+      "path": "execution.json",
+      "sha256": "a4d5488f81293938991dd7fca03f43b0953dc00149a7c7647e8bc29a739f493d",
+      "bytes": 5580
+    },
+    "original_source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+    "launcher_failures": 4,
+    "model_calls": 0,
+    "model_attempts": 0,
+    "setup_rows": [
+      {
+        "label": "split-baseline-empty-r1",
+        "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+        "model_calls": 0,
+        "source_tracked_tree_clean": true,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 6.857891699997708,
+        "launcher_elapsed_seconds": 8.642490699989139,
+        "error_type": "FileNotFoundError",
+        "summary_sha256": "0177145c54ab10a019dec2c7454d37ceb09abadf713c83a693f65881dae64e63"
+      },
+      {
+        "label": "split-retrieval-empty-r1",
+        "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+        "model_calls": 0,
+        "source_tracked_tree_clean": true,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 5.911354100011522,
+        "launcher_elapsed_seconds": 8.059662200001185,
+        "error_type": "FileNotFoundError",
+        "summary_sha256": "0e6ee5b83aed0aa4e6af2e97e27f45601b40b621cf503439c8285f3eb863c6b2"
+      },
+      {
+        "label": "split-baseline-empty-r2",
+        "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+        "model_calls": 0,
+        "source_tracked_tree_clean": false,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 11.92745209998975,
+        "launcher_elapsed_seconds": 15.753109999990556,
+        "error_type": "FileNotFoundError",
+        "summary_sha256": "f87ea100b5be3d4d187aff0206dab5c56d421eedb082ef52032a5dc1d0fb18c2"
+      },
+      {
+        "label": "split-retrieval-empty-r2",
+        "source_commit": "5fc6d0d1ece35cb252e5573998b02e863bda227c",
+        "model_calls": 0,
+        "source_tracked_tree_clean": false,
+        "model_attempts": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "seconds": 10.222869999997783,
+        "launcher_elapsed_seconds": 14.471243600011803,
+        "error_type": "FileNotFoundError",
+        "summary_sha256": "b8b8543ab267ad29fe193aa7f5dac5dae7cf46c4f72dacf15e081ebe612cfb86"
+      }
+    ],
+    "excluded_from_model_attempt_denominator": true,
+    "retry_execution": {
+      "path": "retry-execution.json",
+      "sha256": "363f3eb4139b4011582a1b248850c64381594533b644a9c6ccb59ac0610ad944",
+      "outcomes": [
+        {
+          "label": "split-baseline-empty-r1",
+          "launcher_returncode": 0,
+          "launcher_timed_out": false,
+          "launcher_elapsed_seconds": 71.66906030000246,
+          "summary_present": true
+        },
+        {
+          "label": "split-retrieval-empty-r1",
+          "launcher_returncode": 0,
+          "launcher_timed_out": false,
+          "launcher_elapsed_seconds": 73.82670089999738,
+          "summary_present": true
+        },
+        {
+          "label": "split-baseline-empty-r2",
+          "launcher_returncode": 1,
+          "launcher_timed_out": false,
+          "launcher_elapsed_seconds": 68.92947769998864,
+          "summary_present": true
+        },
+        {
+          "label": "split-retrieval-empty-r2",
+          "launcher_returncode": 0,
+          "launcher_timed_out": false,
+          "launcher_elapsed_seconds": 67.22546670000884,
+          "summary_present": true
+        }
+      ],
+      "launcher_outcomes_recorded": 4,
+      "launcher_batch_complete": true
+    },
+    "trial_seconds_sum": 34.919567899996764,
+    "launcher_seconds_sum": 46.92650649999268,
+    "interpretation": "Four additional zero-call setup failures are retained separately; their replacement trials occupy the same four of ten planned target slots."
+  },
+  "preserved_zero_call_launcher_failures": 14,
+  "targets": {
+    "planned_trials": 10,
+    "successes": 4,
+    "failures": 6,
+    "unknown": 0,
+    "success_rate_all_planned": 0.4,
+    "attempts_confirmed": 10,
+    "attempts_unknown": 0,
+    "observed_source_reads": 2,
+    "source_read_unknown": 4,
+    "usage_incomplete_or_unknown_trials": 4,
+    "all_attempt_measurements": {
+      "input_tokens": {
+        "known_subtotal": 2412570,
+        "known_trials": 10,
+        "unknown_trials": 0
+      },
+      "output_tokens": {
+        "known_subtotal": 15737,
+        "known_trials": 10,
+        "unknown_trials": 0
+      },
+      "model_calls": {
+        "known_subtotal": 136,
+        "known_trials": 10,
+        "unknown_trials": 0
+      },
+      "seconds": {
+        "known_subtotal": 2356.3886122999975,
+        "known_trials": 10,
+        "unknown_trials": 0
+      }
+    }
+  },
+  "source": {
+    "evidence_status": "validated",
+    "delivery_success": true,
+    "model_calls": 15,
+    "seconds": 181.58954060000542,
+    "input_tokens": 242373,
+    "output_tokens": 1996,
+    "usage_complete": true,
+    "unknown_usage_requests": 0,
+    "submitted": true,
+    "attempt_started": true,
+    "status": "submitted",
+    "exit_status": "Submitted",
+    "model_identity": {
+      "kind": "codex_cli",
+      "model": "gpt-6-astra",
+      "cli_version": "codex-cli 0.154.0",
+      "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+      "weight_digest_available": false,
+      "reasoning_effort": "low"
+    },
+    "implementation_sha256": "ca1d39a141a43b6b951894ee29d7aa7f0f968719311f2d3bce27c25991f2ce01",
+    "artifact_root": "source",
+    "artifacts": {
+      "summary": {
+        "path": "summary.json",
+        "sha256": "3d966014cc07671f5143083bdf693b27d2572d328350e7bd971aeac01a15d6c4"
+      },
+      "manifest": {
+        "path": "repository-ablation.json",
+        "sha256": "60cf2f2f78ae9720137a9abdc6aafdc6aa6a71e30e11fb05ca2db898e2ec5af6"
+      },
+      "task": {
+        "path": "model-runs/more-itertools__first-factory-v1-baseline-codex-transfer-v1-source/task.json",
+        "sha256": "2f625383120c05cef7f7fb52d20a97a25c9373a61f5f4846f46a1db2390447b3"
+      },
+      "evidence": {
+        "path": "model-runs/more-itertools__first-factory-v1-baseline-codex-transfer-v1-source/evidence.json",
+        "sha256": "086af313df655036092b9d1450093d5c67f08dacc8e646f363c121a00e6b5ebb"
+      },
+      "patch": {
+        "path": "model-runs/more-itertools__first-factory-v1-baseline-codex-transfer-v1-source/model.patch",
+        "sha256": "769daf66d39ce8136611fc4fbd9303ce506f8fab7027cb37347c933b7df5aeb3"
+      }
+    },
+    "source_package": {
+      "path": "source-package.json",
+      "sha256": "c373f9b66bd1fc95f0a5c1df8fabe99ab0bfbb633b6672fea19d553f31b58bae"
+    },
+    "verification": {
+      "path": "source-verification/source/verification.json",
+      "sha256": "4ffce9b739edaa4d1a8163db38f0774b01718b027cb281bcfbaa4e3ea37e966f"
+    },
+    "guard": {
+      "path": "source-verification/source/source-guard.json",
+      "sha256": "06b7c93ba9f91b1570df442fa6a9f36da2fba293ad404afaf484a2066b56e5e4"
+    },
+    "source_package_sha256": "c373f9b66bd1fc95f0a5c1df8fabe99ab0bfbb633b6672fea19d553f31b58bae",
+    "excluded_from_target_denominator": true
+  },
+  "knowledge_only_pairs": [
+    {
+      "repetition": 1,
+      "empty": "last-retrieval-empty-r1",
+      "verified": "last-retrieval-verified-r1",
+      "both_independently_delivered_and_comparable": false,
+      "knowledge_observed_read": true,
+      "differences": {
+        "input_tokens": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        },
+        "output_tokens": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        },
+        "model_calls": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        },
+        "seconds": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        }
+      }
+    },
+    {
+      "repetition": 2,
+      "empty": "last-retrieval-empty-r2",
+      "verified": "last-retrieval-verified-r2",
+      "both_independently_delivered_and_comparable": false,
+      "knowledge_observed_read": true,
+      "differences": {
+        "input_tokens": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        },
+        "output_tokens": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        },
+        "model_calls": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        },
+        "seconds": {
+          "verified_minus_empty": null,
+          "relative_change": null
+        }
+      }
+    }
+  ],
+  "complete": true,
+  "limits": [
+    "Two repetitions are not controlled seeded samples; no statistical or causal conclusion.",
+    "Knowledge reads prove nonempty tool delivery, not incorporation or usefulness.",
+    "Elapsed repository wall time includes host scheduling and concurrent trial contention; it is not pure LLM latency.",
+    "CLI invocation counts do not expose internal transport retries; token figures are CLI-reported measurements.",
+    "Known token subtotals with incomplete usage are lower bounds; missing trials are never assigned zero.",
+    "Remote weights and dollar costs are unknown; source cost is separate from the target denominator."
+  ],
+  "merge_provenance": {
+    "path": "verification-merged/merge-provenance.json",
+    "sha256": "413afd43b8f4dd3cba2f09d75a44ac0f2ee78321a88e4c74387e6a5d33014d93"
+  },
+  "cost_scope": {
+    "token_total_complete": false,
+    "reported_tokens_known_subtotal": 2428307,
+    "true_total_tokens": null,
+    "unknown_usage_requests": 4,
+    "unknown_usage_trial_count": 4,
+    "monetary_cost": null,
+    "monetary_cost_source": "chatgpt_plan_unpriced",
+    "interpretation": "Incomplete usage is a reported lower bound, never a complete zero-cost request. Source and diagnostic costs are separate."
+  },
+  "supplemental_trials_in_original_denominator": 0
+}

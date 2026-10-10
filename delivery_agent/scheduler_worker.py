@@ -11,6 +11,7 @@ import signal
 import threading
 import time
 import uuid
+from http.client import HTTPException
 from pathlib import Path
 from types import SimpleNamespace
 from urllib.error import HTTPError, URLError
@@ -19,6 +20,8 @@ from urllib.request import HTTPSHandler, ProxyHandler, Request, build_opener
 
 from .scheduler import (CONFIG_DEFAULTS, MAX_PATCH_BYTES, SchedulerError, canonical,
                         identifier, validate_payload)
+
+CLAIM_RECOVERY_ATTEMPTS = 3
 
 
 class Client:
@@ -36,6 +39,7 @@ class Client:
         # Coordinator origins are explicitly configured. Never leak its bearer
         # token through inherited HTTP_PROXY or Windows registry proxy settings.
         self._opener = build_opener(ProxyHandler({}), HTTPSHandler(context=self.context))
+        self._pending_claims = {}
 
     def request(self, path, value=None):
         body = canonical(value).encode("utf-8") if value is not None else None
@@ -63,7 +67,16 @@ class Client:
         return self.request("/v1/jobs", {"job_id": job_id, "payload": payload, "max_attempts": max_attempts})
 
     def claim(self, worker_id):
-        return self.request("/v1/claim", {"worker_id": worker_id})["job"]
+        worker_id = identifier(worker_id, "worker_id")
+        # A lost response may hide a committed lease. Reuse only this logical
+        # request, never an arbitrary active lease belonging to the worker.
+        request_id = self._pending_claims.setdefault(worker_id, uuid.uuid4().hex)
+        response = self.request("/v1/claim", {"worker_id": worker_id, "request_id": request_id})
+        if (not isinstance(response, dict) or "job" not in response
+                or response["job"] is not None and not isinstance(response["job"], dict)):
+            raise SchedulerError("Coordinator claim response is malformed", 502)
+        self._pending_claims.pop(worker_id)
+        return response["job"]
 
     def heartbeat(self, claim, worker_id):
         return self.request(f"/v1/jobs/{identifier(claim['job_id'])}/heartbeat", self._lease(claim, worker_id))
@@ -286,16 +299,27 @@ class Worker:
         if idle_seconds is not None and idle_seconds <= 0:
             raise ValueError("idle_seconds must be positive")
         self.client.register(self.worker_id)
-        count, idle_since, commits = 0, time.monotonic(), []
+        count, idle_since, commits, claim_failures = 0, time.monotonic(), [], 0
         while not self.stop.is_set():
             started = time.monotonic()
             try:
                 claim = self.client.claim(self.worker_id)
-            except (OSError, URLError, TimeoutError):
-                if idle_seconds is not None and time.monotonic() - idle_since >= idle_seconds:
-                    break
-                self.stop.wait(self.poll_seconds)
+            except (SchedulerError, OSError, URLError, TimeoutError, HTTPException,
+                    json.JSONDecodeError, UnicodeDecodeError) as exc:
+                if isinstance(exc, SchedulerError) and exc.status not in {500, 502, 503, 504}:
+                    raise
+                claim_failures += 1
+                if claim_failures >= CLAIM_RECOVERY_ATTEMPTS:
+                    # Do not report an idle success while a committed claim may
+                    # still be unknown. The pending request ID remains reusable.
+                    raise SchedulerError("Claim response remains unknown after bounded retries", 503) from exc
+                self.stop.wait(min(self.poll_seconds, 0.1 * (2 ** (claim_failures - 1))))
                 continue
+            if claim_failures:
+                # Only a recovered response resets idle time. In particular, an
+                # expired request may return None; allow the next fresh request.
+                idle_since = time.monotonic()
+                claim_failures = 0
             if claim is None:
                 if idle_seconds is not None and time.monotonic() - idle_since >= idle_seconds:
                     break

@@ -210,8 +210,8 @@ class CoordinatorHandler(BaseHTTPRequestHandler):
             self._fields(value, ["job_id", "payload"], ["max_attempts"])
             return store.submit(value["job_id"], value["payload"], max_attempts=value.get("max_attempts", 3))
         if parsed.path == "/v1/claim":
-            self._fields(value, ["worker_id"])
-            return {"job": store.claim(value["worker_id"])}
+            self._fields(value, ["worker_id"], ["request_id"])
+            return {"job": store.claim(value["worker_id"], request_id=value.get("request_id"))}
         if len(path) == 5 and path[:3] == ["", "v1", "jobs"]:
             job_id, action = path[3:]
             if action == "cancel":

@@ -2,6 +2,14 @@
 
 验证日期：2026-10-10。这里分别记录实现契约、真实容器、真实模型、公开检查和官方评分。CI job 成功表示流程执行成功，不能替代模型交付成功。
 
+## 知识复用与调度扩展的实测结果
+
+Codex 知识复用队列已全部取得独立验收结论。源任务由真实模型完成并通过独立检查，才被导入 verified namespace；原定十次目标尝试为 4 成功、6 失败、0 未知。last 三组各两次的补丁均通过公开检查，但空知识 retrieval 两次耗尽 24 步且没有 Submitted，故正式交付只有 4/6。四次原 split 均实际调用后发生模型协议错误；用量未知保留，空补丁新功能检查失败。另行预登记的两次 split 为 2/2 成功，单列且不更换原分母。原始补丁、模型用量、实际知识读取、两批 Docker 验收报告及汇总方法见 [完整案例](verified-transfer-case.md)。
+
+目标共 136 次 CLI 调用，其中 4 次 usage 未知；已知输入/输出 token 小计 2,412,570 / 15,737 是下界。源任务 15 次调用、额外试验 33 次调用分别记录。两轮知识库组确实读到了来自已验收源任务的非空内容，但本次没有双方都正式交付成功的空库/知识库配对，成本收益保持 null；不能把失败组较少花费或补丁功能通过改称提效证据。
+
+调度在 Linux/Windows 分别以 8 个独立 worker、1000 个普通任务和 5 个故障任务完成真实 HTTP 验收。30 秒租约下普通任务均只领取一代、1000 次完成确认齐全，完整 readback 无缺失或重复接受；kill/reclaim、旧代拒绝、取消、coordinator 重启均通过。这是单宿主 fixture 调度，零 LLM 调用。5 秒租约两次 Windows 失败及后来全量测试的 401 传输问题均保留，具体原因与修复见 [调度文档](distributed.md)。
+
 ## 已完成的真实模型交付
 
 Codex 第四轮已跑通完整链路：冻结的 Requests 需求 → 真实模型修改源码和测试 → Submitted → 新 checkout 与独立 Docker 公开检查 → 固定官方 SWE-bench 评分。模型使用 `gpt-6-astra`，记录 20 次 CLI 调用、350,416 / 1,312 输入/输出 tokens、254.041 秒；原始 [summary](../experiments/codex-cli-proof-v4/summary.json) 保留推理结束时的验收未知状态，后续验收另存，未回写原始记录。
@@ -16,7 +24,7 @@ Codex 第四轮已跑通完整链路：冻结的 Requests 需求 → 真实模�
 
 ## Codex 适配与真实尝试
 
-此前源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。四个 job 的源码 SHA 均已核对，见 [收据](../experiments/ci-codex-adapter/validation.json)。后续 060c1b9 的两端各 318 项记录见 [profile 配置 CI](../experiments/ci-codex-profiles/validation.json)，最新源码验证为本文开头的 321 项。
+此前源码提交 [564d8e3 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38021345202) 通过 Linux 317 项（34.698 秒）与 Windows 317 项（100.981 秒），均无 skip；真实 Docker 执行、进程崩溃恢复和既有补丁独立验收流程也通过。四个 job 的源码 SHA 均已核对，见 [收据](../experiments/ci-codex-adapter/validation.json)。后续 060c1b9 的两端各 318 项记录见 [profile 配置 CI](../experiments/ci-codex-profiles/validation.json)。321 项属于其后的历史阶段；最新结果见本文新增验证记录。
 
 首个 Codex 真实尝试在一次成功目录读取后发生 PermissionError，保留实际用量、空补丁和失败状态；原因尚未确定，见 [首轮分析](../experiments/codex-cli-proof-v1/analysis.md)。每轮使用独立目录，后续重跑不能覆盖首轮失败。公开检查和官方评分各自保留验收结果，提交状态不能替代它们。
 

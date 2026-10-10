@@ -4,7 +4,7 @@
 
 初版已经具备真实仓库与 SWE-bench 交付接口。本次继续补齐 Skills、跨任务知识库、持久调度和断点恢复，并接入直接 Ollama 推理及受限源码编辑环境。真实实验和评分状态由 [experiments](../experiments) 记录；这里解释实现与证据边界，不预先填写尚未取得的性能数字。
 
-源码提交 [758d1e5 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022684939) 已通过 Linux、Windows 各 321 项，均无 skip；真实 Docker 执行与进程崩溃恢复也通过，见 [CI 收据](../experiments/ci-checkpoint-rename/validation.json)。Codex 第四轮已自主完成 Requests 源码和回归测试修改，独立公开检查通过，官方 SWE-bench 判定 `psf__requests-2931` 为 `resolved=true`。真实调用、三次前置失败、检查点故障定位及最终补丁验收详见 [完整案例](real-delivery-case.md)。三次 7B Docker 失败和未完成的知识复用队列仍保留，单题成功不证明总体成功率或知识迁移收益。
+此前源码提交 [758d1e5 的 CI](https://github.com/chendi-Shi/repo-delivery-agent/actions/runs/38022684939) 通过 Linux、Windows 各 321 项，均无 skip；真实 Docker 执行与进程崩溃恢复也通过，见 [CI 收据](../experiments/ci-checkpoint-rename/validation.json)。Codex 第四轮已自主完成 Requests 源码和回归测试修改，独立公开检查通过，官方 SWE-bench 判定 `psf__requests-2931` 为 `resolved=true`。真实调用、三次前置失败、检查点故障定位及最终补丁验收详见 [完整案例](real-delivery-case.md)。后续已完成 [Codex 知识复用对照](verified-transfer-case.md)：源任务真实验收并入库，原定 10 次目标尝试全部取得独立结论（4 成功、6 失败），额外两次预登记尝试均成功。源成本、用量未知的失败、正式提交与补丁功能通过分别统计。单题成功不证明总体成功率，小样本对照也不能证明知识迁移收益。
 
 ## 复用了什么，自主实现了什么
 
@@ -96,7 +96,7 @@ claim 使用 SQLite BEGIN IMMEDIATE，在同一事务分配 attempt 和租约。
 
 取消与租约丢失触发 cooperative cancellation，停止后续命令并关闭登记的任务容器。已发送的 provider 请求无法撤回，受请求 timeout 约束。coordinator 持久化 queued/leased/succeeded/failed/cancelled 状态，重启后保留 accepted results 和失败 attempts。
 
-系统支持跨机器部署协议；目前真实集成验证用本机两个独立 Python worker 进程，通过真实 loopback HTTP 完成多个长于租约的任务、心跳、取消和 crash 后重领。这属于调度验证，不是 LLM 成功率，也不是物理多机压力测试。共享 token/TLS 支持可信部署，尚无多租户 ACL 或多副本 coordinator。
+系统支持跨机器部署协议；真实集成先用本机两个独立 Python worker 进程验证长任务续租，后续在 Windows/Linux CI 各运行 8 个独立 worker、1000 个普通任务与 5 个故障任务，验证心跳、取消、kill 后重领、旧代提交拒绝、完整 readback 和 coordinator 重启。30 秒租约负载通过，5 秒租约下的 Windows 失败保留在验证档案中。这属于调度验证，不是 LLM 成功率，也不是物理多机压力测试。共享 token/TLS 支持可信部署，尚无多租户 ACL 或多副本 coordinator。
 
 ## 为什么增加直接 Ollama 与 files backend
 
@@ -137,6 +137,12 @@ files backend 把模型动作限定为来源目录内的读、搜索、写、追
 | 工具参考说明压过了真实需求 | 模型持续浏览工具而未编辑仓库 | 完整需求与公开检查置于通用参考之后；明确普通仓库命令仍可用；压缩指引并验证完整 8K 观察的预算 |
 | 请求异常被导出错误覆盖 | 多种故障都只显示 ValueError | 保留模型原始错误类型、发起请求数和已确认用量；缺失字段保持未知，并采集有界模型加载及内存遥测 |
 | Windows 原子替换短暂被拒绝 | 真实第三轮在模型响应已返回后因 WinError 5 中断 | 仅对同一个已 fsync 临时文件执行有限 rename 重试；不重放模型或工具。第四轮实际再次遇到一次拒绝，恢复后完成提交和官方验收 |
+| Windows 深目录超过路径限制 | Git checkout、checkpoint 临时文件或公开审计导出失败 | Git 启用 longpaths，私有执行槽与公开 run 目录使用短路径；原 task/run 身份保留，14 个零调用启动失败不算成模型尝试 |
+| 已调用模型但公开导出失败 | 真实失败可能从报告中消失，或被错误重跑 | 从保存的结果、补丁、请求审计离线恢复；不新增调用，不覆盖原 summary；恢复收据绑定原始字节并记录后补字段来源 |
+| 在等待 SQLite 写锁前取租约时间 | 事务完成时租约可能已经过期，或接受过期提交 | `BEGIN IMMEDIATE` 获得锁后取时间，真实锁等待测试对照旧实现与修复结果 |
+| 高负载下 5 秒租约余量不足 | Windows 任务重新执行、确认缺失，甚至耗尽尝试 | 保存失败；负载验收改用明确的 30 秒参数，仍要求普通任务单代、1000 次确认和完整任务核对 |
+| 鉴权拒绝时请求体尚未到齐 | Windows 客户端收到连接中断而非 401 | 先发错误响应，再做字节与绝对时间均受限的传输清理；真实分段 HTTP/TLS 回归保持无任务落库 |
+| claim 已持久化但 HTTP 响应丢失 | worker 无法取得刚分配的租约，等过期后任务重复领取 | 每次领取使用持久化请求编号，未知传输沿用原编号，同一次领取取回原代并续租；旧的已结束请求不能领新任务 |
 | 固定容器休眠与扩大的任务时限相撞 | 有效任务可能失去执行会话 | 容器驻留改为无固定休眠上限，仍由任务退出、超时、取消与异常清理机制终止 |
 | 官方 CLI 保留旧名字但内部已是 v5 | 旧数据字段不足而无法评分 | 固定数据 revision，私有来源保留 image/eval_script/log_parser/eval_type，公开输入去答案 |
 
