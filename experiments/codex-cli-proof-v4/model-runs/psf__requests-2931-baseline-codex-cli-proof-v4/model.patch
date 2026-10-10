@@ -1,0 +1,65 @@
+diff --git a/requests/models.py b/requests/models.py
+index 9c624d3..b19bfd9 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -81,7 +81,7 @@ class RequestEncodingMixin(object):
+         """
+ 
+         if isinstance(data, (str, bytes)):
+-            return to_native_string(data)
++            return data
+         elif hasattr(data, 'read'):
+             return data
+         elif hasattr(data, '__iter__'):
+@@ -385,6 +385,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+             if isinstance(fragment, str):
+                 fragment = fragment.encode('utf-8')
+ 
++        if isinstance(params, bytes):
++            params = to_native_string(params)
+         enc_params = self._encode_params(params)
+         if enc_params:
+             if query:
+diff --git a/test_requests.py b/test_requests.py
+index 137edc0..4141f78 100755
+--- a/test_requests.py
++++ b/test_requests.py
+@@ -118,6 +118,38 @@ class TestRequests(object):
+         assert pr.url == req.url
+         assert pr.body == 'life=42'
+ 
++    @pytest.mark.parametrize('method', ['PUT', 'POST'])
++    @pytest.mark.parametrize('payload', [
++        u'\u00f6\u00f6\u00f6'.encode('utf-8'),
++        b'\x00\xff\x80\xfe',
++        b'plain ascii bytes',
++    ])
++    def test_binary_request_body_is_preserved(self, method, payload):
++        prepared = requests.Request(
++            method, 'http://example.com/upload', data=payload,
++            headers={'Content-Type': 'application/octet-stream'}).prepare()
++
++        assert isinstance(prepared.body, bytes)
++        assert prepared.body == payload
++        assert prepared.headers['Content-Length'] == builtin_str(len(payload))
++        assert prepared.headers['Content-Type'] == 'application/octet-stream'
++        assert prepared.method == method
++
++    @pytest.mark.parametrize('payload', [u'normal text', u'\u00e9'])
++    def test_text_request_body_is_preserved(self, payload):
++        prepared = requests.Request(
++            'PUT', 'http://example.com/upload', data=payload).prepare()
++
++        assert isinstance(prepared.body, str)
++        assert prepared.body == payload
++
++    def test_params_bytes_with_existing_query(self):
++        prepared = requests.Request(
++            'GET', 'http://example.com/?existing=1#fragment',
++            params=b'test=foo').prepare()
++
++        assert prepared.url == 'http://example.com/?existing=1&test=foo#fragment'
++
+     def test_no_content_length(self, httpbin):
+         get_req = requests.Request('GET', httpbin('get')).prepare()
+         assert 'Content-Length' not in get_req.headers

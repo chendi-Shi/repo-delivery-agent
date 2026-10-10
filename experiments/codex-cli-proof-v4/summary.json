@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "kind": "real_codex_source_trial",
+  "fixture": false,
+  "source_commit": "758d1e536b7961f838ac607abb047c041bb0b142",
+  "source_tracked_tree_clean": true,
+  "source_task_sha256": "fcde87d6c2696631df039356cc84bd181db99ade1577b7ea8a04c1c57f61e499",
+  "source_task_fingerprint": "638b8a7099ea6002045414684d65b971c11c95687d9842cb35f89141a7d2279c",
+  "model_name": "gpt-6-astra",
+  "provider": "codex_cli",
+  "profile": "baseline",
+  "label": "codex-cli-proof-v4",
+  "model_call_unit": "cli_invocations",
+  "underlying_transport_request_count": null,
+  "usage_scope": "CLI-reported completed turns; internal transport retries may have unreported usage",
+  "complete": false,
+  "delivery_success": null,
+  "official_resolved": null,
+  "attempt_started": true,
+  "attempted_count": 1,
+  "context_requests": 20,
+  "usage": {
+    "complete": true,
+    "input_tokens": 350416,
+    "output_tokens": 1312,
+    "calls_with_usage": 20,
+    "unknown_requests": 0
+  },
+  "model_calls": 20,
+  "scope": "one source-only attempt; independent Docker and official grading are separate",
+  "budgets": {
+    "max_steps": 24,
+    "selected_context_byte_budget": 64000,
+    "wall_seconds": 1800,
+    "request_timeout": 120,
+    "generation_token_cap_enforced": false,
+    "seed_enforced": false,
+    "cli_prompt_overhead_in_selected_context_budget": false,
+    "output_and_protocol_reserve": 3048,
+    "reasoning_effort": "low"
+  },
+  "model_status": "submitted",
+  "exit_status": "Submitted",
+  "model_identity": {
+    "kind": "codex_cli",
+    "model": "gpt-6-astra",
+    "cli_version": "codex-cli 0.154.0",
+    "binary_sha256": "be96b992178b1e467c225800da0d65f2c86d5eba1ef0b14632f65db381cbdfde",
+    "weight_digest_available": false,
+    "reasoning_effort": "low"
+  },
+  "seconds": 254.04139209999994,
+  "patch_sha256": "7a9506d7555fdf85c75d1a2d4af5f3ae3d978b9155cf9a34bc3c0e27d5115e28",
+  "patch_valid": true,
+  "error_type": null,
+  "submitted": true,
+  "action_audit": {
+    "available": true,
+    "complete": true,
+    "actions": 20,
+    "kind_counts": {
+      "delivery-file/list": 1,
+      "delivery-file/search": 3,
+      "delivery-file/read": 8,
+      "delivery-skill/read": 2,
+      "delivery-file/replace": 5,
+      "submit": 1
+    },
+    "private_audit_sha256": "308719582cb6aef9f428154cd9b7afb194fb0d8ae14d9a1fa59df165c555555f",
+    "public_audit_sha256": "2b842a41ae0bfe68a3cc6a1f7321d1af2196c7644c3f4f3fc5cae1ed737a3eb5"
+  },
+  "official_export": {
+    "submitted_count": 1,
+    "attempted_count": 1,
+    "agent_failure_count": 0,
+    "empty_patch_count": 0,
+    "official_resolved": null,
+    "original_public_task_sha256": "3ff859fc9db6c152cbcda6a777e3035f88b63798321519d3f22d30e7932cb892",
+    "source_result_sha256": "719eebc433e39e09056462207957ae60bc235c2f57e00f4b229e64208450f869"
+  }
+}

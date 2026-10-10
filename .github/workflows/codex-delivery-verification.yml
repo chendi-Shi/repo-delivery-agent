@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        round: [codex-cli-proof-v1, codex-cli-proof-v2, codex-cli-proof-v3]
+        round: [codex-cli-proof-v1, codex-cli-proof-v2, codex-cli-proof-v3, codex-cli-proof-v4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

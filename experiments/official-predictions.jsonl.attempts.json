@@ -1,27 +1,13 @@
 {
   "attempts": [
     {
-      "instance_id": "pallets__flask-5014",
-      "model_name_or_path": "repo-delivery-qwen2_5-coder-3b",
-      "result_sha256": "183324643cf3b893b0dae9b6152fbdfc845f877ac3572577e433543840e611c4",
-      "status": "stopped",
-      "submitted": false
-    },
-    {
-      "instance_id": "psf__requests-1142",
-      "model_name_or_path": "repo-delivery-qwen2_5-coder-3b",
-      "result_sha256": "75997dd39e5ecd01f056697ada60e8d29f2555aff6ba5b158b2312a2a61894dc",
-      "status": "stopped",
-      "submitted": false
-    },
-    {
       "instance_id": "psf__requests-2931",
-      "model_name_or_path": "repo-delivery-qwen2_5-coder-3b",
-      "result_sha256": "bb9399e39b4c494e9f8abe567e76b1c92cabfdfbee25b0611e1a268da9fd2022",
-      "status": "stopped",
-      "submitted": false
+      "model_name_or_path": "repo-delivery-codex-codex-cli-proof-v4",
+      "result_sha256": "719eebc433e39e09056462207957ae60bc235c2f57e00f4b229e64208450f869",
+      "status": "submitted",
+      "submitted": true
     }
   ],
-  "predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "predictions_sha256": "5cb8f1b9256e51ac3a17d8dbba0fab9919d843f0c982645711bafe9b72bfd93b",
   "schema_version": 1
 }
