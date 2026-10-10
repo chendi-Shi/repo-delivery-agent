@@ -1,0 +1,30 @@
+name: independent Codex knowledge transfer verification
+on:
+  push:
+    branches: [main]
+    paths: ['experiments/codex-transfer-v1/request.json']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: codex-transfer-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fresh checkouts and Docker checks for every declared model attempt
+        run: python scripts/verify_codex_transfer.py
+      - name: Publish safe independent grading evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-transfer-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: runs/codex-transfer-verification
+          if-no-files-found: error
+          retention-days: 30

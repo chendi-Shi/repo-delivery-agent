@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "kind": "predeclared_real_codex_knowledge_transfer",
+  "fixture": false,
+  "source_task": "examples/delivery-suite-v1/more-itertools-first-factory.json",
+  "model": "gpt-6-astra",
+  "provider": "codex_cli",
+  "common": {"selected_context_bytes": 64000, "max_steps": 24, "wall_seconds": 1800, "request_timeout": 120, "reasoning_effort": "low"},
+  "source_profile": "baseline",
+  "repetitions": [1, 2],
+  "targets": [
+    {"task": "examples/delivery-suite-v1/more-itertools-last-factory.json", "arms": ["baseline-empty", "retrieval-empty", "retrieval-verified"]},
+    {"task": "examples/delivery-suite-v1/more-itertools-split-after.json", "arms": ["baseline-empty", "retrieval-empty"]}
+  ],
+  "planned_target_trials": 10,
+  "source_gate": "Real Submitted plus independently passing all frozen public checks and source-target leakage guard; no manual source solution or narrative.",
+  "knowledge_treatment": "Verified source delivery record in a fresh per-target database; empty controls have identical tools and empty fresh databases. No target-generated result is reused.",
+  "metrics": ["submitted", "independent_public_delivery", "actual_verified_knowledge_read", "CLI calls", "reported input/output tokens", "repository elapsed seconds"],
+  "analysis": "Keep all planned rows and failures. Compare retrieval-empty with retrieval-verified at equal task/profile/budget; report paired observed differences without claiming statistical significance. Baseline contrasts change context policy. Separately record source costs. Unstarted rows stay unknown.",
+  "limits": ["Remote alias weights and sampling seed cannot be pinned", "Two repetitions are not independent seeded samples", "Dollar cost unknown", "Small fixed public development tasks, not full SWE-bench", "No physical multi-machine or billion-user claim"]
+}

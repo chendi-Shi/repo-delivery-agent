@@ -1,0 +1,157 @@
+diff --git a/more_itertools/more.py b/more_itertools/more.py
+index 9c56ab3..3e2f87b 100755
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -250,25 +250,46 @@ def chunked(iterable, n, strict=False):
+         return iterator
+ 
+ 
+-def first(iterable, default=_marker):
+-    """Return the first item of *iterable*, or *default* if *iterable* is
+-    empty.
++def first(iterable, default=_marker, *, default_factory=None):
++    """Return the first item of *iterable*, or a fallback if it is empty.
+ 
+         >>> first([0, 1, 2, 3])
+         0
+         >>> first([], 'some default')
+         'some default'
++        >>> first([], default_factory=list)
++        []
+ 
+-    If *default* is not provided and there are no items in the iterable,
+-    raise ``ValueError``.
++    Supply *default* to return a fallback value, or the keyword-only
++    *default_factory* to construct one lazily. The factory is called with no
++    arguments exactly once on empty input and never on nonempty input. Its
++    result is returned unchanged, including falsey values. ``None`` means no
++    factory.
++
++    Supplying both an explicit *default* (including ``None``) and a non-None
++    *default_factory* raises ``ValueError``. Otherwise, a non-None factory
++    must be callable or ``TypeError`` is raised. These options are validated
++    before consuming *iterable*.
++
++    If neither fallback is provided and there are no items in the iterable,
++    raise ``ValueError``. Exceptions from the iterable or factory propagate.
++    Only the first item is consumed on nonempty input.
+ 
+     :func:`first` is useful when you have a generator of expensive-to-retrieve
+     values and want any arbitrary one. It is marginally shorter than
+     ``next(iter(iterable), default)``.
+ 
+     """
++    if default_factory is not None:
++        if default is not _marker:
++            raise ValueError('default and default_factory are mutually exclusive')
++        if not callable(default_factory):
++            raise TypeError('default_factory must be callable')
++
+     for item in iterable:
+         return item
++    if default_factory is not None:
++        return default_factory()
+     if default is _marker:
+         raise ValueError(
+             'first() was called on an empty iterable, '
+diff --git a/tests/test_more.py b/tests/test_more.py
+index 9ecdd06..bd01ff6 100644
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -135,6 +135,96 @@ class FirstTests(TestCase):
+     def test_default(self):
+         self.assertEqual(mi.first([], 'boo'), 'boo')
+ 
++    def test_factory_empty(self):
++        for value in (None, False, 0, [], {'fresh': True}):
++            with self.subTest(value=value):
++                factory = mock.Mock(return_value=value)
++                self.assertIs(mi.first(iter([]), default_factory=factory), value)
++                factory.assert_called_once_with()
++
++    def test_factory_nonempty(self):
++        for value in (None, False, 0, []):
++            with self.subTest(value=value):
++                factory = mock.Mock()
++                self.assertIs(
++                    mi.first(iter([value, 'tail']), default_factory=factory),
++                    value,
++                )
++                factory.assert_not_called()
++
++    def test_factory_single_pass(self):
++        pulled = []
++
++        def values():
++            for value in (3, 4, 5):
++                pulled.append(value)
++                yield value
++
++        source = values()
++        factory = mock.Mock()
++        self.assertEqual(mi.first(source, default_factory=factory), 3)
++        self.assertEqual(pulled, [3])
++        self.assertEqual(list(source), [4, 5])
++        factory.assert_not_called()
++
++    def test_factory_validation_before_iteration(self):
++        class Untouched:
++            def __iter__(self):
++                raise AssertionError('input must not be consumed')
++
++        for factory in (42, False, [], 'invalid'):
++            with self.subTest(factory=factory):
++                with self.assertRaises(TypeError):
++                    mi.first(Untouched(), default_factory=factory)
++
++        for default in (None, False, 0, 'legacy'):
++            for factory in (list, 42):
++                with self.subTest(default=default, factory=factory):
++                    with self.assertRaises(ValueError):
++                        mi.first(Untouched(), default, default_factory=factory)
++
++    def test_factory_none(self):
++        with self.assertRaises(ValueError):
++            mi.first([], default_factory=None)
++        for default in (None, False, 0, []):
++            with self.subTest(default=default):
++                self.assertIs(
++                    mi.first([], default, default_factory=None), default
++                )
++        self.assertIsNone(mi.first([None], default_factory=None))
++
++    def test_factory_keyword_only(self):
++        with self.assertRaises(TypeError):
++            mi.first([], None, list)
++
++    def test_factory_exceptions(self):
++        for error in (RuntimeError('factory failure'), StopIteration('factory')):
++            with self.subTest(error=error):
++                factory = mock.Mock(side_effect=error)
++                with self.assertRaises(type(error)) as raised:
++                    mi.first([], default_factory=factory)
++                self.assertIs(raised.exception, error)
++                factory.assert_called_once_with()
++
++    def test_factory_source_exceptions(self):
++        error = RuntimeError('source failure')
++
++        class BrokenIterable:
++            def __iter__(self):
++                raise error
++
++        def broken_generator():
++            raise error
++            yield None
++
++        for source in (BrokenIterable(), broken_generator()):
++            with self.subTest(source=source):
++                factory = mock.Mock()
++                with self.assertRaises(RuntimeError) as raised:
++                    mi.first(source, default_factory=factory)
++                self.assertIs(raised.exception, error)
++                factory.assert_not_called()
++
+ 
+ class IterOnlyRange:
+     """User-defined iterable class which only support __iter__.

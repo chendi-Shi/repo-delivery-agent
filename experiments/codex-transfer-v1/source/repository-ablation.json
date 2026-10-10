@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "kind": "real_model_repository_ablation",
+  "runs": [
+    {
+      "id": "more-itertools__first-factory-v1-baseline-codex-transfer-v1-source",
+      "task": "model-runs/more-itertools__first-factory-v1-baseline-codex-transfer-v1-source/task.json",
+      "patch": "model-runs/more-itertools__first-factory-v1-baseline-codex-transfer-v1-source/model.patch",
+      "evidence": "model-runs/more-itertools__first-factory-v1-baseline-codex-transfer-v1-source/evidence.json"
+    }
+  ],
+  "limitations": [
+    "One genuine remote-model attempt; not a paired comparison with previous Ollama trials.",
+    "Remote model aliases can change; recorded CLI version/binary hash do not pin server weights.",
+    "Source-only backend cannot execute tests; independent Docker verification remains required.",
+    "CLI prompt overhead is additional to selected context; usage includes actual CLI-reported tokens.",
+    "Seed and generation token cap are not enforced by this CLI adapter; request/step/wall bounds apply.",
+    "Subscription inference has no known per-request dollar price; missing costs are not zero."
+  ]
+}
