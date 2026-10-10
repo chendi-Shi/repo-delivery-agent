@@ -103,6 +103,20 @@ class SourceBoundaryTests(unittest.TestCase):
         self.assertEqual(box.execute({'command': 'delivery-skill list; touch hack'})['returncode'], 2)
         self.assertFalse((self.root / 'hack').exists())
 
+    def test_skill_source_misuse_returns_usable_reference_recovery(self):
+        registry = SkillRegistry()
+        box = ToolboxEnvironment(self.env, registry)
+        rejected = box.execute({'command': 'delivery-skill read python-regression module.py 1000 1000'})
+        self.assertEqual(rejected['returncode'], 2)
+        self.assertIn('delivery-skill read python-regression SKILL.md 0 2000', rejected['output'])
+        self.assertEqual((self.root / 'module.py').read_text(), 'value = 1\n')
+        recovered = box.execute({'command': 'delivery-skill read python-regression SKILL.md 0 2000'})
+        self.assertEqual(recovered['returncode'], 0)
+        self.assertIn('references/iterators.md', json.loads(recovered['output'])['resources'])
+        source = box.execute({'command': 'delivery-file read module.py'})
+        self.assertEqual(source['returncode'], 0)
+        self.assertEqual(source['output'], 'value = 1\n')
+
 
 @unittest.skipUnless(importlib.util.find_spec('minisweagent'), 'pinned upstream optional dependency required')
 class NativeHttpTests(unittest.TestCase):

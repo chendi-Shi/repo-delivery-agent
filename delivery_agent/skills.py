@@ -161,7 +161,10 @@ class SkillRegistry:
         relative = PurePosixPath(path)
         if (not path or "\\" in path or relative.is_absolute() or ".." in relative.parts
                 or ":" in path or relative.as_posix() != path or path not in skill.files):
-            raise ValueError("resource must be an exact relative path in the frozen skill manifest")
+            raise ValueError("resource must be an exact relative path in the frozen skill manifest. "
+                "This tool reads Skill reference files. For the resource list, run: "
+                f"delivery-skill read {skill.name} SKILL.md 0 2000. "
+                "Read repository source using the execution environment's file-reading commands.")
         file = skill.directory.joinpath(*relative.parts)
         if file.is_symlink() or not file.resolve().is_relative_to(skill.directory):
             raise ValueError("skill resource escaped its approved directory")

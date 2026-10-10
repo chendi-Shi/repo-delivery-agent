@@ -276,6 +276,60 @@ def message_groups(messages: list[dict[str, Any]]) -> tuple[list[int], list[list
     return mandatory, groups
 
 
+def repeated_failure_feedback(messages: list[dict[str, Any]]) -> tuple[int, int, str] | None:
+    """Derive a view-only warning from consecutive, paired execution results.
+
+    The pinned upstream formatter supplies raw_output/returncode in extra. Never
+    infer execution failure from arbitrary stdout, model prose or rendered tags.
+    Canonical messages, including these fields, are persisted by checkpoints;
+    no process-local counter changes the view after a resume.
+    """
+    commands: dict[str, str] = {}
+    previous, count, latest = None, 0, None
+    for index, message in enumerate(messages):
+        role = message.get("role")
+        if role == "assistant":
+            commands = {}
+            for call in message.get("tool_calls") or []:
+                try:
+                    function = call["function"]
+                    arguments = json.loads(function["arguments"])
+                    if function.get("name") == "bash" and isinstance(arguments.get("command"), str):
+                        commands[call["id"]] = arguments["command"]
+                except (KeyError, TypeError, ValueError, AttributeError):
+                    continue
+            if not commands:
+                previous, count = None, 0
+            continue
+        if role != "tool":
+            previous, count = None, 0
+            continue
+        extra = message.get("extra") or {}
+        if not isinstance(extra, dict):
+            previous, count = None, 0
+            continue
+        command = commands.get(message.get("tool_call_id"))
+        returncode, output = extra.get("returncode"), extra.get("raw_output")
+        exception_info = extra.get("exception_info")
+        if (command is None or type(returncode) is not int or returncode == 0
+                or not isinstance(output, str) or exception_info == "action was not executed"
+                or exception_info is not None and not isinstance(exception_info, str)):
+            previous, count = None, 0
+            continue
+        signature = hashlib.sha256(json.dumps([command, returncode, output, exception_info], ensure_ascii=False,
+                                              separators=(",", ":")).encode("utf-8")).digest()
+        count = count + 1 if signature == previous else 1
+        previous, latest = signature, (index, count, returncode)
+    if latest is None or latest[0] != len(messages) - 1 or latest[1] < 2:
+        return None
+    index, count, returncode = latest
+    text = (f"\n\n[Execution feedback: {count} consecutive attempts repeated the same command "
+            f"and the same failed result (return code {returncode}). "
+            "Inspect the reported error and the available tool syntax. Correct the command or choose a "
+            "different diagnostic before retrying; an unchanged retry provides no new evidence.]")
+    return index, count, text
+
+
 class ContextPolicy:
     def __init__(self, config: ContextConfig):
         self.config = config
@@ -294,6 +348,12 @@ class ContextPolicy:
                     message["content"] = (content[:half] + f"\n[view shortened; full source {source}; "
                                            "use delivery-history read]\n" + content[-half:])
                     shortened.append(source)
+        feedback = repeated_failure_feedback(messages)
+        if feedback is not None:
+            index, _, text = feedback
+            content = prepared[index].get("content")
+            if isinstance(content, str):
+                prepared[index]["content"] = content + text
         note_message = None
         if notes:
             note_message = {"role": "user", "content": "Agent-maintained notes (unverified):\n" +
@@ -355,6 +415,7 @@ class ContextPolicy:
             "shortened_source_ids": [source for source in shortened if source in {_source(messages[index], index) for index in chosen}],
             "estimated_input_tokens": estimate_tokens(selected_view), "estimate_method": "utf8_bytes_plus_message_framing",
             "context_tokens": self.config.context_tokens, "reserve_tokens": self.config.reserve_tokens,
+            "repeated_failure_count": feedback[1] if feedback is not None else 0,
             "notes": notes or [],
         }
 
